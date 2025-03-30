@@ -19,7 +19,7 @@ namespace PBLWORDLEGAME {
 		~Account() {};
 		//Class data
 	public:
-		String^ ToJSObject() {
+		String^ ToTXTObject() {
 			return "{\n  \"username\": \"" + username + "\",\n  \"password\": \"" + password + "\",\n}";
 		}
 	};
