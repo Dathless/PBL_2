@@ -1,7 +1,8 @@
 #pragma once
 #include "Account.h"
 #include <fstream>
-
+#include <system.security.cryptography.h>
+#include <text.encoding.h>
 using namespace System;
 using namespace System::IO;
 using namespace System::ComponentModel;
@@ -214,6 +215,12 @@ namespace PBLWORDLEGAME {
 	private: System::Void backToLanding(System::Object^ sender, System::EventArgs^ e) {
 		goBack(this, e);
 	}
+	private: String^ hashPassword(String^ password) {
+	    array<Byte>^ passwordBytes = System::Text::Encoding::UTF8->GetBytes(password);
+	    System::Security::Cryptography::SHA256^ sha256 = System::Security::Cryptography::SHA256::Create();
+	    array<Byte>^ hashBytes = sha256->ComputeHash(passwordBytes);
+	    return BitConverter::ToString(hashBytes)->Replace("-", ""); // Chuyển thành chuỗi hex
+}
 	private: System::Void registerAccount(System::Object^ sender, System::EventArgs^ e) {
 		errMes->Text = ""; // Xóa lỗi cũ khi nhập lại
 		if (usrInp->Text == "" || passInp->Text == "" || rePassInp->Text == "") {
@@ -231,7 +238,8 @@ namespace PBLWORDLEGAME {
 		}
 	}
 	private: System::Void createAccount(String^ usr, String^ pwd) {
-		Account^ newAcc = gcnew Account(usr, pwd);
+		Account^ newAcc = gcnew Account(usr, hashPassword(pwd)); // Mã hóa mật khẩu trước khi lưu
+		//Account^ newAcc = gcnew Account(usr, pwd);
 		String^ folderPath = "UserList\\";
 		String^ filePath = folderPath + usr + ".txt";
 
