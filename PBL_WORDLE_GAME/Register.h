@@ -215,11 +215,13 @@ namespace PBLWORDLEGAME {
 		goBack(this, e);
 	}
 	private: System::Void registerAccount(System::Object^ sender, System::EventArgs^ e) {
+		errMes->Text = ""; // Xóa lỗi cũ khi nhập lại
 		if (usrInp->Text == "" || passInp->Text == "" || rePassInp->Text == "") {
 			errMes->Text = "Please fill in all fields";
 		}
 		else if (passInp->Text != rePassInp->Text) {
 			errMes->Text = "Password does not match";
+			rePassInp->clear();
 		}
 		else {
 			createAccount(usrInp->Text, passInp->Text);
@@ -228,7 +230,7 @@ namespace PBLWORDLEGAME {
 	private: System::Void createAccount(String^ usr, String^ pwd) {
 		Account^ newAcc = gcnew Account(usr, pwd);
 		String^ folderPath = "UserList\\";
-		String^ filePath = folderPath + usr + ".js";
+		String^ filePath = folderPath + usr + ".txt";
 
 		if (File::Exists(filePath)) {
 			this->errMes->Text = "Username already exists! Choose another.";
@@ -243,7 +245,7 @@ namespace PBLWORDLEGAME {
 		// Save User Data to .js File
 		try {
 			StreamWriter^ file = gcnew StreamWriter(filePath);
-			file->WriteLine(newAcc->ToJSObject());
+			file->WriteLine(newAcc->ToTXTObject());
 			file->Close();
 			this->errMes->Text = "Account created successfully";
 			this->errMes->ForeColor = System::Drawing::Color::Green;
