@@ -219,10 +219,13 @@ namespace PBLWORDLEGAME {
 		if (usrInp->Text == "" || passInp->Text == "" || rePassInp->Text == "") {
 			errMes->Text = "Please fill in all fields";
 		}
+		else if (passInp->Text->Length < 6) {
+			errMes->Text = "Password must be at least 6 characters long";
+		}
 		else if (passInp->Text != rePassInp->Text) {
 			errMes->Text = "Password does not match";
 			rePassInp->clear();
-		}
+		}	
 		else {
 			createAccount(usrInp->Text, passInp->Text);
 		}
