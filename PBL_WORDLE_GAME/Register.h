@@ -242,7 +242,7 @@ namespace PBLWORDLEGAME {
 				Directory::CreateDirectory(folderPath);
 			}
 
-		// Save User Data to .js File
+		// Save User Data to .txt File
 		try {
 			StreamWriter^ file = gcnew StreamWriter(filePath);
 			file->WriteLine(newAcc->ToTXTObject());
