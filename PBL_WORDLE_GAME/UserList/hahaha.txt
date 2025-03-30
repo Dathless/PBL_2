@@ -1,2 +1,4 @@
-Username: hahaha
-Password: 1234
+{
+  "username": "hahaha",
+  "password": "1234",
+}
