@@ -1,7 +1,8 @@
 #pragma once
 #include "DashBoard.h"
 #include "fstream"
-
+#include <openssl/sha.h>  // Cần thư viện OpenSSL
+#include <msclr/marshal_cppstd.h> 
 using namespace System;
 using namespace System::IO;
 using namespace System::ComponentModel;
@@ -9,7 +10,7 @@ using namespace System::Collections;
 using namespace System::Windows::Forms;
 using namespace System::Data;
 using namespace System::Drawing;
-
+using namespace System::Text;
 
 namespace PBLWORDLEGAME {
 
@@ -193,15 +194,28 @@ namespace PBLWORDLEGAME {
 
 		}
 #pragma endregion
+	private: System::String^ ComputeSHA256(String^ input) {
+	    std::string inputStr = msclr::interop::marshal_as<std::string>(input);
+	    unsigned char hash[SHA256_DIGEST_LENGTH];
+	    SHA256((unsigned char*)inputStr.c_str(), inputStr.length(), hash);
+	
+	    StringBuilder^ sb = gcnew StringBuilder();
+	    for (int i = 0; i < SHA256_DIGEST_LENGTH; i++) {
+	        sb->Append(hash[i].ToString("x2"));
+	    }
+	    return sb->ToString();
+	}
 	private: System::Void Login_Load(System::Object^ sender, System::EventArgs^ e) {
 	}
 	private: System::Void backToLanding(System::Object^ sender, System::EventArgs^ e) {
 			goBack(this, e);
 	}
 	private: System::Void openDashBoard(System::Object^ sender, System::EventArgs^ e) {
-		if (this->usrInp->Text == "Admin" && this->passInp->Text == "1234") {
-			enterDashBoard(this, e);
-			}
+		String^ enteredPassword = ComputeSHA256(this->passInp->Text);
+   		String^ storedPassword = "03ac674216f3e15c761ee1a5e255f067" // Giá trị SHA-256 của "1234"
+		if (this->usrInp->Text == "Admin" && enteredPassword == storedPassword) {
+        		enterDashBoard(this, e);
+    		}
 		else {
 			this->errMes->Text = "The username or password is invalid!";
 		}
