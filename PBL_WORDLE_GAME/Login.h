@@ -168,6 +168,7 @@ namespace PBLWORDLEGAME {
 			this->passInp->Name = L"passInp";
 			this->passInp->Size = System::Drawing::Size(371, 38);
 			this->passInp->TabIndex = 8;
+			this->passInp->UseSystemPasswordChar = true;
 			// 
 			// Login
 			// 
@@ -194,6 +195,10 @@ namespace PBLWORDLEGAME {
 		}
 #pragma endregion
 	private: System::Void Login_Load(System::Object^ sender, System::EventArgs^ e) {
+		if (!this->remCheckbox->Checked) {
+			this->usrInp->Text = "";
+		}
+		this->passInp->Text = "";
 	}
 	private: System::Void backToLanding(System::Object^ sender, System::EventArgs^ e) {
 			goBack(this, e);
@@ -205,6 +210,8 @@ namespace PBLWORDLEGAME {
 		else {
 			this->errMes->Text = "The username or password is invalid!";
 		}
+		if (!this->remCheckbox->Checked) this->usrInp->Text = "";
+		this->passInp->Text = "";
 	}
 };
 }

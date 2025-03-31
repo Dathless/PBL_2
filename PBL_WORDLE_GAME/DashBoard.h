@@ -1,5 +1,7 @@
 #pragma once
 #include "fstream"
+#include "Game1.h"
+#include "Account.h"
 
 using namespace System;
 using namespace System::ComponentModel;
@@ -19,6 +21,7 @@ namespace PBLWORDLEGAME {
 	{
 	public:
 		event EventHandler^ goBack;
+		public: Account^ userLogged;
 		DashBoard(void)
 		{
 			InitializeComponent();
@@ -50,6 +53,34 @@ namespace PBLWORDLEGAME {
 	private: System::Windows::Forms::Label^ setting;
 	private: System::Windows::Forms::Label^ logOut;
 	private: System::Windows::Forms::Label^ listTitle;
+	private: System::Windows::Forms::FlowLayoutPanel^ GameContainer;
+	private: System::Windows::Forms::FlowLayoutPanel^ Game1Panel;
+	private: System::Windows::Forms::Label^ GameTitle1;
+	private: System::Windows::Forms::Label^ GameName1;
+	private: System::Windows::Forms::Button^ Game1Btn;
+
+
+
+	private: System::Windows::Forms::FlowLayoutPanel^ Game2Panel;
+
+	private: System::Windows::Forms::Label^ GameTitle2;
+	private: System::Windows::Forms::Label^ GameName2;
+	private: System::Windows::Forms::FlowLayoutPanel^ Game3Panel;
+
+
+
+	private: System::Windows::Forms::Button^ GameBtn2;
+
+	private: System::Windows::Forms::Label^ GameTitle3;
+	private: System::Windows::Forms::Label^ GameName3;
+	private: System::Windows::Forms::Button^ GameBtn3;
+
+
+
+
+
+
+
 	protected:
 
 	private:
@@ -74,14 +105,32 @@ namespace PBLWORDLEGAME {
 			this->changePass = (gcnew System::Windows::Forms::Label());
 			this->setting = (gcnew System::Windows::Forms::Label());
 			this->logOut = (gcnew System::Windows::Forms::Label());
+			this->GameContainer = (gcnew System::Windows::Forms::FlowLayoutPanel());
 			this->listTitle = (gcnew System::Windows::Forms::Label());
+			this->Game1Panel = (gcnew System::Windows::Forms::FlowLayoutPanel());
+			this->GameTitle1 = (gcnew System::Windows::Forms::Label());
+			this->GameName1 = (gcnew System::Windows::Forms::Label());
+			this->Game1Btn = (gcnew System::Windows::Forms::Button());
+			this->Game2Panel = (gcnew System::Windows::Forms::FlowLayoutPanel());
+			this->GameTitle2 = (gcnew System::Windows::Forms::Label());
+			this->GameName2 = (gcnew System::Windows::Forms::Label());
+			this->GameBtn2 = (gcnew System::Windows::Forms::Button());
+			this->Game3Panel = (gcnew System::Windows::Forms::FlowLayoutPanel());
+			this->GameTitle3 = (gcnew System::Windows::Forms::Label());
+			this->GameName3 = (gcnew System::Windows::Forms::Label());
+			this->GameBtn3 = (gcnew System::Windows::Forms::Button());
 			this->dashboardLayout->SuspendLayout();
 			this->playerInfo->SuspendLayout();
 			(cli::safe_cast<System::ComponentModel::ISupportInitialize^>(this->avtBox))->BeginInit();
+			this->GameContainer->SuspendLayout();
+			this->Game1Panel->SuspendLayout();
+			this->Game2Panel->SuspendLayout();
+			this->Game3Panel->SuspendLayout();
 			this->SuspendLayout();
 			// 
 			// dashboardLayout
 			// 
+			this->dashboardLayout->Anchor = System::Windows::Forms::AnchorStyles::Left;
 			this->dashboardLayout->BackColor = System::Drawing::Color::Transparent;
 			this->dashboardLayout->ColumnCount = 2;
 			this->dashboardLayout->ColumnStyles->Add((gcnew System::Windows::Forms::ColumnStyle(System::Windows::Forms::SizeType::Percent,
@@ -90,7 +139,7 @@ namespace PBLWORDLEGAME {
 				79.66752F)));
 			this->dashboardLayout->Controls->Add(this->Title, 1, 0);
 			this->dashboardLayout->Controls->Add(this->playerInfo, 0, 1);
-			this->dashboardLayout->Controls->Add(this->listTitle, 1, 1);
+			this->dashboardLayout->Controls->Add(this->GameContainer, 1, 1);
 			this->dashboardLayout->Location = System::Drawing::Point(0, 0);
 			this->dashboardLayout->Name = L"dashboardLayout";
 			this->dashboardLayout->RowCount = 2;
@@ -200,6 +249,18 @@ namespace PBLWORDLEGAME {
 			this->logOut->Text = L"Log Out";
 			this->logOut->Click += gcnew System::EventHandler(this, &DashBoard::backToLanding);
 			// 
+			// GameContainer
+			// 
+			this->GameContainer->Controls->Add(this->listTitle);
+			this->GameContainer->Controls->Add(this->Game1Panel);
+			this->GameContainer->Controls->Add(this->Game2Panel);
+			this->GameContainer->Controls->Add(this->Game3Panel);
+			this->GameContainer->FlowDirection = System::Windows::Forms::FlowDirection::TopDown;
+			this->GameContainer->Location = System::Drawing::Point(161, 113);
+			this->GameContainer->Name = L"GameContainer";
+			this->GameContainer->Size = System::Drawing::Size(618, 437);
+			this->GameContainer->TabIndex = 3;
+			// 
 			// listTitle
 			// 
 			this->listTitle->Anchor = System::Windows::Forms::AnchorStyles::Top;
@@ -207,18 +268,172 @@ namespace PBLWORDLEGAME {
 			this->listTitle->Font = (gcnew System::Drawing::Font(L"Microsoft Sans Serif", 20, System::Drawing::FontStyle::Regular, System::Drawing::GraphicsUnit::Point,
 				static_cast<System::Byte>(0)));
 			this->listTitle->ForeColor = System::Drawing::Color::White;
-			this->listTitle->Location = System::Drawing::Point(384, 125);
-			this->listTitle->Margin = System::Windows::Forms::Padding(3, 15, 3, 0);
+			this->listTitle->Location = System::Drawing::Point(223, 10);
+			this->listTitle->Margin = System::Windows::Forms::Padding(0, 10, 3, 0);
 			this->listTitle->Name = L"listTitle";
 			this->listTitle->Size = System::Drawing::Size(171, 39);
 			this->listTitle->TabIndex = 2;
 			this->listTitle->Text = L"Game List";
 			// 
+			// Game1Panel
+			// 
+			this->Game1Panel->Controls->Add(this->GameTitle1);
+			this->Game1Panel->Controls->Add(this->GameName1);
+			this->Game1Panel->Controls->Add(this->Game1Btn);
+			this->Game1Panel->Location = System::Drawing::Point(3, 52);
+			this->Game1Panel->Name = L"Game1Panel";
+			this->Game1Panel->Size = System::Drawing::Size(615, 112);
+			this->Game1Panel->TabIndex = 3;
+			// 
+			// GameTitle1
+			// 
+			this->GameTitle1->Anchor = System::Windows::Forms::AnchorStyles::Left;
+			this->GameTitle1->AutoSize = true;
+			this->GameTitle1->Font = (gcnew System::Drawing::Font(L"Microsoft Sans Serif", 24, System::Drawing::FontStyle::Regular, System::Drawing::GraphicsUnit::Point,
+				static_cast<System::Byte>(0)));
+			this->GameTitle1->ForeColor = System::Drawing::Color::White;
+			this->GameTitle1->Location = System::Drawing::Point(10, 30);
+			this->GameTitle1->Margin = System::Windows::Forms::Padding(10, 30, 3, 0);
+			this->GameTitle1->Name = L"GameTitle1";
+			this->GameTitle1->Size = System::Drawing::Size(150, 46);
+			this->GameTitle1->TabIndex = 0;
+			this->GameTitle1->Text = L"Game1";
+			// 
+			// GameName1
+			// 
+			this->GameName1->Anchor = System::Windows::Forms::AnchorStyles::Left;
+			this->GameName1->AutoSize = true;
+			this->GameName1->Font = (gcnew System::Drawing::Font(L"Microsoft Sans Serif", 20, System::Drawing::FontStyle::Regular, System::Drawing::GraphicsUnit::Point,
+				static_cast<System::Byte>(0)));
+			this->GameName1->ForeColor = System::Drawing::Color::White;
+			this->GameName1->Location = System::Drawing::Point(178, 33);
+			this->GameName1->Margin = System::Windows::Forms::Padding(15, 30, 3, 0);
+			this->GameName1->Name = L"GameName1";
+			this->GameName1->Size = System::Drawing::Size(237, 39);
+			this->GameName1->TabIndex = 1;
+			this->GameName1->Text = L"Game Name 1";
+			// 
+			// Game1Btn
+			// 
+			this->Game1Btn->Anchor = System::Windows::Forms::AnchorStyles::Left;
+			this->Game1Btn->Font = (gcnew System::Drawing::Font(L"Microsoft Sans Serif", 16, System::Drawing::FontStyle::Regular, System::Drawing::GraphicsUnit::Point,
+				static_cast<System::Byte>(0)));
+			this->Game1Btn->Location = System::Drawing::Point(438, 31);
+			this->Game1Btn->Margin = System::Windows::Forms::Padding(20, 30, 3, 3);
+			this->Game1Btn->Name = L"Game1Btn";
+			this->Game1Btn->Size = System::Drawing::Size(100, 40);
+			this->Game1Btn->TabIndex = 2;
+			this->Game1Btn->Text = L"Start";
+			this->Game1Btn->UseVisualStyleBackColor = true;
+			this->Game1Btn->Click += gcnew System::EventHandler(this, &DashBoard::openGame1);
+			// 
+			// Game2Panel
+			// 
+			this->Game2Panel->Controls->Add(this->GameTitle2);
+			this->Game2Panel->Controls->Add(this->GameName2);
+			this->Game2Panel->Controls->Add(this->GameBtn2);
+			this->Game2Panel->Location = System::Drawing::Point(3, 170);
+			this->Game2Panel->Name = L"Game2Panel";
+			this->Game2Panel->Size = System::Drawing::Size(615, 108);
+			this->Game2Panel->TabIndex = 4;
+			// 
+			// GameTitle2
+			// 
+			this->GameTitle2->Anchor = System::Windows::Forms::AnchorStyles::Left;
+			this->GameTitle2->AutoSize = true;
+			this->GameTitle2->Font = (gcnew System::Drawing::Font(L"Microsoft Sans Serif", 24, System::Drawing::FontStyle::Regular, System::Drawing::GraphicsUnit::Point,
+				static_cast<System::Byte>(0)));
+			this->GameTitle2->ForeColor = System::Drawing::Color::White;
+			this->GameTitle2->Location = System::Drawing::Point(10, 30);
+			this->GameTitle2->Margin = System::Windows::Forms::Padding(10, 30, 3, 0);
+			this->GameTitle2->Name = L"GameTitle2";
+			this->GameTitle2->Size = System::Drawing::Size(150, 46);
+			this->GameTitle2->TabIndex = 0;
+			this->GameTitle2->Text = L"Game2";
+			// 
+			// GameName2
+			// 
+			this->GameName2->Anchor = System::Windows::Forms::AnchorStyles::Left;
+			this->GameName2->AutoSize = true;
+			this->GameName2->Font = (gcnew System::Drawing::Font(L"Microsoft Sans Serif", 20, System::Drawing::FontStyle::Regular, System::Drawing::GraphicsUnit::Point,
+				static_cast<System::Byte>(0)));
+			this->GameName2->ForeColor = System::Drawing::Color::White;
+			this->GameName2->Location = System::Drawing::Point(178, 33);
+			this->GameName2->Margin = System::Windows::Forms::Padding(15, 30, 3, 0);
+			this->GameName2->Name = L"GameName2";
+			this->GameName2->Size = System::Drawing::Size(237, 39);
+			this->GameName2->TabIndex = 1;
+			this->GameName2->Text = L"Game Name 2";
+			// 
+			// GameBtn2
+			// 
+			this->GameBtn2->Anchor = System::Windows::Forms::AnchorStyles::Left;
+			this->GameBtn2->Font = (gcnew System::Drawing::Font(L"Microsoft Sans Serif", 16, System::Drawing::FontStyle::Regular, System::Drawing::GraphicsUnit::Point,
+				static_cast<System::Byte>(0)));
+			this->GameBtn2->Location = System::Drawing::Point(438, 31);
+			this->GameBtn2->Margin = System::Windows::Forms::Padding(20, 30, 3, 3);
+			this->GameBtn2->Name = L"GameBtn2";
+			this->GameBtn2->Size = System::Drawing::Size(100, 40);
+			this->GameBtn2->TabIndex = 2;
+			this->GameBtn2->Text = L"Start";
+			this->GameBtn2->UseVisualStyleBackColor = true;
+			// 
+			// Game3Panel
+			// 
+			this->Game3Panel->Controls->Add(this->GameTitle3);
+			this->Game3Panel->Controls->Add(this->GameName3);
+			this->Game3Panel->Controls->Add(this->GameBtn3);
+			this->Game3Panel->Location = System::Drawing::Point(3, 284);
+			this->Game3Panel->Name = L"Game3Panel";
+			this->Game3Panel->Size = System::Drawing::Size(615, 115);
+			this->Game3Panel->TabIndex = 5;
+			// 
+			// GameTitle3
+			// 
+			this->GameTitle3->Anchor = System::Windows::Forms::AnchorStyles::Left;
+			this->GameTitle3->AutoSize = true;
+			this->GameTitle3->Font = (gcnew System::Drawing::Font(L"Microsoft Sans Serif", 24, System::Drawing::FontStyle::Regular, System::Drawing::GraphicsUnit::Point,
+				static_cast<System::Byte>(0)));
+			this->GameTitle3->ForeColor = System::Drawing::Color::White;
+			this->GameTitle3->Location = System::Drawing::Point(10, 30);
+			this->GameTitle3->Margin = System::Windows::Forms::Padding(10, 30, 3, 0);
+			this->GameTitle3->Name = L"GameTitle3";
+			this->GameTitle3->Size = System::Drawing::Size(150, 46);
+			this->GameTitle3->TabIndex = 0;
+			this->GameTitle3->Text = L"Game3";
+			// 
+			// GameName3
+			// 
+			this->GameName3->Anchor = System::Windows::Forms::AnchorStyles::Left;
+			this->GameName3->AutoSize = true;
+			this->GameName3->Font = (gcnew System::Drawing::Font(L"Microsoft Sans Serif", 20, System::Drawing::FontStyle::Regular, System::Drawing::GraphicsUnit::Point,
+				static_cast<System::Byte>(0)));
+			this->GameName3->ForeColor = System::Drawing::Color::White;
+			this->GameName3->Location = System::Drawing::Point(178, 33);
+			this->GameName3->Margin = System::Windows::Forms::Padding(15, 30, 3, 0);
+			this->GameName3->Name = L"GameName3";
+			this->GameName3->Size = System::Drawing::Size(237, 39);
+			this->GameName3->TabIndex = 1;
+			this->GameName3->Text = L"Game Name 3";
+			// 
+			// GameBtn3
+			// 
+			this->GameBtn3->Anchor = System::Windows::Forms::AnchorStyles::Left;
+			this->GameBtn3->Font = (gcnew System::Drawing::Font(L"Microsoft Sans Serif", 16, System::Drawing::FontStyle::Regular, System::Drawing::GraphicsUnit::Point,
+				static_cast<System::Byte>(0)));
+			this->GameBtn3->Location = System::Drawing::Point(438, 31);
+			this->GameBtn3->Margin = System::Windows::Forms::Padding(20, 30, 3, 3);
+			this->GameBtn3->Name = L"GameBtn3";
+			this->GameBtn3->Size = System::Drawing::Size(100, 40);
+			this->GameBtn3->TabIndex = 2;
+			this->GameBtn3->Text = L"Start";
+			this->GameBtn3->UseVisualStyleBackColor = true;
+			// 
 			// DashBoard
 			// 
 			this->AutoScaleDimensions = System::Drawing::SizeF(8, 16);
 			this->AutoScaleMode = System::Windows::Forms::AutoScaleMode::Font;
-			this->BackgroundImage = gcnew System::Drawing::Bitmap("asset\\img\\bg1.jpg");
+			this->BackgroundImage = (cli::safe_cast<System::Drawing::Image^>(resources->GetObject(L"$this.BackgroundImage")));
 			this->BackgroundImageLayout = System::Windows::Forms::ImageLayout::Stretch;
 			this->Controls->Add(this->dashboardLayout);
 			this->Name = L"DashBoard";
@@ -229,6 +444,14 @@ namespace PBLWORDLEGAME {
 			this->playerInfo->ResumeLayout(false);
 			this->playerInfo->PerformLayout();
 			(cli::safe_cast<System::ComponentModel::ISupportInitialize^>(this->avtBox))->EndInit();
+			this->GameContainer->ResumeLayout(false);
+			this->GameContainer->PerformLayout();
+			this->Game1Panel->ResumeLayout(false);
+			this->Game1Panel->PerformLayout();
+			this->Game2Panel->ResumeLayout(false);
+			this->Game2Panel->PerformLayout();
+			this->Game3Panel->ResumeLayout(false);
+			this->Game3Panel->PerformLayout();
 			this->ResumeLayout(false);
 
 		}
@@ -244,5 +467,9 @@ namespace PBLWORDLEGAME {
 	private: System::Void backToLanding(System::Object^ sender, System::EventArgs^ e) {
 		goBack(this, e);
 	}
-	};
+	private: System::Void openGame1(System::Object^ sender, System::EventArgs^ e) {
+		Game1^ game1 = gcnew Game1();
+		game1->ShowDialog();
+	}
+};
 }

@@ -1,74 +1,82 @@
 #pragma once
-#include "Account.h"
-#include <fstream>
-
-using namespace System;
-using namespace System::IO;
-using namespace System::ComponentModel;
-using namespace System::Collections;
-using namespace System::Windows::Forms;
-using namespace System::Data;
-using namespace System::Drawing;
+#include "Game.h"
+#include <cliext/vector>
 
 namespace PBLWORDLEGAME {
+
+	using namespace System;
+	using namespace System::ComponentModel;
+	using namespace System::Collections;
+	using namespace System::Windows::Forms;
+	using namespace System::Data;
+	using namespace System::Drawing;
+	using namespace System::Net;
+	using namespace System::Text::Json;
+	using namespace System::Collections::Generic;
+	using namespace System::Net::Http;
+	using namespace System::Threading::Tasks;
+
 	/// <summary>
-/// Summary for Game
-/// </summary>
-	public ref class Game : public System::Windows::Forms::Form
+	/// Summary for Game1
+	/// </summary>
+	public ref class Game1 : public System::Windows::Forms::Form
 	{
+	private: cliext::vector<System::String^> wordList;
 	public:
-		Game(void)
+		Game1(void)
 		{
 			InitializeComponent();
-
+			//
+			//TODO: Add the constructor code here
+			//
 		}
+
 	protected:
 		/// <summary>
 		/// Clean up any resources being used.
 		/// </summary>
-		~Game()
+		~Game1()
 		{
 			if (components)
 			{
 				delete components;
 			}
 		}
-	/*protected: System::Windows::Forms::Label^ Title;
-	protected: System::Windows::Forms::Label^ Desc;
-	protected: System::Windows::Forms::TextBox^ numberWord;
-	protected: System::Windows::Forms::Button^ GameStart;
-	protected: System::Windows::Forms::Button^ GameExit;
-	protected: System::Windows::Forms::FlowLayoutPanel^ gameDomain;
-	protected: System::Windows::Forms::FlowLayoutPanel^ gameAns;
-	protected: cliext::vector<System::Windows::Forms::TextBox^> charBoxes;*/
-	protected: System::Windows::Forms::Label^ Title;
+	private: System::Windows::Forms::Label^ Title;
 	protected:
-
 	protected:
-	protected: System::Windows::Forms::Label^ GameRule;
-	protected: System::Windows::Forms::Label^ HighestScore;
-	protected: System::Windows::Forms::Label^ Rank;
-	protected: System::Windows::Forms::TextBox^ ScoreContent;
-	protected: System::Windows::Forms::TextBox^ RankContent;
-	protected: System::Windows::Forms::Button^ GameStart;
-	protected: System::Windows::Forms::Button^ GameExit;
-	protected: System::Windows::Forms::Button^ showRule;
-	protected: System::Windows::Forms::Label^ ansLabel;
-	protected: System::Windows::Forms::Label^ usrAnsLabel;
-	protected: System::Windows::Forms::FlowLayoutPanel^ GameAns;
-	protected: System::Windows::Forms::FlowLayoutPanel^ GameDomain;
-	protected: System::Windows::Forms::Label^ ScoreLabel;
-	protected: System::Windows::Forms::TextBox^ Score;
-	protected: System::Windows::Forms::TextBox^ Test;
+	private: System::Windows::Forms::Label^ GameRule;
+	private: System::Windows::Forms::Label^ HighestScore;
+	private: System::Windows::Forms::Label^ Rank;
+	private: System::Windows::Forms::TextBox^ ScoreContent;
+	private: System::Windows::Forms::TextBox^ RankContent;
+	private: System::Windows::Forms::Button^ GameStart;
+	private: System::Windows::Forms::Button^ GameExit;
+	private: System::Windows::Forms::Button^ showRule;
+	private: System::Windows::Forms::Label^ ansLabel;
+	private: System::Windows::Forms::Label^ usrAnsLabel;
+	private: System::Windows::Forms::FlowLayoutPanel^ GameAns;
+	private: System::Windows::Forms::FlowLayoutPanel^ GameDomain;
+	private: System::Windows::Forms::Label^ ScoreLabel;
+	private: System::Windows::Forms::TextBox^ Score;
+	private: System::Windows::Forms::TextBox^ Test;
 
-	protected:
 
-	protected: System::ComponentModel::Container^ components;
+
+	private:
+		/// <summary>
+		/// Required designer variable.
+		/// </summary>
+		System::ComponentModel::Container ^components;
+
 #pragma region Windows Form Designer generated code
-
+		/// <summary>
+		/// Required method for Designer support - do not modify
+		/// the contents of this method with the code editor.
+		/// </summary>
 		void InitializeComponent(void)
 		{
-			System::ComponentModel::ComponentResourceManager^ resources = (gcnew System::ComponentModel::ComponentResourceManager(Game::typeid));
+			System::ComponentModel::ComponentResourceManager^ resources = (gcnew System::ComponentModel::ComponentResourceManager(Game1::typeid));
 			this->Title = (gcnew System::Windows::Forms::Label());
 			this->GameRule = (gcnew System::Windows::Forms::Label());
 			this->HighestScore = (gcnew System::Windows::Forms::Label());
@@ -175,7 +183,7 @@ namespace PBLWORDLEGAME {
 			this->GameStart->TabIndex = 8;
 			this->GameStart->Text = L"Start";
 			this->GameStart->UseVisualStyleBackColor = true;
-			this->GameStart->Click += gcnew System::EventHandler(this, &Game::Render);
+			this->GameStart->Click += gcnew System::EventHandler(this, &Game1::Render);
 			// 
 			// GameExit
 			// 
@@ -188,16 +196,16 @@ namespace PBLWORDLEGAME {
 			this->GameExit->TabIndex = 7;
 			this->GameExit->Text = L"Exit";
 			this->GameExit->UseVisualStyleBackColor = true;
-			this->GameExit->Click += gcnew System::EventHandler(this, &Game::Exit);
+			this->GameExit->Click += gcnew System::EventHandler(this, &Game1::Exit);
 			// 
 			// showRule
 			// 
 			this->showRule->Cursor = System::Windows::Forms::Cursors::Hand;
-			this->showRule->Font = (gcnew System::Drawing::Font(L"Microsoft Sans Serif", 9, System::Drawing::FontStyle::Regular, System::Drawing::GraphicsUnit::Point,
+			this->showRule->Font = (gcnew System::Drawing::Font(L"Microsoft Sans Serif", 10, System::Drawing::FontStyle::Regular, System::Drawing::GraphicsUnit::Point,
 				static_cast<System::Byte>(0)));
-			this->showRule->Location = System::Drawing::Point(205, 255);
+			this->showRule->Location = System::Drawing::Point(205, 250);
 			this->showRule->Name = L"showRule";
-			this->showRule->Size = System::Drawing::Size(80, 25);
+			this->showRule->Size = System::Drawing::Size(80, 35);
 			this->showRule->TabIndex = 9;
 			this->showRule->Text = L"Show";
 			this->showRule->UseVisualStyleBackColor = true;
@@ -274,15 +282,14 @@ namespace PBLWORDLEGAME {
 			this->Test->Name = L"Test";
 			this->Test->Size = System::Drawing::Size(287, 22);
 			this->Test->TabIndex = 16;
-			this->Test->TextChanged += gcnew System::EventHandler(this, &Game::UpdateScore);
+			this->Test->TextChanged += gcnew System::EventHandler(this, &Game1::UpdateScore);
 			// 
 			// Game1
 			// 
 			this->AutoScaleDimensions = System::Drawing::SizeF(8, 16);
 			this->AutoScaleMode = System::Windows::Forms::AutoScaleMode::Font;
 			this->AutoScroll = true;
-			/*this->BackgroundImage = (cli::safe_cast<System::Drawing::Image^>(resources->GetObject(L"$this.BackgroundImage")));*/
-			this->BackgroundImage = gcnew System::Drawing::Bitmap("asset//img//bg1.jpg");
+			this->BackgroundImage = (cli::safe_cast<System::Drawing::Image^>(resources->GetObject(L"$this.BackgroundImage")));
 			this->BackgroundImageLayout = System::Windows::Forms::ImageLayout::Stretch;
 			this->ClientSize = System::Drawing::Size(782, 553);
 			this->Controls->Add(this->Test);
@@ -301,7 +308,9 @@ namespace PBLWORDLEGAME {
 			this->Controls->Add(this->HighestScore);
 			this->Controls->Add(this->GameRule);
 			this->Controls->Add(this->Title);
+			this->FormBorderStyle = System::Windows::Forms::FormBorderStyle::None;
 			this->Name = L"Game1";
+			this->ShowInTaskbar = false;
 			this->StartPosition = System::Windows::Forms::FormStartPosition::CenterParent;
 			this->Text = L"Game1";
 			this->ResumeLayout(false);
@@ -309,34 +318,58 @@ namespace PBLWORDLEGAME {
 
 		}
 #pragma endregion
-	/*public: virtual System::Void showRule() {};
-	public: virtual System::Void gameGenerate() {};*/
-	/*public: System::Void addTxtBox(System::Windows::Forms::FlowLayoutPanel^ container, int x, int y, System::String^ ch) {
-		System::Windows::Forms::TextBox^ newBox = gcnew TextBox();
-		newBox->Size = System::Drawing::Size(30, 30);
-		newBox->Location = System::Drawing::Point(x, y);
-		newBox->Text = ch;
-		charBoxes.push_back(newBox);
-		container->Controls->Add(newBox);
+	private: System::Void Render(System::Object^ sender, System::EventArgs^ e) {
+		/*this->GameDomain->Controls->Clear();
+		int count;
+		if (Int32::TryParse(Test->Text, count) && count > 0) {
+			for (int i = 0; i < count; i++) {
+				System::Windows::Forms::TextBox^ charBox = gcnew TextBox();
+				charBox->Size = System::Drawing::Size(20, 30);
+				charBox->MaxLength = 1;
+				charBox->TextAlign = HorizontalAlignment::Center;
+				charBox->Margin = System::Windows::Forms::Padding(0, 0, 0, 0);
+				charBox->BackColor = System::Drawing::Color::Green;
+				this->GameDomain->Controls->Add(charBox);
+			}
+		}*/
+		this->Score->Text = "";
+		this->GameStart->Enabled = false;
+		Task::Run(gcnew Action(this, &Game1::FetchWord));
 	}
-	public: System::Void clearBox(System::Windows::Forms::FlowLayoutPanel^ container) {
-		for each (System::Windows::Forms::TextBox ^ box in charBoxes) {
-			container->Controls->Remove(box);
-		}
-	}*/
-	protected: System::Void Render(System::Object^ sender, System::EventArgs^ e) {
-		/*this->GameRule->Visible = false;
-		this->RuleContent->Visible = false;
-		this->HighestScore->Visible = false;
-		this->ScoreContent->Visible = false;
-		this->Rank->Visible = false;
-		this->RankContent->Visible = false;*/
-	}
-	protected: System::Void Exit(System::Object^ sender, System::EventArgs^ e) {
+	private: System::Void Exit(System::Object^ sender, System::EventArgs^ e) {
 		this->Close();
 	}
-	protected: System::Void UpdateScore(System::Object^ sender, System::EventArgs^ e) {
-		this->Score->Text = Test->Text->Length.ToString();
+	private: System::Void UpdateScore(System::Object^ sender, System::EventArgs^ e) {
+		this->Score->Text = this->Test->Text->Length.ToString();
+	}
+
+	void FetchWord() {
+		HttpClient^ client = gcnew HttpClient();
+		String^ url = "https://api.datamuse.com/words?sp=?????&max=1"; // 5-letter word (?????)
+
+		try {
+			Task<String^>^ task = client->GetStringAsync(url);
+			task->Wait();
+			String^ response = task->Result;
+
+			if (!String::IsNullOrEmpty(response)) {
+				int start = response->IndexOf("\"word\":\"") + 8;
+				int end = response->IndexOf("\"", start);
+				String^ word = response->Substring(start, end - start);
+
+				this->Invoke(gcnew Action<String^>(this, &Game1::UpdateUI), word);
+			}
+			else {
+				this->Invoke(gcnew Action<String^>(this, &Game1::UpdateUI), "Error fetching word");
+			}
+		}
+		catch (Exception^ ex) {
+			this->Invoke(gcnew Action<String^>(this, &Game1::UpdateUI), "API Error");
+		}
+	}
+	private: System::Void UpdateUI(System::String^ word) {
+		this->Score->Text = word;
+		this->GameStart->Enabled = true;
 	}
 };
 }

@@ -7,7 +7,7 @@ namespace PBLWORDLEGAME {
 	/// </summary>
 	public ref class Account
 	{
-	private: String^ username;
+	public: String^ username;
 	private: String^ password;
 	public:
 		Account(String^ usr, String^ pwd)
@@ -19,8 +19,8 @@ namespace PBLWORDLEGAME {
 		~Account() {};
 		//Class data
 	public:
-		String^ ToJSObject() {
-			return "{\n  \"username\": \"" + username + "\",\n  \"password\": \"" + password + "\",\n}";
+		String^ ToData() {
+			return username + " " + password;
 		}
 	};
 }

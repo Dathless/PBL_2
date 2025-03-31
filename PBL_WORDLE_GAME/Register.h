@@ -228,7 +228,7 @@ namespace PBLWORDLEGAME {
 	private: System::Void createAccount(String^ usr, String^ pwd) {
 		Account^ newAcc = gcnew Account(usr, pwd);
 		String^ folderPath = "UserList\\";
-		String^ filePath = folderPath + usr + ".js";
+		String^ filePath = folderPath + usr + ".txt";
 
 		if (File::Exists(filePath)) {
 			this->errMes->Text = "Username already exists! Choose another.";
@@ -240,12 +240,12 @@ namespace PBLWORDLEGAME {
 				Directory::CreateDirectory(folderPath);
 			}
 
-		// Save User Data to .js File
+		// Save User Data to .txt File
 		try {
 			StreamWriter^ file = gcnew StreamWriter(filePath);
-			file->WriteLine(newAcc->ToJSObject());
+			file->WriteLine(newAcc->ToData());
 			file->Close();
-			this->errMes->Text = "Account created successfully";
+			this->errMes->Text = "Account created succe	ssfully";
 			this->errMes->ForeColor = System::Drawing::Color::Green;
 		}
 		catch (Exception^ ex) {

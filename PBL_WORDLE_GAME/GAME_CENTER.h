@@ -10,6 +10,7 @@
 namespace PBLWORDLEGAME {
 
 	using namespace System;
+	using namespace System::IO;
 	using namespace System::ComponentModel;
 	using namespace System::Collections;
 	using namespace System::Windows::Forms;
@@ -84,6 +85,7 @@ namespace PBLWORDLEGAME {
 			this->Controls->Add(this->mainPanel);
 			this->BackgroundImage = gcnew System::Drawing::Bitmap("asset\\img\\bg1.jpg");
 			this->Icon = gcnew System::Drawing::Icon("asset\\logo\\logo.ico");
+			this->StartPosition = System::Windows::Forms::FormStartPosition::CenterScreen;
 			this->Name = L"GAME_CENTER";
 			this->Text = L"GAME_CENTER";
 			this->Load += gcnew System::EventHandler(this, &GAME_CENTER::GAME_CENTER_Load);
@@ -151,6 +153,7 @@ namespace PBLWORDLEGAME {
 	}
 	private: System::Void showDashBoard(System::Object^ sender, System::EventArgs^ e) {
 		this->mainPanel->Controls->Clear();
+		this->dashBoard->userLogged = gcnew Account("Admin","");
 		this->mainPanel->Controls->Add(dashBoard);
 	}
 	private: System::Void quitGame(System::Object^ sender, System::EventArgs^ e) {
