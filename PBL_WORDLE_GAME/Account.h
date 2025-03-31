@@ -21,6 +21,9 @@ namespace PBLWORDLEGAME {
 	public:
 		String^ ToData() {
 			return username + " " + password;
+		};
+		String^ ToTXTObject() {
+			return "{\n  \"username\": \"" + username + "\",\n  \"password\": \"" + password + "\",\n}";
 		}
 	};
 }

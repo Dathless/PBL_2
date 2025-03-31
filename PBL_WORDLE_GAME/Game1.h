@@ -1,15 +1,19 @@
 #pragma once
 #include "Game.h"
 #include <cliext/vector>
+#include "Account.h"
+#include <fstream>
+//#include <vector>
+//#include <algorithm>
 
 namespace PBLWORDLEGAME {
 
-	using namespace System;
+using namespace System;
 	using namespace System::ComponentModel;
 	using namespace System::Collections;
-	using namespace System::Windows::Forms;
+using namespace System::Windows::Forms;
 	using namespace System::Data;
-	using namespace System::Drawing;
+using namespace System::Drawing;
 	using namespace System::Net;
 	using namespace System::Text::Json;
 	using namespace System::Collections::Generic;
@@ -22,16 +26,29 @@ namespace PBLWORDLEGAME {
 	public ref class Game1 : public System::Windows::Forms::Form
 	{
 	private: cliext::vector<System::String^> wordList;
-	public:
-		Game1(void)
-		{
-			InitializeComponent();
+    /*public:
+        String^ secretWord = "APPLE";
+        String^ currentState = "_____";
+        int score = 100;
+        std::vector<std::pair<int, std::string>> highScores;*/
+        /*Label^ displayWord;
+        TextBox^ inputBox;
+        Button^ guessButton;
+        Label^ scoreLabel;
+        Label^ highScoreLabel;
+        Label^ highScoreHolderLabel;
+        TextBox^ nameInputBox;*/
+    
+        /*Landing() {*/
+	public:	Game1(){
+            /*LoadHighScores();*/
+            InitializeComponent();
 			//
 			//TODO: Add the constructor code here
 			//
-		}
-
-	protected:
+        }
+    
+    protected:
 		/// <summary>
 		/// Clean up any resources being used.
 		/// </summary>
@@ -40,7 +57,7 @@ namespace PBLWORDLEGAME {
 			if (components)
 			{
 				delete components;
-			}
+        }
 		}
 	private: System::Windows::Forms::Label^ Title;
 	protected:
@@ -60,14 +77,28 @@ namespace PBLWORDLEGAME {
 	private: System::Windows::Forms::Label^ ScoreLabel;
 	private: System::Windows::Forms::TextBox^ Score;
 	private: System::Windows::Forms::TextBox^ Test;
+    
+    /*private:
+        System::ComponentModel::Container^ components;*/
 
+        /*void InitializeComponent() {
+            this->displayWord = gcnew Label();
+            this->inputBox = gcnew TextBox();
+            this->guessButton = gcnew Button();
+            this->scoreLabel = gcnew Label();
+            this->highScoreLabel = gcnew Label();
+            this->highScoreHolderLabel = gcnew Label();
+            this->nameInputBox = gcnew TextBox();
 
-
+            this->displayWord->Text = currentState;
+            this->displayWord->Location = Point(50, 30);
+            this->displayWord->Font = gcnew System::Drawing::Font("Arial", 16);
+            this->displayWord->AutoSize = true;*/
 	private:
 		/// <summary>
 		/// Required designer variable.
 		/// </summary>
-		System::ComponentModel::Container ^components;
+		System::ComponentModel::Container ^components; 
 
 #pragma region Windows Form Designer generated code
 		/// <summary>
@@ -315,61 +346,125 @@ namespace PBLWORDLEGAME {
 			this->Text = L"Game1";
 			this->ResumeLayout(false);
 			this->PerformLayout();
+            /*this->inputBox->Location = Point(50, 80);
+            this->inputBox->Width = 100;
 
-		}
-#pragma endregion
-	private: System::Void Render(System::Object^ sender, System::EventArgs^ e) {
-		/*this->GameDomain->Controls->Clear();
-		int count;
-		if (Int32::TryParse(Test->Text, count) && count > 0) {
-			for (int i = 0; i < count; i++) {
-				System::Windows::Forms::TextBox^ charBox = gcnew TextBox();
-				charBox->Size = System::Drawing::Size(20, 30);
-				charBox->MaxLength = 1;
-				charBox->TextAlign = HorizontalAlignment::Center;
-				charBox->Margin = System::Windows::Forms::Padding(0, 0, 0, 0);
-				charBox->BackColor = System::Drawing::Color::Green;
-				this->GameDomain->Controls->Add(charBox);
-			}
-		}*/
-		this->Score->Text = "";
-		this->GameStart->Enabled = false;
-		Task::Run(gcnew Action(this, &Game1::FetchWord));
-	}
+            this->guessButton->Text = "Guess";
+            this->guessButton->Location = Point(170, 80);
+            this->guessButton->Click += gcnew System::EventHandler(this, &Landing::processGuess);
+
+            this->scoreLabel->Text = "Score: " + score;
+            this->scoreLabel->Location = Point(50, 120);
+            this->scoreLabel->Font = gcnew System::Drawing::Font("Arial", 12);
+            this->scoreLabel->AutoSize = true;
+            
+            this->highScoreLabel->Location = Point(50, 150);
+            this->highScoreLabel->Font = gcnew System::Drawing::Font("Arial", 12);
+            this->highScoreLabel->AutoSize = true;
+            UpdateHighScoreLabel();
+
+            this->nameInputBox->Location = Point(50, 210);
+            this->nameInputBox->Width = 150;
+            this->nameInputBox->PlaceholderText = "Enter your name";
+            
+            this->Controls->Add(displayWord);
+            this->Controls->Add(inputBox);
+            this->Controls->Add(guessButton);
+            this->Controls->Add(scoreLabel);
+            this->Controls->Add(highScoreLabel);
+            this->Controls->Add(nameInputBox);*/
+        }
+    
+        /*void processGuess(Object^ sender, EventArgs^ e) {
+            String^ userGuess = inputBox->Text->ToUpper();
+            if (userGuess->Length != secretWord->Length) return;
+
+            bool correctGuess = false;
+            for (int i = 0; i < secretWord->Length; i++) {
+                if (userGuess[i] == secretWord[i]) {
+                    if (currentState[i] == '_') {
+                        currentState = currentState->Remove(i, 1)->Insert(i, userGuess[i].ToString());
+                        correctGuess = true;
+                    }
+                }*/
 	private: System::Void Exit(System::Object^ sender, System::EventArgs^ e) {
 		this->Close();
-	}
+            }
+            
+            /*if (!correctGuess) {
+                score -= 10;*/
 	private: System::Void UpdateScore(System::Object^ sender, System::EventArgs^ e) {
 		this->Score->Text = this->Test->Text->Length.ToString();
+            }
+	private: System::Void Render(System::Object^ sender, System::EventArgs^ e) {
+		FetchWord();
 	}
-
+            /*displayWord->Text = currentState;
+            scoreLabel->Text = "Score: " + score;*/
 	void FetchWord() {
 		HttpClient^ client = gcnew HttpClient();
 		String^ url = "https://api.datamuse.com/words?sp=?????&max=1"; // 5-letter word (?????)
-
+            
+            /*if (currentState == secretWord) {
+                SaveHighScore();
+            }*/
 		try {
 			Task<String^>^ task = client->GetStringAsync(url);
 			task->Wait();
 			String^ response = task->Result;
-
+            
+            /*inputBox->Clear();*/
+        /*}*/
 			if (!String::IsNullOrEmpty(response)) {
 				int start = response->IndexOf("\"word\":\"") + 8;
 				int end = response->IndexOf("\"", start);
 				String^ word = response->Substring(start, end - start);
 
+        /*void LoadHighScores() {
+            std::ifstream file("highscore.txt");
+            if (file.is_open()) {
+                highScores.clear();
+                int s;
+                std::string n;
+                while (file >> s) {
+                    file.ignore();
+                    std::getline(file, n);
+                    highScores.push_back({s, n});
+                }
+                file.close();
+                std::sort(highScores.rbegin(), highScores.rend());
+            }*/
 				this->Invoke(gcnew Action<String^>(this, &Game1::UpdateUI), word);
-			}
+        }
+
+        /*void SaveHighScore() {
+            std::string playerName = msclr::interop::marshal_as<std::string>(nameInputBox->Text);
+            highScores.push_back({score, playerName});
+            std::sort(highScores.rbegin(), highScores.rend());
+            if (highScores.size() > 3) highScores.pop_back();
+            std::ofstream file("highscore.txt");
+            if (file.is_open()) {
+                for (const auto& hs : highScores) {
+                    file << hs.first << std::endl << hs.second << std::endl;*/
 			else {
 				this->Invoke(gcnew Action<String^>(this, &Game1::UpdateUI), "Error fetching word");
-			}
-		}
+                }
+                /*file.close();*/
+            }
 		catch (Exception^ ex) {
 			this->Invoke(gcnew Action<String^>(this, &Game1::UpdateUI), "API Error");
-		}
+            /*UpdateHighScoreLabel();*/
+        }
 	}
+        /*void UpdateHighScoreLabel() {
+            std::string labelText = "Top 3 Players:\n";
+            for (size_t i = 0; i < highScores.size(); ++i) {
+                labelText += std::to_string(i + 1) + ". " + highScores[i].second + " - " + std::to_string(highScores[i].first) + "\n";
+            }
+            highScoreLabel->Text = gcnew String(labelText.c_str());*/
 	private: System::Void UpdateUI(System::String^ word) {
 		this->Score->Text = word;
 		this->GameStart->Enabled = true;
-	}
-};
+        }
+    };
 }
