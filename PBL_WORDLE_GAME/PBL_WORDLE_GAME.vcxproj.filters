@@ -21,9 +21,6 @@
     <ClCompile Include="GAME_CENTER.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="Game1.cpp">
-      <Filter>Header Files\Content</Filter>
-    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="GAME_CENTER.h">

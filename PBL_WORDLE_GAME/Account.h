@@ -1,5 +1,9 @@
 #pragma once
+#include <fstream>
+
 using namespace System;
+using namespace System::IO;
+using namespace System::Data;
 
 namespace PBLWORDLEGAME {
 	/// <summary>
@@ -25,5 +29,27 @@ namespace PBLWORDLEGAME {
 		String^ ToTXTObject() {
 			return "{\n  \"username\": \"" + username + "\",\n  \"password\": \"" + password + "\",\n}";
 		}
+	//NOTE: Delete User
+	public: System::Void UserDelete(System::String^ usr){
+		System::String^ filePath = "UserList\\" + usr + ".txt";
+		if (File::Exists(filePath)) {
+			File::Delete(filePath);
+		}
+		else {
+			MessageBox::Show("User not found!", "Error", MessageBoxButtons::OK, MessageBoxIcon::Information);
+		}
+	}
+	//NOTE: Change Password
+	public: System::Void ChangePassword(System::String^ newPwd) {
+		System::String^ filePath = "UserList\\" + this->username + ".txt";
+		if (File::Exists(filePath)) {
+			StreamWriter^ file = gcnew StreamWriter(filePath);
+			file->WriteLine(this->username + " " + newPwd);
+			file->Close();
+		}
+		else {
+			MessageBox::Show("User not found!", "Error", MessageBoxButtons::OK, MessageBoxIcon::Information);
+		}
+	}
 	};
 }

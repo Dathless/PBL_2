@@ -19,12 +19,15 @@ namespace PBLWORDLEGAME {
 	/// </summary>
 	public ref class DashBoard : public System::Windows::Forms::UserControl
 	{
+	private: System::String^ usrname;
 	public:
 		event EventHandler^ goBack;
 		public: Account^ userLogged;
-		DashBoard(void)
+		DashBoard(System::String^ usr)
 		{
 			InitializeComponent();
+			this->usrName->Text = usr;
+			this->usrname = usr;
 			//
 			//TODO: Add the constructor code here
 			//
@@ -67,19 +70,11 @@ namespace PBLWORDLEGAME {
 	private: System::Windows::Forms::Label^ GameName2;
 	private: System::Windows::Forms::FlowLayoutPanel^ Game3Panel;
 
-
-
 	private: System::Windows::Forms::Button^ GameBtn2;
 
 	private: System::Windows::Forms::Label^ GameTitle3;
 	private: System::Windows::Forms::Label^ GameName3;
 	private: System::Windows::Forms::Button^ GameBtn3;
-
-
-
-
-
-
 
 	protected:
 
@@ -201,7 +196,6 @@ namespace PBLWORDLEGAME {
 			this->usrName->Name = L"usrName";
 			this->usrName->Size = System::Drawing::Size(68, 25);
 			this->usrName->TabIndex = 2;
-			this->usrName->Text = L"Admin";
 			// 
 			// changePass
 			// 

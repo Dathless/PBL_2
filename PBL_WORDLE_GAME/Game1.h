@@ -451,7 +451,7 @@ using namespace System::Drawing;
                 }
                 /*file.close();*/
             }
-		catch (Exception^ ex) {
+		catch (System::Exception^ ex) {
 			this->Invoke(gcnew Action<String^>(this, &Game1::UpdateUI), "API Error");
             /*UpdateHighScoreLabel();*/
         }

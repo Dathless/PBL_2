@@ -87,7 +87,7 @@ namespace PBLWORDLEGAME {
 			this->Title->Location = System::Drawing::Point(229, 63);
 			this->Title->Name = L"Title";
 			this->Title->Size = System::Drawing::Size(337, 69);
-			this->Title->TabIndex = 0;
+			this->Title->TabIndex = 4;
 			this->Title->Text = L"REGISTER";
 			// 
 			// usrLabel
@@ -99,7 +99,7 @@ namespace PBLWORDLEGAME {
 			this->usrLabel->Location = System::Drawing::Point(73, 197);
 			this->usrLabel->Name = L"usrLabel";
 			this->usrLabel->Size = System::Drawing::Size(139, 31);
-			this->usrLabel->TabIndex = 1;
+			this->usrLabel->TabIndex = 5;
 			this->usrLabel->Text = L"Username";
 			// 
 			// passLabel
@@ -111,7 +111,7 @@ namespace PBLWORDLEGAME {
 			this->passLabel->Location = System::Drawing::Point(76, 249);
 			this->passLabel->Name = L"passLabel";
 			this->passLabel->Size = System::Drawing::Size(134, 31);
-			this->passLabel->TabIndex = 2;
+			this->passLabel->TabIndex = 6;
 			this->passLabel->Text = L"Password";
 			// 
 			// rePassLabel
@@ -132,7 +132,8 @@ namespace PBLWORDLEGAME {
 			this->usrInp->Location = System::Drawing::Point(346, 190);
 			this->usrInp->Name = L"usrInp";
 			this->usrInp->Size = System::Drawing::Size(357, 38);
-			this->usrInp->TabIndex = 4;
+			this->usrInp->TabIndex = 0;
+			this->usrInp->KeyDown += gcnew System::Windows::Forms::KeyEventHandler(this, &Register::PerformRegister);
 			// 
 			// passInp
 			// 
@@ -140,8 +141,9 @@ namespace PBLWORDLEGAME {
 			this->passInp->Location = System::Drawing::Point(346, 242);
 			this->passInp->Name = L"passInp";
 			this->passInp->Size = System::Drawing::Size(357, 38);
-			this->passInp->TabIndex = 5;
+			this->passInp->TabIndex = 1;
 			this->passInp->UseSystemPasswordChar = true;
+			this->passInp->KeyDown += gcnew System::Windows::Forms::KeyEventHandler(this, &Register::PerformRegister);
 			// 
 			// rePassInp
 			// 
@@ -149,8 +151,9 @@ namespace PBLWORDLEGAME {
 			this->rePassInp->Location = System::Drawing::Point(346, 299);
 			this->rePassInp->Name = L"rePassInp";
 			this->rePassInp->Size = System::Drawing::Size(357, 38);
-			this->rePassInp->TabIndex = 6;
+			this->rePassInp->TabIndex = 2;
 			this->rePassInp->UseSystemPasswordChar = true;
+			this->rePassInp->KeyDown += gcnew System::Windows::Forms::KeyEventHandler(this, &Register::PerformRegister);
 			// 
 			// errMes
 			// 
@@ -190,7 +193,8 @@ namespace PBLWORDLEGAME {
 			// 
 			this->AutoScaleDimensions = System::Drawing::SizeF(8, 16);
 			this->AutoScaleMode = System::Windows::Forms::AutoScaleMode::Font;
-			this->BackgroundImage = gcnew System::Drawing::Bitmap("asset\\img\\bg1.jpg");
+			this->BackgroundImage = (cli::safe_cast<System::Drawing::Image^>(resources->GetObject(L"$this.BackgroundImage")));
+			//this->BackgroundImage = gcnew System::Drawing::Bitmap("asset\\img\\bg1.jpg");
 			this->BackgroundImageLayout = System::Windows::Forms::ImageLayout::Stretch;
 			this->Controls->Add(this->backBtn);
 			this->Controls->Add(this->regisBtn);
@@ -211,6 +215,7 @@ namespace PBLWORDLEGAME {
 		}
 #pragma endregion
 	private: System::Void Register_Load(System::Object^ sender, System::EventArgs^ e) {
+		this->usrInp->Focus();
 	}
 	private: System::Void backToLanding(System::Object^ sender, System::EventArgs^ e) {
 		goBack(this, e);
@@ -220,6 +225,12 @@ namespace PBLWORDLEGAME {
 	//    System::Security::Cryptography::SHA256^ sha256 = System::Security::Cryptography::SHA256::Create();
 	//    array<Byte>^ hashBytes = sha256->ComputeHash(passwordBytes);
 	//    return BitConverter::ToString(hashBytes)->Replace("-", ""); // Chuyển thành chuỗi hex
+	private: System::Void PerformRegister(System::Object^ sender, System::Windows::Forms::KeyEventArgs^ e) {
+		if (e->KeyCode == System::Windows::Forms::Keys::Enter) {
+			e->SuppressKeyPress = true;
+			registerAccount(sender, e);
+		}
+	}
 	//}
 	private: System::Void registerAccount(System::Object^ sender, System::EventArgs^ e) {
 		errMes->Text = ""; // Xóa lỗi cũ khi nhập lại
@@ -257,9 +268,9 @@ namespace PBLWORDLEGAME {
 		try {
 			StreamWriter^ file = gcnew StreamWriter(filePath);
 			file->WriteLine(newAcc->ToData());
-			file->WriteLine(newAcc->ToTXTObject());
+			/*file->WriteLine(newAcc->ToTXTObject());*/
 			file->Close();
-			this->errMes->Text = "Account created succe	ssfully";
+			this->errMes->Text = "Account created successfully";
 			this->errMes->ForeColor = System::Drawing::Color::Green;
 		}
 		catch (Exception^ ex) {
@@ -270,3 +281,4 @@ namespace PBLWORDLEGAME {
 	};
 }
 
+	

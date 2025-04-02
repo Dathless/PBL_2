@@ -1,4 +1,5 @@
 #pragma once
+#include "GAME_CENTER.h"
 #include "DashBoard.h"
 #include "fstream"
 //#include <openssl/sha.h>  // Cần thư viện OpenSSL
@@ -19,17 +20,21 @@ namespace PBLWORDLEGAME {
 	/// </summary>
 	public ref class Login : public System::Windows::Forms::UserControl
 	{
+	/*private: GAME_CENTER^ game_center;*/
 	public:
 		event EventHandler^ goBack;
 		event EventHandler^ enterDashBoard;
-		Login(void)
+		
+		System::String^ usrname;
+		Login(/*GAME_CENTER^ parent*/)
 		{
+			/*game_center = parent;*/
 			InitializeComponent();
 			//
 			//TODO: Add the constructor code here
 			//
 		}
-
+		/*event System::EventHandler<System::String^>^ enterDashBoard;*/
 	protected:
 		/// <summary>
 		/// Clean up any resources being used.
@@ -85,7 +90,7 @@ namespace PBLWORDLEGAME {
 			this->Title->Location = System::Drawing::Point(295, 93);
 			this->Title->Name = L"Title";
 			this->Title->Size = System::Drawing::Size(233, 69);
-			this->Title->TabIndex = 0;
+			this->Title->TabIndex = 7;
 			this->Title->Text = L"LOG IN";
 			// 
 			// usrLabel
@@ -96,7 +101,7 @@ namespace PBLWORDLEGAME {
 			this->usrLabel->Location = System::Drawing::Point(134, 216);
 			this->usrLabel->Name = L"usrLabel";
 			this->usrLabel->Size = System::Drawing::Size(139, 31);
-			this->usrLabel->TabIndex = 1;
+			this->usrLabel->TabIndex = 8;
 			this->usrLabel->Text = L"Username";
 			// 
 			// passLabel
@@ -160,7 +165,8 @@ namespace PBLWORDLEGAME {
 			this->usrInp->Location = System::Drawing::Point(307, 216);
 			this->usrInp->Name = L"usrInp";
 			this->usrInp->Size = System::Drawing::Size(371, 38);
-			this->usrInp->TabIndex = 7;
+			this->usrInp->TabIndex = 0;
+			this->usrInp->KeyDown += gcnew System::Windows::Forms::KeyEventHandler(this, &Login::PerformLogin);
 			// 
 			// passInp
 			// 
@@ -168,15 +174,17 @@ namespace PBLWORDLEGAME {
 			this->passInp->Location = System::Drawing::Point(307, 297);
 			this->passInp->Name = L"passInp";
 			this->passInp->Size = System::Drawing::Size(371, 38);
-			this->passInp->TabIndex = 8;
+			this->passInp->TabIndex = 1;
 			this->passInp->UseSystemPasswordChar = true;
+			this->passInp->KeyDown += gcnew System::Windows::Forms::KeyEventHandler(this, &Login::PerformLogin);
 			// 
 			// Login
 			// 
 			this->AutoScaleDimensions = System::Drawing::SizeF(8, 16);
 			this->AutoScaleMode = System::Windows::Forms::AutoScaleMode::Font;
 			this->BackColor = System::Drawing::Color::Transparent;
-			this->BackgroundImage = gcnew System::Drawing::Bitmap("asset\\img\\bg1.jpg");
+			this->BackgroundImage = (cli::safe_cast<System::Drawing::Image^>(resources->GetObject(L"$this.BackgroundImage")));
+			//this->BackgroundImage = gcnew System::Drawing::Bitmap("asset\\img\\bg1.jpg");
 			this->BackgroundImageLayout = System::Windows::Forms::ImageLayout::Stretch;
 			this->Controls->Add(this->passInp);
 			this->Controls->Add(this->usrInp);
@@ -207,6 +215,7 @@ namespace PBLWORDLEGAME {
 	    return sb->ToString();
 	}*/
 	private: System::Void Login_Load(System::Object^ sender, System::EventArgs^ e) {
+		this->usrInp->Focus();
 		if (!this->remCheckbox->Checked) {
 			this->usrInp->Text = "";
 		}
@@ -218,14 +227,52 @@ namespace PBLWORDLEGAME {
 	private: System::Void openDashBoard(System::Object^ sender, System::EventArgs^ e) {
 		//String^ enteredPassword = ComputeSHA256(this->passInp->Text);
   // 		String^ storedPassword = "03ac674216f3e15c761ee1a5e255f067" // Giá trị SHA-256 của "1234"
-		if (this->usrInp->Text == "Admin" && /*enteredPassword == storedPassword*/ this->passInp->Text == "1234") {
+		/*if (this->usrInp->Text == "Admin" && enteredPassword == storedPassword this->passInp->Text == "1234") {
         		enterDashBoard(this, e);
     		}
 		else {
 			this->errMes->Text = "The username or password is invalid!";
 		}
 		if (!this->remCheckbox->Checked) this->usrInp->Text = "";
-		this->passInp->Text = "";
+		this->passInp->Text = "";*/
+		System::String^ usr = this->usrInp->Text;
+		System::String^ pwd = this->passInp->Text;
+		System::String^ userDir = "UserList\\";
+		System::String^ userPath = userDir + usr + ".txt";
+		if (File::Exists(userPath)) {
+			StreamReader^ reader = gcnew StreamReader(userPath);
+			System::String^ line = reader->ReadLine();
+			array<System::String^>^ part = line->Split(' ');
+			if (part->Length != 2) {
+				MessageBox::Show("File Format is invalid!", "Login Failed", MessageBoxButtons::OK, MessageBoxIcon::Error);
+			}
+			else {
+				System::String^ storedUsr = part[0];
+				System::String^ storedPwd = part[1];
+				if (storedUsr == usr && storedPwd == pwd) {
+					usrname = usr;
+					enterDashBoard(this, e);
+					/*if (enterDashBoard != nullptr) {
+						enterDashBoard(this, usr);
+					}*/
+				}
+				else {
+					this->errMes->Text = "The username or password is invalid!";
+				}
+				if (!this->remCheckbox->Checked) this->usrInp->Text = "";
+				this->passInp->Text = "";
+			}
+		}
+		else {
+			MessageBox::Show("User not found!", "Error", MessageBoxButtons::OK, MessageBoxIcon::Information);
+		}
+	}
+
+	private: System::Void PerformLogin(System::Object^ sender, System::Windows::Forms::KeyEventArgs^ e) {
+		if (e->KeyCode == System::Windows::Forms::Keys::Enter) {
+			e->SuppressKeyPress = true;
+			openDashBoard(sender, e);
+		}
 	}
 };
 }
