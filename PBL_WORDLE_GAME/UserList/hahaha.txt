@@ -1,4 +1,1 @@
-{
-  "username": "hahaha",
-  "password": "1234",
-}
+hahaha 1234

@@ -1,5 +1,6 @@
 #pragma once
 #include "Account.h"
+#include "CryptoUtils.h"
 #include <fstream>
 //#include <system.security.cryptography.h>
 //#include <text.encoding.h>
@@ -250,7 +251,8 @@ namespace PBLWORDLEGAME {
 	}
 	private: System::Void createAccount(String^ usr, String^ pwd) {
 		/*Account^ newAcc = gcnew Account(usr, hashPassword(pwd));*/ // Mã hóa mật khẩu trước khi lưu
-		Account^ newAcc = gcnew Account(usr, pwd);
+		System::String^ encryptPass = PBLWORDLEGAME::CryptoUtils::Encrypt(pwd);
+		Account^ newAcc = gcnew Account(usr, encryptPass);
 		String^ folderPath = "UserList\\";
 		String^ filePath = folderPath + usr + ".txt";
 

@@ -1,6 +1,7 @@
 #pragma once
 #include "GAME_CENTER.h"
 #include "DashBoard.h"
+#include "CryptoUtils.h"
 #include "fstream"
 //#include <openssl/sha.h>  // Cần thư viện OpenSSL
 //#include <msclr/marshal_cppstd.h> 
@@ -249,7 +250,8 @@ namespace PBLWORDLEGAME {
 			else {
 				System::String^ storedUsr = part[0];
 				System::String^ storedPwd = part[1];
-				if (storedUsr == usr && storedPwd == pwd) {
+				System::String^ decryptPwd = PBLWORDLEGAME::CryptoUtils::Decrypt(storedPwd);
+				if (storedUsr == usr && decryptPwd == pwd) {
 					usrname = usr;
 					enterDashBoard(this, e);
 					/*if (enterDashBoard != nullptr) {

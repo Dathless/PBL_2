@@ -129,6 +129,7 @@
     <ClInclude Include="Credit.h">
       <FileType>CppControl</FileType>
     </ClInclude>
+    <ClInclude Include="CryptoUtils.h" />
     <ClInclude Include="DashBoard.h">
       <FileType>CppControl</FileType>
     </ClInclude>

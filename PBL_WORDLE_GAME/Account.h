@@ -4,6 +4,7 @@
 using namespace System;
 using namespace System::IO;
 using namespace System::Data;
+using namespace System::Windows::Forms;
 
 namespace PBLWORDLEGAME {
 	/// <summary>
