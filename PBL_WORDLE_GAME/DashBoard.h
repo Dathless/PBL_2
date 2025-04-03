@@ -4,6 +4,7 @@
 #include "Account.h"
 
 using namespace System;
+using namespace System::Media;
 using namespace System::ComponentModel;
 using namespace System::Collections;
 using namespace System::Windows::Forms;
@@ -21,7 +22,9 @@ namespace PBLWORDLEGAME {
 	{
 	private: System::String^ usrname;
 	public:
+		public: SoundPlayer^ bgMusic;
 		event EventHandler^ goBack;
+		event EventHandler^ enterGame1;
 		public: Account^ userLogged;
 		DashBoard(System::String^ usr)
 		{
@@ -457,13 +460,21 @@ namespace PBLWORDLEGAME {
 	}
 	private: System::Void DashBoard_Load(System::Object^ sender, System::EventArgs^ e) {
 		makeCircle(avtBox);
+		playMusic("bgMusic");
 	}
 	private: System::Void backToLanding(System::Object^ sender, System::EventArgs^ e) {
 		goBack(this, e);
 	}
 	private: System::Void openGame1(System::Object^ sender, System::EventArgs^ e) {
 		Game1^ game1 = gcnew Game1();
+		enterGame1(this, e);
 		game1->ShowDialog();
+		this->bgMusic->PlayLooping();
+	}
+	private: System::Void playMusic(System::String^ filesound) {
+		this->bgMusic->Stop();
+		this->bgMusic = gcnew SoundPlayer("asset\\sound\\" + filesound + ".wav");
+		this->bgMusic->PlayLooping();
 	}
 };
 }

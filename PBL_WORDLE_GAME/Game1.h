@@ -8,17 +8,19 @@
 
 namespace PBLWORDLEGAME {
 
-using namespace System;
+	using namespace System;
 	using namespace System::ComponentModel;
 	using namespace System::Collections;
-using namespace System::Windows::Forms;
+	using namespace System::Windows::Forms;
 	using namespace System::Data;
-using namespace System::Drawing;
+	using namespace System::Drawing;
 	using namespace System::Net;
 	using namespace System::Text::Json;
 	using namespace System::Collections::Generic;
 	using namespace System::Net::Http;
 	using namespace System::Threading::Tasks;
+	using namespace System::IO;
+	using namespace System::Media;
 
 	/// <summary>
 	/// Summary for Game1
@@ -40,7 +42,9 @@ using namespace System::Drawing;
         TextBox^ nameInputBox;*/
     
         /*Landing() {*/
-	public:	Game1(){
+	private: SoundPlayer^ bgMusic;
+	public:	
+		Game1(){
             /*LoadHighScores();*/
             InitializeComponent();
 			//
@@ -138,6 +142,7 @@ using namespace System::Drawing;
 			this->Title->Size = System::Drawing::Size(150, 46);
 			this->Title->TabIndex = 0;
 			this->Title->Text = L"Game1";
+			this->Title->Focus();
 			// 
 			// GameRule
 			// 
@@ -344,6 +349,7 @@ using namespace System::Drawing;
 			this->ShowInTaskbar = false;
 			this->StartPosition = System::Windows::Forms::FormStartPosition::CenterParent;
 			this->Text = L"Game1";
+			this->Load += gcnew System::EventHandler(this, &Game1::GameLoading);
 			this->ResumeLayout(false);
 			this->PerformLayout();
             /*this->inputBox->Location = Point(50, 80);
@@ -373,7 +379,7 @@ using namespace System::Drawing;
             this->Controls->Add(scoreLabel);
             this->Controls->Add(highScoreLabel);
             this->Controls->Add(nameInputBox);*/
-        }
+    }
     
         /*void processGuess(Object^ sender, EventArgs^ e) {
             String^ userGuess = inputBox->Text->ToUpper();
@@ -388,14 +394,18 @@ using namespace System::Drawing;
                     }
                 }*/
 	private: System::Void Exit(System::Object^ sender, System::EventArgs^ e) {
+		this->bgMusic->Stop();
 		this->Close();
-            }
+    }
             
             /*if (!correctGuess) {
                 score -= 10;*/
+	private: System::Void GameLoading(System::Object^ sender, System::EventArgs^ e) {
+		playMusic("continue");
+	}
 	private: System::Void UpdateScore(System::Object^ sender, System::EventArgs^ e) {
 		this->Score->Text = this->Test->Text->Length.ToString();
-            }
+    }
 	private: System::Void Render(System::Object^ sender, System::EventArgs^ e) {
 		FetchWord();
 	}
@@ -466,5 +476,10 @@ using namespace System::Drawing;
 		this->Score->Text = word;
 		this->GameStart->Enabled = true;
         }
+	private: System::Void playMusic(System::String^ filesound) {
+		this->bgMusic->Stop();
+		this->bgMusic = gcnew SoundPlayer("asset\\sound\\" + filesound + ".wav");
+		this->bgMusic->PlayLooping();
+	}
     };
 }

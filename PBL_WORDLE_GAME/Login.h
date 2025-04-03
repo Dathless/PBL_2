@@ -241,15 +241,16 @@ namespace PBLWORDLEGAME {
 		System::String^ userDir = "UserList\\";
 		System::String^ userPath = userDir + usr + ".txt";
 		if (File::Exists(userPath)) {
-			StreamReader^ reader = gcnew StreamReader(userPath);
+			/*StreamReader^ reader = gcnew StreamReader(userPath);
 			System::String^ line = reader->ReadLine();
-			array<System::String^>^ part = line->Split(' ');
-			if (part->Length != 2) {
+			array<System::String^>^ part = line->Split(' ');*/
+			array<System::String^>^ lines = File::ReadAllLines(userPath);
+			if (lines->Length != 2) {
 				MessageBox::Show("File Format is invalid!", "Login Failed", MessageBoxButtons::OK, MessageBoxIcon::Error);
 			}
 			else {
-				System::String^ storedUsr = part[0];
-				System::String^ storedPwd = part[1];
+				System::String^ storedUsr = lines[0];
+				System::String^ storedPwd = lines[1];
 				System::String^ decryptPwd = PBLWORDLEGAME::CryptoUtils::Decrypt(storedPwd);
 				if (storedUsr == usr && decryptPwd == pwd) {
 					usrname = usr;

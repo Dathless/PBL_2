@@ -10,6 +10,7 @@
 namespace PBLWORDLEGAME {
 
 	using namespace System;
+	using namespace System::Media;
 	using namespace System::IO;
 	using namespace System::ComponentModel;
 	using namespace System::Collections;
@@ -28,6 +29,7 @@ namespace PBLWORDLEGAME {
 	private: DashBoard^ dashBoard;
 	private: Credit^ credit;
 	private: System::String^ user;
+	private: SoundPlayer^ bgMusic;
 	public:
 		GAME_CENTER(void)
 		{
@@ -98,12 +100,13 @@ namespace PBLWORDLEGAME {
 
 		}
 #pragma endregion
-	public: System::Void GAME_CENTER_Load(System::Object^ sender, System::EventArgs^ e) {
+	private: System::Void GAME_CENTER_Load(System::Object^ sender, System::EventArgs^ e) {
 		LoadLanding();//Load Landing page
+		playMusic("op");
 	}
 	private: System::Void mainPanel_Paint(System::Object^ sender, System::Windows::Forms::PaintEventArgs^ e) {
 	}
-	public: System::Void LoadLanding() {//create landing UC
+	private: System::Void LoadLanding() {//create landing UC
 		this->mainPanel->Controls->Clear();
 		this->landing = gcnew Landing();
 		this->landing->Dock = System::Windows::Forms::DockStyle::Fill;
@@ -113,7 +116,7 @@ namespace PBLWORDLEGAME {
 		this->landing->quitForm += gcnew System::EventHandler(this, &GAME_CENTER::quitGame);
 		this->mainPanel->Controls->Add(landing);
 	}
-	public: System::Void showLogin(System::Object^ sender, System::EventArgs^ e) {
+	private: System::Void showLogin(System::Object^ sender, System::EventArgs^ e) {
 		this->mainPanel->Controls->Clear();
 		//Create login form  
 		this->login = gcnew Login(/*this*/);
@@ -122,7 +125,7 @@ namespace PBLWORDLEGAME {
 		this->login->enterDashBoard += gcnew System::EventHandler(this, &GAME_CENTER::showDashBoard);
 		this->mainPanel->Controls->Add(login);
 	}
-	public: System::Void showRegis(System::Object^ sender, System::EventArgs^ e) {
+	private: System::Void showRegis(System::Object^ sender, System::EventArgs^ e) {
 		this->mainPanel->Controls->Clear();
 		// Create register form
 		this->regis = gcnew Register();
@@ -130,7 +133,7 @@ namespace PBLWORDLEGAME {
 		this->regis->goBack += gcnew System::EventHandler(this, &GAME_CENTER::GoToBack);
 		this->mainPanel->Controls->Add(regis);
 	}
-	public: System::Void showCredit(System::Object^ sender, System::EventArgs^ e) {
+	private: System::Void showCredit(System::Object^ sender, System::EventArgs^ e) {
 		this->mainPanel->Controls->Clear();
 		// Create Credit form
 		this->credit = gcnew Credit();
@@ -138,22 +141,31 @@ namespace PBLWORDLEGAME {
 		this->credit->goBack += gcnew System::EventHandler(this, &GAME_CENTER::GoToBack);
 		this->mainPanel->Controls->Add(credit);
 	}
-	public: System::Void GoToBack(System::Object^ sender, System::EventArgs^ e) {
-		this->login->usrname = "";
+	private: System::Void GoToBack(System::Object^ sender, System::EventArgs^ e) {
 		this->mainPanel->Controls->Clear();
 		this->mainPanel->Controls->Add(landing);
 	}
+	private: System::Void BackToLanding(System::Object^ sender, System::EventArgs^ e) {
+		this->mainPanel->Controls->Clear();
+		this->mainPanel->Controls->Add(landing);
+		playMusic("op");
+	}
 
-	public: System::Void showDashBoard(System::Object^ sender, System::EventArgs^ e) {
+	private: System::Void showDashBoard(System::Object^ sender, System::EventArgs^ e) {
 		this->mainPanel->Controls->Clear();
 		System::String^ usr = this->login->usrname;//add username when login successfully
 		this->dashBoard = gcnew DashBoard(usr);
 		this->dashBoard->Dock = System::Windows::Forms::DockStyle::Fill;
-		this->dashBoard->goBack += gcnew System::EventHandler(this, &GAME_CENTER::GoToBack);
+		this->dashBoard->goBack += gcnew System::EventHandler(this, &GAME_CENTER::BackToLanding);
 		this->mainPanel->Controls->Add(dashBoard);
 	}
-	public: System::Void quitGame(System::Object^ sender, System::EventArgs^ e) {
+	private: System::Void quitGame(System::Object^ sender, System::EventArgs^ e) {
 		this->Close();
+	}
+	private: System::Void playMusic(System::String^ filesound) {
+		this->bgMusic->Stop();
+		this->bgMusic = gcnew SoundPlayer("asset\\sound\\" + filesound + ".wav");
+		this->bgMusic->PlayLooping();
 	}
 	};
 }
