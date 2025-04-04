@@ -12,22 +12,24 @@ namespace PBLWORDLEGAME {
 	/// </summary>
 	public ref class Account
 	{
-	public: String^ username;
-	private: String^ password;
+	protected: String^ username;
+	protected: String^ password;
+	protected: String^ role;
 	public:
 		Account(String^ usr, String^ pwd)
 		{
 			username = usr;
 			password = pwd;
+			role = "";
 		}
 	protected:
 		~Account() {};
 		//Class data
 	public:
-		String^ ToData() {
-			return username + "\n" + password;
+		virtual System::String^ ToData() {
+			return role + "\n" + username + "\n" + password;
 		};
-		String^ ToTXTObject() {
+		System::String^ ToTXTObject() {
 			return "{\n  \"username\": \"" + username + "\",\n  \"password\": \"" + password + "\",\n}";
 		}
 	//NOTE: Delete User

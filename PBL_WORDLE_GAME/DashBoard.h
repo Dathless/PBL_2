@@ -12,7 +12,6 @@ using namespace System::Data;
 using namespace System::Drawing;
 using namespace System::Drawing::Drawing2D;
 
-
 namespace PBLWORDLEGAME {
 
 	/// <summary>
@@ -23,6 +22,7 @@ namespace PBLWORDLEGAME {
 	private: System::String^ usrname;
 	public:
 		public: SoundPlayer^ bgMusic;
+		public: SoundPlayer^ clickTrack;
 		event EventHandler^ goBack;
 		event EventHandler^ enterGame1;
 		public: Account^ userLogged;
@@ -64,17 +64,11 @@ namespace PBLWORDLEGAME {
 	private: System::Windows::Forms::Label^ GameTitle1;
 	private: System::Windows::Forms::Label^ GameName1;
 	private: System::Windows::Forms::Button^ Game1Btn;
-
-
-
 	private: System::Windows::Forms::FlowLayoutPanel^ Game2Panel;
-
 	private: System::Windows::Forms::Label^ GameTitle2;
 	private: System::Windows::Forms::Label^ GameName2;
 	private: System::Windows::Forms::FlowLayoutPanel^ Game3Panel;
-
 	private: System::Windows::Forms::Button^ GameBtn2;
-
 	private: System::Windows::Forms::Label^ GameTitle3;
 	private: System::Windows::Forms::Label^ GameName3;
 	private: System::Windows::Forms::Button^ GameBtn3;
@@ -214,6 +208,7 @@ namespace PBLWORDLEGAME {
 			this->changePass->Size = System::Drawing::Size(98, 50);
 			this->changePass->TabIndex = 2;
 			this->changePass->Text = L"Change Password";
+			this->changePass->Click += gcnew System::EventHandler(this, &DashBoard::passChanging);
 			// 
 			// setting
 			// 
@@ -463,7 +458,11 @@ namespace PBLWORDLEGAME {
 		playMusic("bgMusic");
 	}
 	private: System::Void backToLanding(System::Object^ sender, System::EventArgs^ e) {
+		Clicking();
 		goBack(this, e);
+	}
+	private: System::Void passChanging(System::Object^ sender, System::EventArgs^ e){
+		Clicking();
 	}
 	private: System::Void openGame1(System::Object^ sender, System::EventArgs^ e) {
 		Game1^ game1 = gcnew Game1();
@@ -474,6 +473,12 @@ namespace PBLWORDLEGAME {
 	private: System::Void playMusic(System::String^ filesound) {
 		this->bgMusic->Stop();
 		this->bgMusic = gcnew SoundPlayer("asset\\sound\\" + filesound + ".wav");
+		this->bgMusic->PlayLooping();
+	}
+	private: System::Void Clicking() {
+		this->bgMusic->Stop();
+		this->clickTrack = gcnew SoundPlayer("asset\\sound\\click.wav");
+		this->clickTrack->PlaySync();
 		this->bgMusic->PlayLooping();
 	}
 };

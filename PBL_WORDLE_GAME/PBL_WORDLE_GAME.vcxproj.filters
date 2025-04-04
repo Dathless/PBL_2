@@ -56,6 +56,12 @@
     <ClInclude Include="CryptoUtils.h">
       <Filter>Header Files</Filter>
     </ClInclude>
+    <ClInclude Include="User.h">
+      <Filter>Header Files\Content</Filter>
+    </ClInclude>
+    <ClInclude Include="Admin.h">
+      <Filter>Header Files\Content</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ResourceCompile Include="PBL_WORDLE_GAME.rc">

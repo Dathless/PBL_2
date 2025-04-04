@@ -245,12 +245,13 @@ namespace PBLWORDLEGAME {
 			System::String^ line = reader->ReadLine();
 			array<System::String^>^ part = line->Split(' ');*/
 			array<System::String^>^ lines = File::ReadAllLines(userPath);
-			if (lines->Length != 2) {
+			if (lines->Length < 3) {
 				MessageBox::Show("File Format is invalid!", "Login Failed", MessageBoxButtons::OK, MessageBoxIcon::Error);
 			}
 			else {
-				System::String^ storedUsr = lines[0];
-				System::String^ storedPwd = lines[1];
+				System::String^ role = lines[0];
+				System::String^ storedUsr = lines[1];
+				System::String^ storedPwd = lines[2];
 				System::String^ decryptPwd = PBLWORDLEGAME::CryptoUtils::Decrypt(storedPwd);
 				if (storedUsr == usr && decryptPwd == pwd) {
 					usrname = usr;

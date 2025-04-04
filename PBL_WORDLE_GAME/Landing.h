@@ -219,7 +219,7 @@ namespace PBLWORDLEGAME {
 
 		}
 #pragma endregion
-	
+
 		private: System::Void openLogin(System::Object^ sender, System::Windows::Forms::LinkLabelLinkClickedEventArgs^ e) {
 			enterLogin(this, e);
 		}

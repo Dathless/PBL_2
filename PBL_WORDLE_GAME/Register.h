@@ -1,5 +1,6 @@
 #pragma once
-#include "Account.h"
+#include "User.h"
+#include "Admin.h"
 #include "CryptoUtils.h"
 #include <fstream>
 //#include <system.security.cryptography.h>
@@ -252,20 +253,17 @@ namespace PBLWORDLEGAME {
 	private: System::Void createAccount(String^ usr, String^ pwd) {
 		/*Account^ newAcc = gcnew Account(usr, hashPassword(pwd));*/ // Mã hóa mật khẩu trước khi lưu
 		System::String^ encryptPass = PBLWORDLEGAME::CryptoUtils::Encrypt(pwd);
-		Account^ newAcc = gcnew Account(usr, encryptPass);
+		Account^ newAcc = gcnew User(usr, encryptPass);
 		String^ folderPath = "UserList\\";
 		String^ filePath = folderPath + usr + ".txt";
-
 		if (File::Exists(filePath)) {
 			this->errMes->Text = "Username already exists! Choose another.";
 			this->errMes->ForeColor = System::Drawing::Color::White;
 			return;
 		}
-
 		if (!Directory::Exists(folderPath)) {
 				Directory::CreateDirectory(folderPath);
 			}
-
 		// Save User Data to .txt File
 		try {
 			StreamWriter^ file = gcnew StreamWriter(filePath);
@@ -274,6 +272,9 @@ namespace PBLWORDLEGAME {
 			file->Close();
 			this->errMes->Text = "Account created successfully";
 			this->errMes->ForeColor = System::Drawing::Color::Green;
+			this->usrInp->Text = "";
+			this->passInp->Text = "";
+			this->rePassInp->Text = "";
 		}
 		catch (Exception^ ex) {
 			this->errMes->Text = "Error saving file! Error:" + ex->Message;
