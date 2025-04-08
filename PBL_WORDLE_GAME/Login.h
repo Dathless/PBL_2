@@ -239,7 +239,8 @@ namespace PBLWORDLEGAME {
 		System::String^ usr = this->usrInp->Text;
 		System::String^ pwd = this->passInp->Text;
 		System::String^ userDir = "UserList\\";
-		System::String^ userPath = userDir + usr + ".txt";
+		System::String^ secureUsr = CryptoUtils::ComputeSHA256(usr);
+		System::String^ userPath = userDir + secureUsr + ".txt";
 		if (File::Exists(userPath)) {
 			/*StreamReader^ reader = gcnew StreamReader(userPath);
 			System::String^ line = reader->ReadLine();
@@ -253,8 +254,13 @@ namespace PBLWORDLEGAME {
 				System::String^ storedUsr = lines[1];
 				System::String^ storedPwd = lines[2];
 				System::String^ decryptPwd = PBLWORDLEGAME::CryptoUtils::Decrypt(storedPwd);
+				if (!CryptoUtils::CanLogin(usr)) {
+					MessageBox::Show("Too many failed attempts. Try again later.", "Login Failed", MessageBoxButtons::OK, MessageBoxIcon::Error);
+					return;
+				}
 				if (storedUsr == usr && decryptPwd == pwd) {
 					usrname = usr;
+					CryptoUtils::RecordLoginAttempts(usr, true);
 					enterDashBoard(this, e);
 					/*if (enterDashBoard != nullptr) {
 						enterDashBoard(this, usr);
@@ -262,6 +268,10 @@ namespace PBLWORDLEGAME {
 				}
 				else {
 					this->errMes->Text = "The username or password is invalid!";
+					CryptoUtils::RecordLoginAttempts(usr, false);
+					int attemptsRemain = 5 - CryptoUtils::getLoginAttempts(usr);
+					(attemptsRemain > 0) ? attemptsRemain : 0;
+					MessageBox::Show("You have " + attemptsRemain + " attempts left!", "Login Failed", MessageBoxButtons::OK, MessageBoxIcon::Error);
 				}
 				if (!this->remCheckbox->Checked) this->usrInp->Text = "";
 				this->passInp->Text = "";

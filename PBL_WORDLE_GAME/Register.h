@@ -255,7 +255,8 @@ namespace PBLWORDLEGAME {
 		System::String^ encryptPass = PBLWORDLEGAME::CryptoUtils::Encrypt(pwd);
 		Account^ newAcc = gcnew User(usr, encryptPass);
 		String^ folderPath = "UserList\\";
-		String^ filePath = folderPath + usr + ".txt";
+		String^ secureFile = CryptoUtils::ComputeSHA256(usr) ;
+		String^ filePath = folderPath + secureFile + ".txt";
 		if (File::Exists(filePath)) {
 			this->errMes->Text = "Username already exists! Choose another.";
 			this->errMes->ForeColor = System::Drawing::Color::White;
@@ -275,6 +276,7 @@ namespace PBLWORDLEGAME {
 			this->usrInp->Text = "";
 			this->passInp->Text = "";
 			this->rePassInp->Text = "";
+			this->usrInp->Focus();
 		}
 		catch (Exception^ ex) {
 			this->errMes->Text = "Error saving file! Error:" + ex->Message;

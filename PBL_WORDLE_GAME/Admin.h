@@ -15,5 +15,25 @@ namespace PBLWORDLEGAME {
 			role = "admin";
 		};
 		~Admin() {};
+	public: System::Void changeAccLevel(System::String^ usr, System::String^ role) {
+		System::String^ filePath = "UserList\\" + usr + ".txt";
+		if (!File::Exists(filePath)) {
+			MessageBox::Show("User not found!", "Error", MessageBoxButtons::OK, MessageBoxIcon::Information);
+			return;
+		}
+		try {
+			array<String^>^ lines = File::ReadAllLines(filePath);
+			if (lines->Length != 3 || lines->Length != 6) {
+				MessageBox::Show("Invalid file format!", "Error", MessageBoxButtons::OK, MessageBoxIcon::Information);
+				return;
+			}
+			lines[0] = role;
+			File::WriteAllLines(filePath, lines);
+		}
+		catch (Exception^ ex) {
+			MessageBox::Show("Error reading file: " + ex->Message, "Error", MessageBoxButtons::OK, MessageBoxIcon::Information);
+			return;
+		}
+	}
 	};
 }

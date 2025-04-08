@@ -15,18 +15,24 @@ namespace PBLWORDLEGAME {
 	private: int game3Score;
 
 	public:
-		User(String^ usr, String^ pwd, int s1, int s2, int s3) :Account(usr, pwd) {
+		User(String^ usr, String^ pwd, int s1, int s2, int s3) :Account(usr, pwd) {//Create a user by reading from file
 			role = "user";
 			game1Score = s1;
 			game2Score = s2;
 			game3Score = s3;
 		}
-		User(String^ usr, String^ pwd) : Account(usr, pwd) {
+		User(String^ usr, String^ pwd) : Account(usr, pwd) {//Create a user when register
 			role = "user";
 			game1Score = 0;
 			game2Score = 0;
 			game3Score = 0;
 		};
+		User(User^ usr) : Account(usr->username, usr->password) {//Create a user from an exist user
+			role = usr->role;
+			game1Score = usr->game1Score;
+			game2Score = usr->game2Score;
+			game3Score = usr->game3Score;
+		}
 	public: ~User() {};
 	public: System::String^ ToData() override {
 		return role + "\n" + username + "\n" + password + "\n" + game1Score.ToString() + "\n" + game2Score.ToString() + "\n" + game3Score.ToString();
