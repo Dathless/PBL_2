@@ -138,6 +138,9 @@
     <ClInclude Include="Game1.h">
       <FileType>CppForm</FileType>
     </ClInclude>
+    <ClInclude Include="Game2.h">
+      <FileType>CppForm</FileType>
+    </ClInclude>
     <ClInclude Include="GAME_CENTER.h">
       <FileType>CppForm</FileType>
     </ClInclude>
@@ -163,6 +166,9 @@
     </EmbeddedResource>
     <EmbeddedResource Include="Game1.resx">
       <DependentUpon>Game1.h</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Game2.resx">
+      <DependentUpon>Game2.h</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Include="GAME_CENTER.resx">
       <DependentUpon>GAME_CENTER.h</DependentUpon>

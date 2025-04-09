@@ -255,6 +255,7 @@ namespace PBLWORDLEGAME {
 				System::String^ storedPwd = lines[2];
 				System::String^ decryptPwd = PBLWORDLEGAME::CryptoUtils::Decrypt(storedPwd);
 				if (!CryptoUtils::CanLogin(usr)) {
+					this->usrInp->Focus();
 					MessageBox::Show("Too many failed attempts. Try again later.", "Login Failed", MessageBoxButtons::OK, MessageBoxIcon::Error);
 					return;
 				}
@@ -268,6 +269,7 @@ namespace PBLWORDLEGAME {
 				}
 				else {
 					this->errMes->Text = "The username or password is invalid!";
+					this->usrInp->Focus();
 					CryptoUtils::RecordLoginAttempts(usr, false);
 					int attemptsRemain = 5 - CryptoUtils::getLoginAttempts(usr);
 					(attemptsRemain > 0) ? attemptsRemain : 0;

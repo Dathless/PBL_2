@@ -1,6 +1,7 @@
 #pragma once
 #include "fstream"
 #include "Game1.h"
+#include "Game2.h"
 #include "Account.h"
 
 using namespace System;
@@ -369,6 +370,7 @@ namespace PBLWORDLEGAME {
 			this->GameBtn2->TabIndex = 2;
 			this->GameBtn2->Text = L"Start";
 			this->GameBtn2->UseVisualStyleBackColor = true;
+			this->GameBtn2->Click += gcnew System::EventHandler(this, &DashBoard::openGame2);
 			// 
 			// Game3Panel
 			// 
@@ -468,6 +470,12 @@ namespace PBLWORDLEGAME {
 		Game1^ game1 = gcnew Game1();
 		enterGame1(this, e);
 		game1->ShowDialog();
+		this->bgMusic->PlayLooping();
+	}
+	private: System::Void openGame2(System::Object^ sender, System::EventArgs^ e) {
+		Game2^ game2 = gcnew Game2();
+		enterGame1(this, e);
+		game2->ShowDialog();
 		this->bgMusic->PlayLooping();
 	}
 	private: System::Void playMusic(System::String^ filesound) {
