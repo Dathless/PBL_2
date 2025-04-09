@@ -25,9 +25,21 @@ namespace PBLWORDLEGAME {
 	{
 	private: Timer^ sidebarTimer;
 	private: bool isHidden = false;
-	private: System::Windows::Forms::TextBox^ APIContent;
+	private: System::Windows::Forms::TextBox^ UserAns;
 	private: cliext::vector<System::String^> wordList;
-	private: SoundPlayer^ bgMusic;														
+	private: Dictionary<String^, int>^ getWord = gcnew Dictionary<String^, int>();
+	private: int n;
+	private: int score=0;
+	private: System::Windows::Forms::TextBox^ numberChar;
+	private: System::Windows::Forms::Label^ quesLabel;
+	private: System::Windows::Forms::Label^ AnsLabel;
+	private: System::Windows::Forms::Label^ ScoreLabel;
+	private: System::Windows::Forms::TextBox^ Score;
+	private: System::Windows::Forms::Label^ errMes;
+	private: System::Windows::Forms::Label^ Title;
+	private: System::Windows::Forms::Label^ GameState;
+
+	private: SoundPlayer^ bgMusic;
 	public:
 		Game2(void)
 		{
@@ -84,7 +96,15 @@ namespace PBLWORDLEGAME {
 			this->HighestScore = (gcnew System::Windows::Forms::Label());
 			this->showRule = (gcnew System::Windows::Forms::Button());
 			this->toggleSidebar = (gcnew System::Windows::Forms::Button());
-			this->APIContent = (gcnew System::Windows::Forms::TextBox());
+			this->UserAns = (gcnew System::Windows::Forms::TextBox());
+			this->numberChar = (gcnew System::Windows::Forms::TextBox());
+			this->quesLabel = (gcnew System::Windows::Forms::Label());
+			this->AnsLabel = (gcnew System::Windows::Forms::Label());
+			this->ScoreLabel = (gcnew System::Windows::Forms::Label());
+			this->Score = (gcnew System::Windows::Forms::TextBox());
+			this->errMes = (gcnew System::Windows::Forms::Label());
+			this->Title = (gcnew System::Windows::Forms::Label());
+			this->GameState = (gcnew System::Windows::Forms::Label());
 			this->SideBar->SuspendLayout();
 			this->SuspendLayout();
 			// 
@@ -176,13 +196,115 @@ namespace PBLWORDLEGAME {
 			this->toggleSidebar->UseVisualStyleBackColor = true;
 			this->toggleSidebar->Click += gcnew System::EventHandler(this, &Game2::ToggleSidebar);
 			// 
-			// APIContent
+			// UserAns
 			// 
-			this->APIContent->Location = System::Drawing::Point(364, 149);
-			this->APIContent->Multiline = true;
-			this->APIContent->Name = L"APIContent";
-			this->APIContent->Size = System::Drawing::Size(357, 297);
-			this->APIContent->TabIndex = 4;
+			this->UserAns->Font = (gcnew System::Drawing::Font(L"Microsoft Sans Serif", 12, System::Drawing::FontStyle::Regular, System::Drawing::GraphicsUnit::Point,
+				static_cast<System::Byte>(0)));
+			this->UserAns->Location = System::Drawing::Point(483, 300);
+			this->UserAns->Name = L"UserAns";
+			this->UserAns->Size = System::Drawing::Size(266, 30);
+			this->UserAns->TabIndex = 4;
+			this->UserAns->Enter += gcnew System::EventHandler(this, &Game2::UserAnsEnter);
+			this->UserAns->KeyDown += gcnew System::Windows::Forms::KeyEventHandler(this, &Game2::CheckWord);
+			this->UserAns->Leave += gcnew System::EventHandler(this, &Game2::UserAnsLeave);
+			// 
+			// numberChar
+			// 
+			this->numberChar->Font = (gcnew System::Drawing::Font(L"Microsoft Sans Serif", 12, System::Drawing::FontStyle::Regular, System::Drawing::GraphicsUnit::Point,
+				static_cast<System::Byte>(0)));
+			this->numberChar->Location = System::Drawing::Point(607, 220);
+			this->numberChar->Name = L"numberChar";
+			this->numberChar->Size = System::Drawing::Size(142, 30);
+			this->numberChar->TabIndex = 5;
+			this->numberChar->Enter += gcnew System::EventHandler(this, &Game2::numberCharEnter);
+			this->numberChar->Leave += gcnew System::EventHandler(this, &Game2::numberCharLeave);
+			// 
+			// quesLabel
+			// 
+			this->quesLabel->AutoSize = true;
+			this->quesLabel->BackColor = System::Drawing::Color::Transparent;
+			this->quesLabel->Font = (gcnew System::Drawing::Font(L"Microsoft Sans Serif", 10, System::Drawing::FontStyle::Regular, System::Drawing::GraphicsUnit::Point,
+				static_cast<System::Byte>(0)));
+			this->quesLabel->ForeColor = System::Drawing::Color::White;
+			this->quesLabel->Location = System::Drawing::Point(286, 220);
+			this->quesLabel->Name = L"quesLabel";
+			this->quesLabel->Size = System::Drawing::Size(245, 20);
+			this->quesLabel->TabIndex = 6;
+			this->quesLabel->Text = L"Enter the number chars of word";
+			// 
+			// AnsLabel
+			// 
+			this->AnsLabel->AutoSize = true;
+			this->AnsLabel->BackColor = System::Drawing::Color::Transparent;
+			this->AnsLabel->Font = (gcnew System::Drawing::Font(L"Microsoft Sans Serif", 10, System::Drawing::FontStyle::Regular, System::Drawing::GraphicsUnit::Point,
+				static_cast<System::Byte>(0)));
+			this->AnsLabel->ForeColor = System::Drawing::Color::White;
+			this->AnsLabel->Location = System::Drawing::Point(361, 307);
+			this->AnsLabel->Name = L"AnsLabel";
+			this->AnsLabel->Size = System::Drawing::Size(88, 20);
+			this->AnsLabel->TabIndex = 7;
+			this->AnsLabel->Text = L"Your Word";
+			// 
+			// ScoreLabel
+			// 
+			this->ScoreLabel->AutoSize = true;
+			this->ScoreLabel->BackColor = System::Drawing::Color::Transparent;
+			this->ScoreLabel->Font = (gcnew System::Drawing::Font(L"Microsoft Sans Serif", 10, System::Drawing::FontStyle::Regular, System::Drawing::GraphicsUnit::Point,
+				static_cast<System::Byte>(0)));
+			this->ScoreLabel->ForeColor = System::Drawing::Color::White;
+			this->ScoreLabel->Location = System::Drawing::Point(361, 381);
+			this->ScoreLabel->Name = L"ScoreLabel";
+			this->ScoreLabel->Size = System::Drawing::Size(90, 20);
+			this->ScoreLabel->TabIndex = 8;
+			this->ScoreLabel->Text = L"Your score";
+			// 
+			// Score
+			// 
+			this->Score->Font = (gcnew System::Drawing::Font(L"Microsoft Sans Serif", 12, System::Drawing::FontStyle::Regular, System::Drawing::GraphicsUnit::Point,
+				static_cast<System::Byte>(0)));
+			this->Score->Location = System::Drawing::Point(604, 381);
+			this->Score->Name = L"Score";
+			this->Score->ReadOnly = true;
+			this->Score->Size = System::Drawing::Size(145, 30);
+			this->Score->TabIndex = 9;
+			this->Score->TextAlign = System::Windows::Forms::HorizontalAlignment::Center;
+			// 
+			// errMes
+			// 
+			this->errMes->AutoSize = true;
+			this->errMes->BackColor = System::Drawing::Color::Transparent;
+			this->errMes->Font = (gcnew System::Drawing::Font(L"Microsoft Sans Serif", 10, System::Drawing::FontStyle::Regular, System::Drawing::GraphicsUnit::Point,
+				static_cast<System::Byte>(0)));
+			this->errMes->ForeColor = System::Drawing::Color::White;
+			this->errMes->Location = System::Drawing::Point(451, 352);
+			this->errMes->Name = L"errMes";
+			this->errMes->Size = System::Drawing::Size(0, 20);
+			this->errMes->TabIndex = 10;
+			// 
+			// Title
+			// 
+			this->Title->AutoSize = true;
+			this->Title->BackColor = System::Drawing::Color::Transparent;
+			this->Title->Font = (gcnew System::Drawing::Font(L"Microsoft Sans Serif", 32, System::Drawing::FontStyle::Regular, System::Drawing::GraphicsUnit::Point,
+				static_cast<System::Byte>(0)));
+			this->Title->ForeColor = System::Drawing::Color::White;
+			this->Title->Location = System::Drawing::Point(301, 22);
+			this->Title->Name = L"Title";
+			this->Title->Size = System::Drawing::Size(230, 63);
+			this->Title->TabIndex = 11;
+			this->Title->Text = L"GAME 2";
+			// 
+			// GameState
+			// 
+			this->GameState->AutoSize = true;
+			this->GameState->BackColor = System::Drawing::Color::Transparent;
+			this->GameState->Font = (gcnew System::Drawing::Font(L"Microsoft Sans Serif", 12, System::Drawing::FontStyle::Regular, System::Drawing::GraphicsUnit::Point,
+				static_cast<System::Byte>(0)));
+			this->GameState->ForeColor = System::Drawing::Color::White;
+			this->GameState->Location = System::Drawing::Point(374, 106);
+			this->GameState->Name = L"GameState";
+			this->GameState->Size = System::Drawing::Size(0, 25);
+			this->GameState->TabIndex = 12;
 			// 
 			// Game2
 			// 
@@ -191,7 +313,15 @@ namespace PBLWORDLEGAME {
 			this->BackgroundImage = (cli::safe_cast<System::Drawing::Image^>(resources->GetObject(L"$this.BackgroundImage")));
 			this->BackgroundImageLayout = System::Windows::Forms::ImageLayout::Stretch;
 			this->ClientSize = System::Drawing::Size(782, 553);
-			this->Controls->Add(this->APIContent);
+			this->Controls->Add(this->GameState);
+			this->Controls->Add(this->Title);
+			this->Controls->Add(this->errMes);
+			this->Controls->Add(this->Score);
+			this->Controls->Add(this->ScoreLabel);
+			this->Controls->Add(this->AnsLabel);
+			this->Controls->Add(this->quesLabel);
+			this->Controls->Add(this->numberChar);
+			this->Controls->Add(this->UserAns);
 			this->Controls->Add(this->toggleSidebar);
 			this->Controls->Add(this->SideBar);
 			this->Controls->Add(this->GameStart);
@@ -210,6 +340,11 @@ namespace PBLWORDLEGAME {
 		}
 #pragma endregion
 	private: System::Void GameLoading(System::Object^ sender, System::EventArgs^ e) {
+		this->numberChar->Text = "2->5";
+		this->numberChar->ForeColor = System::Drawing::Color::Gray;
+		this->UserAns->Text = "Enter your word!";
+		this->UserAns->ForeColor = System::Drawing::Color::Gray;
+		this->Score->Text = "0";
 		playMusic("continue");
 	}
 	private: System::Void playMusic(System::String^ filesound) {
@@ -244,11 +379,26 @@ namespace PBLWORDLEGAME {
 		this->Close();
 	}
 	private: System::Void Render(System::Object^ sender, System::EventArgs^ e) {
-		Task::Run(gcnew Action(this, &Game2::FetchWord));
+		if (this->numberChar->Text == "2->5") {
+			MessageBox::Show("Please enter the number of characters in the word.");
+			return;
+		}
+		else {
+			int num;
+			if (Int32::TryParse(this->numberChar->Text, num) && num >= 2 && num <= 5) {
+				Task::Run(gcnew Action(this, &Game2::FetchWord));
+			}
+			else {
+				MessageBox::Show("It's an invalid number!","Error",MessageBoxButtons::OK,MessageBoxIcon::Information);
+				return;
+			}
+		}
+		this->GameStart->Enabled = false;
 	}
 	private: System::Void FetchWord() {
+		n = Int32::Parse(this->numberChar->Text);
 		try {
-			String^ url = "https://api.datamuse.com/words?sp=?????&max=10";
+			String^ url = "https://api.datamuse.com/words?sp=" + getSizeOfWord(n) + "&max=1000";
 			WebClient^ client = gcnew WebClient();
 			String^ response = client->DownloadString(url);
 			array<String^>^ words = response->Split('"');
@@ -256,27 +406,89 @@ namespace PBLWORDLEGAME {
 			String^ res = "";
 			for (int i = 0; i < words->Length; i++) {
 				if (words[i]->Length == 5) { // Only valid 5-letter words
-					/*this->wordList.push_back(words[i]);*/
-					res += words[i] + " ";
+					if (!this->getWord->ContainsKey(words[i])) {
+						this->getWord->Add(words[i], 0);
+					}
 				}
 			}
-			/*String^ selectedWord = "";
-			if (!this->wordList.empty()) {
-				std::random_device rd;
-				std::mt19937 gen(rd());
-				std::uniform_int_distribution<> dis(0, this->wordList.size() - 1);
-				int randomIndex = dis(gen);
-				selectedWord = this->wordList[randomIndex];
-			}*/
-			this->Invoke(gcnew Action<String^>(this, &Game2::UpdateUI), res);
-
+			this->Invoke(gcnew Action<String^>(this, &Game2::LoadState),"Ready");
 		}
 		catch (Exception^ ex) {
 			MessageBox::Show("Error fetching words: " + ex->Message);
 		}
 	}
-	private: System::Void UpdateUI(String^ word) {
-		this->APIContent->Text = word;
+	private: System::Void CheckWord(System::Object^ sender, System::Windows::Forms::KeyEventArgs^ e){
+		if (e->KeyCode == System::Windows::Forms::Keys::Enter) {
+			e->SuppressKeyPress = true;
+			String^ ans = this->UserAns->Text;
+			int entered;
+			if (ans == "" || ans->Length != n) {
+				this->errMes->Text = "";
+				this->errMes->Text = "The word is invalid!";
+				this->errMes->ForeColor = System::Drawing::Color::Red;
+				this->UserAns->Text = "";
+				this->UserAns->Focus();
+			}
+			else {
+				if (this->getWord->TryGetValue(ans, entered)) {
+					if (entered == 0){
+						this->getWord[ans] = 1;
+						score++;
+						this->Score->Text = score.ToString();
+						this->errMes->Text = "";
+						this->errMes->Text = "Correct!";
+						this->errMes->ForeColor = System::Drawing::Color::Green;
+						this->UserAns->Text = "";
+						this->UserAns->Focus();
+					}
+					else {
+						this->UserAns->Text = "";
+						this->UserAns->Focus();
+						this->errMes->Text = "";
+						this->errMes->Text = "You have already entered this word!";
+					}
+				}
+				else {
+					this->errMes->Text = "";
+					this->errMes->Text = "The word is not correct!";
+					this->errMes->ForeColor = System::Drawing::Color::Red;
+				}
+			}
+		}
+	}
+	private: System::Void numberCharEnter(System::Object^ sender, System::EventArgs^ e) {
+		if (this->numberChar->Text == "2->5") {
+			this->numberChar->Text = "";
+			this->numberChar->ForeColor = System::Drawing::Color::Black;
+		}
+	}
+	private: System::Void numberCharLeave(System::Object^ sender, System::EventArgs^ e) {
+		if (this->numberChar->Text == "") {
+			this->numberChar->Text = "2->5";
+			this->numberChar->ForeColor = System::Drawing::Color::Gray;
+		}
+	}
+	private: System::Void UserAnsEnter(System::Object^ sender, System::EventArgs^ e) {
+		if (this->UserAns->Text == "Enter your word!") {
+			this->UserAns->Text = "";
+			this->UserAns->ForeColor = System::Drawing::Color::Black;
+		}
+	}
+	private: System::Void UserAnsLeave(System::Object^ sender, System::EventArgs^ e) {
+		if (this->UserAns->Text == "") {
+			this->UserAns->Text = "Enter your word!";
+			this->UserAns->ForeColor = System::Drawing::Color::Gray;
+		}
+	}
+	private: System::String^ getSizeOfWord(int num) {
+		String^ ans = "";
+		for (int i = 0; i < num; i++) {
+			ans += "?";
+		}
+		return ans;
+	}
+	private: System::Void LoadState(String^ state) {
+		this->GameState->Text = state;
 	}
 };
 }
