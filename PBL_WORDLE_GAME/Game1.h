@@ -325,7 +325,7 @@ namespace PBLWORDLEGAME {
         this->GameStart->Enabled = false;  // Disable "Start" button to prevent multiple starts
         this->Score->Text = "0";  // Reset score
         this->Test->Clear();  // Clear the input box
-        FetchWord();  // Fetch a random word from the API (đảm bảo không mở cửa sổ mới)
+        FetchWord();  // Fetch a random word from the API 
     }
 
 
@@ -339,7 +339,7 @@ namespace PBLWORDLEGAME {
             "3. Each correct letter will appear in the word.\n"
             "4. Incorrect guesses will reduce your score.\n"
             "5. The game ends when you guess the word.";
-        MessageBox::Show(rules, "Game Rules"); // Hiển thị quy tắc ngay trên cửa sổ hiện tại
+        MessageBox::Show(rules, "Game Rules"); 
     }
 
            void FetchWord() {
