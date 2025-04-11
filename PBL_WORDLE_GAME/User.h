@@ -1,6 +1,7 @@
 #pragma once
 #include "Account.h"
 #include <fstream>
+#include "CryptoUtils.h"
 
 using namespace System;
 using namespace System::IO;
@@ -42,7 +43,7 @@ namespace PBLWORDLEGAME {
 		int getS2() { return game2Score; }
 		int getS3() { return game3Score; }
 		System::Void setS1(int s1) { game1Score = s1; }
-		System::Void setS2(int s2) { game1Score = s2; }
-		System::Void setS3(int s3) { game1Score = s3; }
+		System::Void setS2(int s2) { game2Score = s2; }
+		System::Void setS3(int s3) { game3Score = s3; }
 	};
 }

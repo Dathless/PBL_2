@@ -3,6 +3,8 @@
 #include "Game1.h"
 #include "Game2.h"
 #include "Account.h"
+#include "User.h"
+#include "Admin.h"
 
 using namespace System;
 using namespace System::Media;
@@ -26,7 +28,7 @@ namespace PBLWORDLEGAME {
 		public: SoundPlayer^ clickTrack;
 		event EventHandler^ goBack;
 		event EventHandler^ enterGame1;
-		public: Account^ userLogged;
+		public: User^ UserLogged;
 		DashBoard(System::String^ usr)
 		{
 			InitializeComponent();
@@ -473,7 +475,7 @@ namespace PBLWORDLEGAME {
 		this->bgMusic->PlayLooping();
 	}
 	private: System::Void openGame2(System::Object^ sender, System::EventArgs^ e) {
-		Game2^ game2 = gcnew Game2();
+		Game2^ game2 = gcnew Game2(this->usrname);
 		enterGame1(this, e);
 		game2->ShowDialog();
 		this->bgMusic->PlayLooping();

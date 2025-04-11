@@ -1,6 +1,10 @@
 #pragma once
 #include <cliext/vector>
+#include "Game2_Char.h"
+#include "Game.h"
 #include <random>
+#include "User.h"
+#include "CryptoUtils.h"
 
 namespace PBLWORDLEGAME {
 
@@ -21,29 +25,31 @@ namespace PBLWORDLEGAME {
 	/// <summary>
 	/// Summary for Game2
 	/// </summary>
-	public ref class Game2 : public System::Windows::Forms::Form
+	public ref class Game2 : public Game
 	{
+	private: System::String^ username;
 	private: Timer^ sidebarTimer;
+	private: Timer^ gameTimer;
 	private: bool isHidden = false;
 	private: System::Windows::Forms::TextBox^ UserAns;
 	private: cliext::vector<System::String^> wordList;
 	private: Dictionary<String^, int>^ getWord = gcnew Dictionary<String^, int>();
 	private: int n;
-	private: int score=0;
-	private: System::Windows::Forms::TextBox^ numberChar;
-	private: System::Windows::Forms::Label^ quesLabel;
+	private: int remainingTime;
+	private: int score;
 	private: System::Windows::Forms::Label^ AnsLabel;
 	private: System::Windows::Forms::Label^ ScoreLabel;
 	private: System::Windows::Forms::TextBox^ Score;
 	private: System::Windows::Forms::Label^ errMes;
 	private: System::Windows::Forms::Label^ Title;
 	private: System::Windows::Forms::Label^ GameState;
-
+	private: System::Windows::Forms::Label^ countDown;
 	private: SoundPlayer^ bgMusic;
 	public:
-		Game2(void)
+		Game2(String^ uname)
 		{
 			InitializeComponent();
+			this->username = uname;
 			//
 			//TODO: Add the constructor code here
 			//
@@ -97,14 +103,13 @@ namespace PBLWORDLEGAME {
 			this->showRule = (gcnew System::Windows::Forms::Button());
 			this->toggleSidebar = (gcnew System::Windows::Forms::Button());
 			this->UserAns = (gcnew System::Windows::Forms::TextBox());
-			this->numberChar = (gcnew System::Windows::Forms::TextBox());
-			this->quesLabel = (gcnew System::Windows::Forms::Label());
 			this->AnsLabel = (gcnew System::Windows::Forms::Label());
 			this->ScoreLabel = (gcnew System::Windows::Forms::Label());
 			this->Score = (gcnew System::Windows::Forms::TextBox());
 			this->errMes = (gcnew System::Windows::Forms::Label());
 			this->Title = (gcnew System::Windows::Forms::Label());
 			this->GameState = (gcnew System::Windows::Forms::Label());
+			this->countDown = (gcnew System::Windows::Forms::Label());
 			this->SideBar->SuspendLayout();
 			this->SuspendLayout();
 			// 
@@ -188,16 +193,17 @@ namespace PBLWORDLEGAME {
 			// 
 			this->toggleSidebar->Font = (gcnew System::Drawing::Font(L"Microsoft Sans Serif", 10, System::Drawing::FontStyle::Regular, System::Drawing::GraphicsUnit::Point,
 				static_cast<System::Byte>(0)));
-			this->toggleSidebar->Location = System::Drawing::Point(40, 125);
+			this->toggleSidebar->Location = System::Drawing::Point(181, 216);
 			this->toggleSidebar->Name = L"toggleSidebar";
-			this->toggleSidebar->Size = System::Drawing::Size(96, 30);
+			this->toggleSidebar->Size = System::Drawing::Size(67, 53);
 			this->toggleSidebar->TabIndex = 3;
-			this->toggleSidebar->Text = L"SideBar";
+			this->toggleSidebar->Text = L"<<";
 			this->toggleSidebar->UseVisualStyleBackColor = true;
 			this->toggleSidebar->Click += gcnew System::EventHandler(this, &Game2::ToggleSidebar);
 			// 
 			// UserAns
 			// 
+			this->UserAns->Enabled = false;
 			this->UserAns->Font = (gcnew System::Drawing::Font(L"Microsoft Sans Serif", 12, System::Drawing::FontStyle::Regular, System::Drawing::GraphicsUnit::Point,
 				static_cast<System::Byte>(0)));
 			this->UserAns->Location = System::Drawing::Point(483, 300);
@@ -207,30 +213,6 @@ namespace PBLWORDLEGAME {
 			this->UserAns->Enter += gcnew System::EventHandler(this, &Game2::UserAnsEnter);
 			this->UserAns->KeyDown += gcnew System::Windows::Forms::KeyEventHandler(this, &Game2::CheckWord);
 			this->UserAns->Leave += gcnew System::EventHandler(this, &Game2::UserAnsLeave);
-			// 
-			// numberChar
-			// 
-			this->numberChar->Font = (gcnew System::Drawing::Font(L"Microsoft Sans Serif", 12, System::Drawing::FontStyle::Regular, System::Drawing::GraphicsUnit::Point,
-				static_cast<System::Byte>(0)));
-			this->numberChar->Location = System::Drawing::Point(607, 220);
-			this->numberChar->Name = L"numberChar";
-			this->numberChar->Size = System::Drawing::Size(142, 30);
-			this->numberChar->TabIndex = 5;
-			this->numberChar->Enter += gcnew System::EventHandler(this, &Game2::numberCharEnter);
-			this->numberChar->Leave += gcnew System::EventHandler(this, &Game2::numberCharLeave);
-			// 
-			// quesLabel
-			// 
-			this->quesLabel->AutoSize = true;
-			this->quesLabel->BackColor = System::Drawing::Color::Transparent;
-			this->quesLabel->Font = (gcnew System::Drawing::Font(L"Microsoft Sans Serif", 10, System::Drawing::FontStyle::Regular, System::Drawing::GraphicsUnit::Point,
-				static_cast<System::Byte>(0)));
-			this->quesLabel->ForeColor = System::Drawing::Color::White;
-			this->quesLabel->Location = System::Drawing::Point(286, 220);
-			this->quesLabel->Name = L"quesLabel";
-			this->quesLabel->Size = System::Drawing::Size(245, 20);
-			this->quesLabel->TabIndex = 6;
-			this->quesLabel->Text = L"Enter the number chars of word";
 			// 
 			// AnsLabel
 			// 
@@ -306,6 +288,19 @@ namespace PBLWORDLEGAME {
 			this->GameState->Size = System::Drawing::Size(0, 25);
 			this->GameState->TabIndex = 12;
 			// 
+			// countDown
+			// 
+			this->countDown->AutoSize = true;
+			this->countDown->BackColor = System::Drawing::Color::Transparent;
+			this->countDown->Font = (gcnew System::Drawing::Font(L"Microsoft Sans Serif", 20, System::Drawing::FontStyle::Regular, System::Drawing::GraphicsUnit::Point,
+				static_cast<System::Byte>(0)));
+			this->countDown->ForeColor = System::Drawing::Color::White;
+			this->countDown->Location = System::Drawing::Point(505, 179);
+			this->countDown->Name = L"countDown";
+			this->countDown->Size = System::Drawing::Size(102, 39);
+			this->countDown->TabIndex = 13;
+			this->countDown->Text = L"Time:";
+			// 
 			// Game2
 			// 
 			this->AutoScaleDimensions = System::Drawing::SizeF(8, 16);
@@ -313,14 +308,13 @@ namespace PBLWORDLEGAME {
 			this->BackgroundImage = (cli::safe_cast<System::Drawing::Image^>(resources->GetObject(L"$this.BackgroundImage")));
 			this->BackgroundImageLayout = System::Windows::Forms::ImageLayout::Stretch;
 			this->ClientSize = System::Drawing::Size(782, 553);
+			this->Controls->Add(this->countDown);
 			this->Controls->Add(this->GameState);
 			this->Controls->Add(this->Title);
 			this->Controls->Add(this->errMes);
 			this->Controls->Add(this->Score);
 			this->Controls->Add(this->ScoreLabel);
 			this->Controls->Add(this->AnsLabel);
-			this->Controls->Add(this->quesLabel);
-			this->Controls->Add(this->numberChar);
 			this->Controls->Add(this->UserAns);
 			this->Controls->Add(this->toggleSidebar);
 			this->Controls->Add(this->SideBar);
@@ -340,11 +334,19 @@ namespace PBLWORDLEGAME {
 		}
 #pragma endregion
 	private: System::Void GameLoading(System::Object^ sender, System::EventArgs^ e) {
-		this->numberChar->Text = "2->5";
-		this->numberChar->ForeColor = System::Drawing::Color::Gray;
+		userLoading(this->username);
+		this->HighestScore->Text = "Highest Score: " + this->UserLogged->getS2();
 		this->UserAns->Text = "Enter your word!";
 		this->UserAns->ForeColor = System::Drawing::Color::Gray;
+		loadAllUser(2);
+		this->Rank->Text = "Rank: " + getRank(UserLogged->username);
 		this->Score->Text = "0";
+		this->gameTimer = gcnew Timer();
+		this->gameTimer->Interval = 1000; // 1 second
+		this->gameTimer->Tick += gcnew System::EventHandler(this, &Game2::GameRunning);
+		this->sidebarTimer = gcnew Timer();
+		this->sidebarTimer->Interval = 10; // 10 milliseconds
+		this->sidebarTimer->Tick += gcnew System::EventHandler(this, &Game2::AnimateSidebar);
 		playMusic("continue");
 	}
 	private: System::Void playMusic(System::String^ filesound) {
@@ -353,11 +355,13 @@ namespace PBLWORDLEGAME {
 		this->bgMusic->PlayLooping();
 	}
 	private: System::Void ToggleSidebar(System::Object^ sender, System::EventArgs^ e) {
+		(this->toggleSidebar->Text == "<<") ? this->toggleSidebar->Text = ">>" : this->toggleSidebar->Text = "<<";
 		this->sidebarTimer->Start();
 	}
-	/*private: System::Void AnimateSidebar(System::Object^ sender, System::EventArgs^ e) {
+	private: System::Void AnimateSidebar(System::Object^ sender, System::EventArgs^ e) {
 		if (isHidden) {
 			this->SideBar->Left += 10;
+			this->toggleSidebar->Left += 10;
 			if (SideBar->Left >= 0) {
 				SideBar->Left = 0;
 				sidebarTimer->Stop();
@@ -365,7 +369,8 @@ namespace PBLWORDLEGAME {
 			}
 		}
 		else {
-			SideBar->Left -= 10;
+			this->SideBar->Left -= 10;
+			this->toggleSidebar->Left -= 10;
 			if (SideBar->Left <= -SideBar->Width) {
 				SideBar->Left = -SideBar->Width;
 				sidebarTimer->Stop();
@@ -373,30 +378,44 @@ namespace PBLWORDLEGAME {
 			}
 		}
 
-	}*/
+	}
 	private: System::Void Exit(System::Object^ sender, System::EventArgs^ e) {
 		this->bgMusic->Stop();
 		this->Close();
 	}
 	private: System::Void Render(System::Object^ sender, System::EventArgs^ e) {
-		if (this->numberChar->Text == "2->5") {
-			MessageBox::Show("Please enter the number of characters in the word.");
-			return;
+		this->score = 0;
+		this->Score->Text = this->score.ToString();
+		Game2_Char^ popup = gcnew Game2_Char();
+		if (popup->ShowDialog() == System::Windows::Forms::DialogResult::OK) {
+			this->n = Int32::Parse(popup->NumberChar);
+			this->UserAns->Enabled = true;
+			this->GameStart->Enabled = false;
+			FetchWord();
+			this->remainingTime = 10;
+			this->gameTimer->Start();
 		}
-		else {
-			int num;
-			if (Int32::TryParse(this->numberChar->Text, num) && num >= 2 && num <= 5) {
-				Task::Run(gcnew Action(this, &Game2::FetchWord));
+	}
+	private: System::Void GameRunning(System::Object^ sender, System::EventArgs^ e) {
+		this->remainingTime--;
+		this->countDown->Text = "Time: " + this->remainingTime + " s";
+		if (this->remainingTime <= 0) {
+			this->gameTimer->Stop();
+			this->UserAns->Enabled = false;
+			this->GameStart->Enabled = true;
+			this->GameState->Text = "Game Over!";
+			MessageBox::Show("Game Over! Your score is: " + this->score);
+			this->errMes->Text = "";
+			this->getWord->Clear();
+			if (this->UserLogged->getS2() < this->score) {
+				this->UserLogged->setS2(this->score);
+				scoreUpdating(this->score);
 			}
-			else {
-				MessageBox::Show("It's an invalid number!","Error",MessageBoxButtons::OK,MessageBoxIcon::Information);
-				return;
-			}
+			userSaving(this->UserLogged);
+
 		}
-		this->GameStart->Enabled = false;
 	}
 	private: System::Void FetchWord() {
-		n = Int32::Parse(this->numberChar->Text);
 		try {
 			String^ url = "https://api.datamuse.com/words?sp=" + getSizeOfWord(n) + "&max=1000";
 			WebClient^ client = gcnew WebClient();
@@ -433,7 +452,7 @@ namespace PBLWORDLEGAME {
 				if (this->getWord->TryGetValue(ans, entered)) {
 					if (entered == 0){
 						this->getWord[ans] = 1;
-						score++;
+						this->score += 10;
 						this->Score->Text = score.ToString();
 						this->errMes->Text = "";
 						this->errMes->Text = "Correct!";
@@ -452,20 +471,9 @@ namespace PBLWORDLEGAME {
 					this->errMes->Text = "";
 					this->errMes->Text = "The word is not correct!";
 					this->errMes->ForeColor = System::Drawing::Color::Red;
+					this->UserAns->Text = "";
 				}
 			}
-		}
-	}
-	private: System::Void numberCharEnter(System::Object^ sender, System::EventArgs^ e) {
-		if (this->numberChar->Text == "2->5") {
-			this->numberChar->Text = "";
-			this->numberChar->ForeColor = System::Drawing::Color::Black;
-		}
-	}
-	private: System::Void numberCharLeave(System::Object^ sender, System::EventArgs^ e) {
-		if (this->numberChar->Text == "") {
-			this->numberChar->Text = "2->5";
-			this->numberChar->ForeColor = System::Drawing::Color::Gray;
 		}
 	}
 	private: System::Void UserAnsEnter(System::Object^ sender, System::EventArgs^ e) {
@@ -489,6 +497,14 @@ namespace PBLWORDLEGAME {
 	}
 	private: System::Void LoadState(String^ state) {
 		this->GameState->Text = state;
+		this->UserAns->Focus();
+	}
+	public: System::Void scoreUpdating(int s) override {
+		this->UserLogged->setS2(s);
+		this->HighestScore->Text = "Highest Score: " + this->UserLogged->getS2();
+	}
+	public: int getRank() override {
+		return this->UserLogged->getS2();
 	}
 };
 }

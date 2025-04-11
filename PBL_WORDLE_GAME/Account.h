@@ -12,7 +12,7 @@ namespace PBLWORDLEGAME {
 	/// </summary>
 	public ref class Account
 	{
-	protected: String^ username;
+	public: String^ username;
 	protected: String^ password;
 	protected: String^ role;
 	public:
@@ -51,6 +51,12 @@ namespace PBLWORDLEGAME {
 		else {
 			MessageBox::Show("User not found!", "Error", MessageBoxButtons::OK, MessageBoxIcon::Information);
 		}
+	}
+	public: System::Void setPwd(System::String^ pwd) {
+		this->password = pwd;
+	}
+	public: System::String^ getPwd() {
+		return this->password;
 	}
 	};
 }
