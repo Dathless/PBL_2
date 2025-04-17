@@ -468,12 +468,17 @@ namespace PBLWORDLEGAME {
 	private: System::Void passChanging(System::Object^ sender, System::EventArgs^ e){
 		Clicking();
 	}
-	private: System::Void openGame1(System::Object^ sender, System::EventArgs^ e) {
-		Game1^ game1 = gcnew Game1();
-		enterGame1(this, e);
-		game1->ShowDialog();
-		this->bgMusic->PlayLooping();
-	}
+private: System::Void openGame1(System::Object^ sender, System::EventArgs^ e) {
+	// Instantiate Game1 class (assuming it's in the WordGuessGame namespace)
+	WordGuessGame::Game1^ game1 = gcnew WordGuessGame::Game1();
+
+	// Show Game1 as a modal dialog
+	game1->ShowDialog();
+
+	// Optionally play background music if needed
+	this->bgMusic->PlayLooping();
+}
+
 	private: System::Void openGame2(System::Object^ sender, System::EventArgs^ e) {
 		Game2^ game2 = gcnew Game2(this->usrname);
 		enterGame1(this, e);
