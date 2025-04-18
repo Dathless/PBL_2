@@ -36,7 +36,7 @@ namespace PBLWORDLEGAME {
 		}
 	public: ~User() {};
 	public: System::String^ ToData() override {
-		return role + "\n" + username + "\n" + password + "\n" + game1Score.ToString() + "\n" + game2Score.ToString() + "\n" + game3Score.ToString();
+		return role + "\n" + username + "\n" + CryptoUtils::Encrypt(password) + "\n" + game1Score.ToString() + "\n" + game2Score.ToString() + "\n" + game3Score.ToString();
 	}
 	public:
 		int getS1() { return game1Score; }
@@ -45,5 +45,9 @@ namespace PBLWORDLEGAME {
 		System::Void setS1(int s1) { game1Score = s1; }
 		System::Void setS2(int s2) { game2Score = s2; }
 		System::Void setS3(int s3) { game3Score = s3; }
+	public: System::Void writeToFile() {
+		String^ fileName = "UserList\\" + CryptoUtils::ComputeSHA256(username) + ".txt";
+		File::WriteAllText(fileName, ToData());
+	}
 	};
 }

@@ -3,6 +3,7 @@
 #include "Login.h"
 #include "Register.h"
 #include "DashBoard.h"
+#include "Dashboard_Admin.h"
 #include "Credit.h"
 #include "Account.h"
 #include <fstream>
@@ -27,6 +28,7 @@ namespace PBLWORDLEGAME {
 	private: Login^ login;
 	private: Register^ regis;
 	private: DashBoard^ dashBoard;
+	private: Dashboard_Admin^ adminDashBoard;
 	private: Credit^ credit;
 	private: System::String^ user;
 	private: SoundPlayer^ bgMusic;
@@ -86,12 +88,10 @@ namespace PBLWORDLEGAME {
 			this->AutoScaleDimensions = System::Drawing::SizeF(8, 16);
 			this->AutoScaleMode = System::Windows::Forms::AutoScaleMode::Font;
 			this->BackgroundImage = (cli::safe_cast<System::Drawing::Image^>(resources->GetObject(L"$this.BackgroundImage")));
-			//this->BackgroundImage = gcnew System::Drawing::Bitmap("asset\\img\\bg1.jpg");
 			this->BackgroundImageLayout = System::Windows::Forms::ImageLayout::Stretch;
 			this->ClientSize = System::Drawing::Size(782, 553);
 			this->Controls->Add(this->mainPanel);
 			this->Icon = (cli::safe_cast<System::Drawing::Icon^>(resources->GetObject(L"$this.Icon")));
-			//this->Icon = gcnew System::Drawing::Bitmap("asset\\logo\\logo.ico");
 			this->Name = L"GAME_CENTER";
 			this->StartPosition = System::Windows::Forms::FormStartPosition::CenterScreen;
 			this->Text = L"GAME_CENTER";
@@ -123,6 +123,7 @@ namespace PBLWORDLEGAME {
 		this->login->Dock = System::Windows::Forms::DockStyle::Fill;
 		this->login->goBack += gcnew System::EventHandler(this, &GAME_CENTER::GoToBack);
 		this->login->enterDashBoard += gcnew System::EventHandler(this, &GAME_CENTER::showDashBoard);
+		this->login->adminDashBoard += gcnew System::EventHandler(this, &GAME_CENTER::showAdminDashBoard);
 		this->mainPanel->Controls->Add(login);
 	}
 	private: System::Void showRegis(System::Object^ sender, System::EventArgs^ e) {
@@ -158,6 +159,14 @@ namespace PBLWORDLEGAME {
 		this->dashBoard->Dock = System::Windows::Forms::DockStyle::Fill;
 		this->dashBoard->goBack += gcnew System::EventHandler(this, &GAME_CENTER::BackToLanding);
 		this->mainPanel->Controls->Add(dashBoard);
+	}
+	private: System::Void showAdminDashBoard(System::Object^ sender, System::EventArgs^ e) {
+		this->mainPanel->Controls->Clear();
+		System::String^ usr = this->login->usrname;//add username when login successfully
+		this->adminDashBoard = gcnew Dashboard_Admin(usr);
+		this->adminDashBoard->Dock = System::Windows::Forms::DockStyle::Fill;
+		this->adminDashBoard->goBack += gcnew System::EventHandler(this, &GAME_CENTER::BackToLanding);
+		this->mainPanel->Controls->Add(adminDashBoard);
 	}
 	private: System::Void quitGame(System::Object^ sender, System::EventArgs^ e) {
 		this->Close();

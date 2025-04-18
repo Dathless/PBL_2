@@ -71,6 +71,12 @@
     <ClInclude Include="Game2_Char.h">
       <Filter>Header Files\Popup_Model</Filter>
     </ClInclude>
+    <ClInclude Include="Dashboard_Admin.h">
+      <Filter>Header Files\Content</Filter>
+    </ClInclude>
+    <ClInclude Include="ChangePass.h">
+      <Filter>Header Files\Popup_Model</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ResourceCompile Include="PBL_WORDLE_GAME.rc">

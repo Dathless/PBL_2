@@ -127,11 +127,17 @@
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Admin.h" />
+    <ClInclude Include="ChangePass.h">
+      <FileType>CppForm</FileType>
+    </ClInclude>
     <ClInclude Include="Credit.h">
       <FileType>CppControl</FileType>
     </ClInclude>
     <ClInclude Include="CryptoUtils.h" />
     <ClInclude Include="DashBoard.h">
+      <FileType>CppControl</FileType>
+    </ClInclude>
+    <ClInclude Include="Dashboard_Admin.h">
       <FileType>CppControl</FileType>
     </ClInclude>
     <ClInclude Include="Game.h" />
@@ -161,11 +167,17 @@
     <ClInclude Include="resource.h" />
   </ItemGroup>
   <ItemGroup>
+    <EmbeddedResource Include="ChangePass.resx">
+      <DependentUpon>ChangePass.h</DependentUpon>
+    </EmbeddedResource>
     <EmbeddedResource Include="Credit.resx">
       <DependentUpon>Credit.h</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Include="DashBoard.resx">
       <DependentUpon>DashBoard.h</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Dashboard_Admin.resx">
+      <DependentUpon>Dashboard_Admin.h</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Include="Game1.resx">
       <DependentUpon>Game1.h</DependentUpon>

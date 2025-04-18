@@ -25,7 +25,7 @@ namespace PBLWORDLEGAME {
 	public:
 		event EventHandler^ goBack;
 		event EventHandler^ enterDashBoard;
-		
+		event EventHandler^ adminDashBoard;
 		System::String^ usrname;
 		Login(/*GAME_CENTER^ parent*/)
 		{
@@ -262,10 +262,10 @@ namespace PBLWORDLEGAME {
 				if (storedUsr == usr && decryptPwd == pwd) {
 					usrname = usr;
 					CryptoUtils::RecordLoginAttempts(usr, true);
-					enterDashBoard(this, e);
-					/*if (enterDashBoard != nullptr) {
-						enterDashBoard(this, usr);
-					}*/
+					if (role == "admin") {
+						adminDashBoard(this, e);
+					}
+					else { enterDashBoard(this, e); }
 				}
 				else {
 					this->errMes->Text = "The username or password is invalid!";

@@ -141,8 +141,7 @@ namespace PBLWORDLEGAME {
 			// 
 			// SideBar
 			// 
-			this->SideBar->BackColor = System::Drawing::Color::FromArgb(static_cast<System::Int32>(static_cast<System::Byte>(90)), static_cast<System::Int32>(static_cast<System::Byte>(241)),
-				static_cast<System::Int32>(static_cast<System::Byte>(239)), static_cast<System::Int32>(static_cast<System::Byte>(236)));
+			this->SideBar->BackColor = System::Drawing::Color::SlateGray;
 			this->SideBar->Controls->Add(this->Rank);
 			this->SideBar->Controls->Add(this->HighestScore);
 			this->SideBar->Controls->Add(this->showRule);
@@ -159,6 +158,7 @@ namespace PBLWORDLEGAME {
 			// 
 			this->Rank->Anchor = System::Windows::Forms::AnchorStyles::Top;
 			this->Rank->AutoSize = true;
+			this->Rank->BackColor = System::Drawing::Color::Transparent;
 			this->Rank->Location = System::Drawing::Point(39, 30);
 			this->Rank->Margin = System::Windows::Forms::Padding(0, 30, 0, 20);
 			this->Rank->Name = L"Rank";
@@ -170,6 +170,7 @@ namespace PBLWORDLEGAME {
 			// 
 			this->HighestScore->Anchor = System::Windows::Forms::AnchorStyles::Top;
 			this->HighestScore->AutoSize = true;
+			this->HighestScore->BackColor = System::Drawing::Color::Transparent;
 			this->HighestScore->Location = System::Drawing::Point(0, 95);
 			this->HighestScore->Margin = System::Windows::Forms::Padding(0, 20, 0, 20);
 			this->HighestScore->Name = L"HighestScore";
@@ -195,7 +196,7 @@ namespace PBLWORDLEGAME {
 				static_cast<System::Byte>(0)));
 			this->toggleSidebar->Location = System::Drawing::Point(181, 216);
 			this->toggleSidebar->Name = L"toggleSidebar";
-			this->toggleSidebar->Size = System::Drawing::Size(67, 53);
+			this->toggleSidebar->Size = System::Drawing::Size(53, 36);
 			this->toggleSidebar->TabIndex = 3;
 			this->toggleSidebar->Text = L"<<";
 			this->toggleSidebar->UseVisualStyleBackColor = true;
@@ -345,7 +346,7 @@ namespace PBLWORDLEGAME {
 		this->gameTimer->Interval = 1000; // 1 second
 		this->gameTimer->Tick += gcnew System::EventHandler(this, &Game2::GameRunning);
 		this->sidebarTimer = gcnew Timer();
-		this->sidebarTimer->Interval = 10; // 10 milliseconds
+		this->sidebarTimer->Interval = 5;
 		this->sidebarTimer->Tick += gcnew System::EventHandler(this, &Game2::AnimateSidebar);
 		playMusic("continue");
 	}
@@ -503,8 +504,6 @@ namespace PBLWORDLEGAME {
 		this->UserLogged->setS2(s);
 		this->HighestScore->Text = "Highest Score: " + this->UserLogged->getS2();
 	}
-	public: int getRank() override {
-		return this->UserLogged->getS2();
-	}
+	
 };
 }

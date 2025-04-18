@@ -139,6 +139,7 @@ namespace PBLWORDLEGAME {
 			this->numChar->TextAlign = System::Windows::Forms::HorizontalAlignment::Center;
 			this->numChar->Enter += gcnew System::EventHandler(this, &Game2_Char::Entering);
 			this->numChar->Leave += gcnew System::EventHandler(this, &Game2_Char::Leaving);
+			this->numChar->KeyDown += gcnew System::Windows::Forms::KeyEventHandler(this, &Game2_Char::pressEnter);
 			// 
 			// Game2_Char
 			// 
@@ -198,6 +199,12 @@ namespace PBLWORDLEGAME {
 		if (this->numChar->Text == "") {
 			this->numChar->Text = "2->5";
 			this->numChar->ForeColor = System::Drawing::Color::Gray;
+		}
+	}
+	private: System::Void pressEnter(System::Object^ sender, System::Windows::Forms::KeyEventArgs^ e) {
+		if (e->KeyCode == System::Windows::Forms::Keys::Enter) {
+			e->SuppressKeyPress = true;
+			this->clickOK(sender, e);
 		}
 	}
 };

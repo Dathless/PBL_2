@@ -1,5 +1,6 @@
 #pragma once
 #include <fstream>
+#include "CryptoUtils.h"
 
 using namespace System;
 using namespace System::IO;
@@ -32,8 +33,8 @@ namespace PBLWORDLEGAME {
 		System::String^ ToTXTObject() {
 			return "{\n  \"username\": \"" + username + "\",\n  \"password\": \"" + password + "\",\n}";
 		}
-	public: System::Void deletAccount(System::String^ usr) {
-		System::String^ filePath = "UserList\\" + usr + ".txt";
+	public: System::Void deletAccount() {
+		System::String^ filePath = "UserList\\" + CryptoUtils::ComputeSHA256(username) + ".txt";
 		if (File::Exists(filePath)) {
 			File::Delete(filePath);
 		}

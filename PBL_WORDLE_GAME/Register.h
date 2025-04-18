@@ -251,9 +251,7 @@ namespace PBLWORDLEGAME {
 		}
 	}
 	private: System::Void createAccount(String^ usr, String^ pwd) {
-		/*Account^ newAcc = gcnew Account(usr, hashPassword(pwd));*/ // Mã hóa mật khẩu trước khi lưu
-		System::String^ encryptPass = PBLWORDLEGAME::CryptoUtils::Encrypt(pwd);
-		Account^ newAcc = gcnew User(usr, encryptPass);
+		User^ newAcc = gcnew User(usr, pwd);
 		String^ folderPath = "UserList\\";
 		String^ secureFile = CryptoUtils::ComputeSHA256(usr) ;
 		String^ filePath = folderPath + secureFile + ".txt";
@@ -269,7 +267,6 @@ namespace PBLWORDLEGAME {
 		try {
 			StreamWriter^ file = gcnew StreamWriter(filePath);
 			file->WriteLine(newAcc->ToData());
-			/*file->WriteLine(newAcc->ToTXTObject());*/
 			file->Close();
 			this->errMes->Text = "Account created successfully";
 			this->errMes->ForeColor = System::Drawing::Color::Green;
