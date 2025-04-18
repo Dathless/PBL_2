@@ -17,10 +17,12 @@ namespace WordGuessGame {
 
     public ref class Game1 : public System::Windows::Forms::Form
     {
+    private: String^ uname;
     public:
-        Game1(void)
+        Game1(String^ usr)
         {
             InitializeComponent();
+            uname = usr;
         }
 
     protected:

@@ -470,7 +470,7 @@ namespace PBLWORDLEGAME {
 	}
 private: System::Void openGame1(System::Object^ sender, System::EventArgs^ e) {
 	// Instantiate Game1 class (assuming it's in the WordGuessGame namespace)
-	WordGuessGame::Game1^ game1 = gcnew WordGuessGame::Game1();
+	WordGuessGame::Game1^ game1 = gcnew WordGuessGame::Game1(usrname);
 
 	// Show Game1 as a modal dialog
 	game1->ShowDialog();
