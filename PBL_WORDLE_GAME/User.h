@@ -36,7 +36,7 @@ namespace PBLWORDLEGAME {
 		}
 	public: ~User() {};
 	public: System::String^ ToData() override {
-		return role + "\n" + username + "\n" + CryptoUtils::Encrypt(password) + "\n" + game1Score.ToString() + "\n" + game2Score.ToString() + "\n" + game3Score.ToString();
+		return role + "\n" + username + "\n" + CryptoUtils::EncryptAES(password) + "\n" + game1Score.ToString() + "\n" + game2Score.ToString() + "\n" + game3Score.ToString();
 	}
 	public:
 		int getS1() { return game1Score; }

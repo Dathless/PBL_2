@@ -15,11 +15,20 @@ namespace PBLWORDLEGAME {
         static Dictionary<String^, DateTime>^ loginTimestamps;
         static Dictionary<String^, int>^ blockCount;
         static String^ fileLog;
+        static RSACryptoServiceProvider^ rsa;
+        static String^ publicKey;
+        static String^ privateKey;
 
         // Static constructor to initialize static variables
         static CryptoUtils() {
+            //Initialize AES
             key = Encoding::UTF8->GetBytes("1234567890123456");
             iv = Encoding::UTF8->GetBytes("6543219876543210");
+            //Initialize for RSA
+            rsa = gcnew RSACryptoServiceProvider();
+            publicKey = rsa->ToXmlString(false);
+            privateKey = rsa->ToXmlString(true);
+            //Initialize for preventing brute-force
             loginAttempts = gcnew Dictionary<String^, int>();
             loginTimestamps = gcnew Dictionary<String^, DateTime>();
             blockCount = gcnew Dictionary<String^, int>();
@@ -27,7 +36,7 @@ namespace PBLWORDLEGAME {
         }
 
     public:
-        static String^ Encrypt(String^ plainText) {
+        static String^ EncryptAES(String^ plainText) {
             Aes^ aes = Aes::Create();
             try {
                 aes->Key = key;
@@ -44,7 +53,7 @@ namespace PBLWORDLEGAME {
             }
         }
 
-        static String^ Decrypt(String^ encryptedText) {
+        static String^ DecryptAES(String^ encryptedText) {
             Aes^ aes = Aes::Create();
             try {
                 aes->Key = key;
@@ -60,7 +69,22 @@ namespace PBLWORDLEGAME {
                 delete aes;
             }
         }
+        static String^ EncryptRSA(String^ plainText) {
+            RSACryptoServiceProvider^ rsaEncryptor = gcnew RSACryptoServiceProvider();
+            rsa->FromXmlString(publicKey);
 
+            array<Byte>^ data = Encoding::UTF8->GetBytes(plainText);
+            array<Byte>^ encrypted = rsaEncryptor->Encrypt(data, false);
+            return Convert::ToBase64String(encrypted);
+        }
+        static String^ DecryptRSA(String^ encryptedText) {
+            RSACryptoServiceProvider^ rsaDecryptor = gcnew RSACryptoServiceProvider();
+            rsaDecryptor->FromXmlString(privateKey);
+
+            array<Byte>^ encryptedBytes = Convert::FromBase64String(encryptedText);
+            array<Byte>^ decryptedBytes = rsaDecryptor->Decrypt(encryptedBytes, false);
+            return Encoding::UTF8->GetString(decryptedBytes);
+        }
         static String^ ComputeSHA256(String^ input) {
             array<Byte>^ inputBytes = Encoding::UTF8->GetBytes(input);
             SHA256^ sha256 = SHA256::Create();

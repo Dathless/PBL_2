@@ -1,10 +1,11 @@
-#pragma once
+﻿#pragma once
 #include <cliext/vector>
 #include "Game2_Char.h"
 #include "Game.h"
 #include <random>
 #include "User.h"
 #include "CryptoUtils.h"
+#include "Player_Congratulation.h"
 
 namespace PBLWORDLEGAME {
 
@@ -118,7 +119,7 @@ namespace PBLWORDLEGAME {
 			this->GameExit->Cursor = System::Windows::Forms::Cursors::Hand;
 			this->GameExit->Font = (gcnew System::Drawing::Font(L"Microsoft Sans Serif", 12, System::Drawing::FontStyle::Regular, System::Drawing::GraphicsUnit::Point,
 				static_cast<System::Byte>(0)));
-			this->GameExit->Location = System::Drawing::Point(12, 22);
+			this->GameExit->Location = System::Drawing::Point(16, 34);
 			this->GameExit->Name = L"GameExit";
 			this->GameExit->Size = System::Drawing::Size(92, 32);
 			this->GameExit->TabIndex = 0;
@@ -131,7 +132,7 @@ namespace PBLWORDLEGAME {
 			this->GameStart->Cursor = System::Windows::Forms::Cursors::Hand;
 			this->GameStart->Font = (gcnew System::Drawing::Font(L"Microsoft Sans Serif", 12, System::Drawing::FontStyle::Regular, System::Drawing::GraphicsUnit::Point,
 				static_cast<System::Byte>(0)));
-			this->GameStart->Location = System::Drawing::Point(607, 471);
+			this->GameStart->Location = System::Drawing::Point(632, 471);
 			this->GameStart->Name = L"GameStart";
 			this->GameStart->Size = System::Drawing::Size(96, 32);
 			this->GameStart->TabIndex = 1;
@@ -141,7 +142,8 @@ namespace PBLWORDLEGAME {
 			// 
 			// SideBar
 			// 
-			this->SideBar->BackColor = System::Drawing::Color::SlateGray;
+			this->SideBar->BackColor = System::Drawing::Color::FromArgb(static_cast<System::Int32>(static_cast<System::Byte>(128)), static_cast<System::Int32>(static_cast<System::Byte>(255)),
+				static_cast<System::Int32>(static_cast<System::Byte>(255)), static_cast<System::Int32>(static_cast<System::Byte>(255)));
 			this->SideBar->Controls->Add(this->Rank);
 			this->SideBar->Controls->Add(this->HighestScore);
 			this->SideBar->Controls->Add(this->showRule);
@@ -159,7 +161,7 @@ namespace PBLWORDLEGAME {
 			this->Rank->Anchor = System::Windows::Forms::AnchorStyles::Top;
 			this->Rank->AutoSize = true;
 			this->Rank->BackColor = System::Drawing::Color::Transparent;
-			this->Rank->Location = System::Drawing::Point(39, 30);
+			this->Rank->Location = System::Drawing::Point(44, 30);
 			this->Rank->Margin = System::Windows::Forms::Padding(0, 30, 0, 20);
 			this->Rank->Name = L"Rank";
 			this->Rank->Size = System::Drawing::Size(57, 25);
@@ -171,8 +173,8 @@ namespace PBLWORDLEGAME {
 			this->HighestScore->Anchor = System::Windows::Forms::AnchorStyles::Top;
 			this->HighestScore->AutoSize = true;
 			this->HighestScore->BackColor = System::Drawing::Color::Transparent;
-			this->HighestScore->Location = System::Drawing::Point(0, 95);
-			this->HighestScore->Margin = System::Windows::Forms::Padding(0, 20, 0, 20);
+			this->HighestScore->Location = System::Drawing::Point(10, 95);
+			this->HighestScore->Margin = System::Windows::Forms::Padding(10, 20, 0, 20);
 			this->HighestScore->Name = L"HighestScore";
 			this->HighestScore->Size = System::Drawing::Size(135, 25);
 			this->HighestScore->TabIndex = 4;
@@ -182,8 +184,8 @@ namespace PBLWORDLEGAME {
 			// 
 			this->showRule->Anchor = System::Windows::Forms::AnchorStyles::Top;
 			this->showRule->ForeColor = System::Drawing::Color::Black;
-			this->showRule->Location = System::Drawing::Point(20, 160);
-			this->showRule->Margin = System::Windows::Forms::Padding(0, 20, 0, 20);
+			this->showRule->Location = System::Drawing::Point(35, 160);
+			this->showRule->Margin = System::Windows::Forms::Padding(20, 20, 0, 20);
 			this->showRule->Name = L"showRule";
 			this->showRule->Size = System::Drawing::Size(94, 36);
 			this->showRule->TabIndex = 3;
@@ -205,11 +207,11 @@ namespace PBLWORDLEGAME {
 			// UserAns
 			// 
 			this->UserAns->Enabled = false;
-			this->UserAns->Font = (gcnew System::Drawing::Font(L"Microsoft Sans Serif", 12, System::Drawing::FontStyle::Regular, System::Drawing::GraphicsUnit::Point,
+			this->UserAns->Font = (gcnew System::Drawing::Font(L"Microsoft Sans Serif", 16, System::Drawing::FontStyle::Regular, System::Drawing::GraphicsUnit::Point,
 				static_cast<System::Byte>(0)));
-			this->UserAns->Location = System::Drawing::Point(483, 300);
+			this->UserAns->Location = System::Drawing::Point(438, 303);
 			this->UserAns->Name = L"UserAns";
-			this->UserAns->Size = System::Drawing::Size(266, 30);
+			this->UserAns->Size = System::Drawing::Size(290, 38);
 			this->UserAns->TabIndex = 4;
 			this->UserAns->Enter += gcnew System::EventHandler(this, &Game2::UserAnsEnter);
 			this->UserAns->KeyDown += gcnew System::Windows::Forms::KeyEventHandler(this, &Game2::CheckWord);
@@ -219,12 +221,12 @@ namespace PBLWORDLEGAME {
 			// 
 			this->AnsLabel->AutoSize = true;
 			this->AnsLabel->BackColor = System::Drawing::Color::Transparent;
-			this->AnsLabel->Font = (gcnew System::Drawing::Font(L"Microsoft Sans Serif", 10, System::Drawing::FontStyle::Regular, System::Drawing::GraphicsUnit::Point,
+			this->AnsLabel->Font = (gcnew System::Drawing::Font(L"Microsoft Sans Serif", 12, System::Drawing::FontStyle::Regular, System::Drawing::GraphicsUnit::Point,
 				static_cast<System::Byte>(0)));
 			this->AnsLabel->ForeColor = System::Drawing::Color::White;
-			this->AnsLabel->Location = System::Drawing::Point(361, 307);
+			this->AnsLabel->Location = System::Drawing::Point(296, 309);
 			this->AnsLabel->Name = L"AnsLabel";
-			this->AnsLabel->Size = System::Drawing::Size(88, 20);
+			this->AnsLabel->Size = System::Drawing::Size(106, 25);
 			this->AnsLabel->TabIndex = 7;
 			this->AnsLabel->Text = L"Your Word";
 			// 
@@ -232,23 +234,23 @@ namespace PBLWORDLEGAME {
 			// 
 			this->ScoreLabel->AutoSize = true;
 			this->ScoreLabel->BackColor = System::Drawing::Color::Transparent;
-			this->ScoreLabel->Font = (gcnew System::Drawing::Font(L"Microsoft Sans Serif", 10, System::Drawing::FontStyle::Regular, System::Drawing::GraphicsUnit::Point,
+			this->ScoreLabel->Font = (gcnew System::Drawing::Font(L"Microsoft Sans Serif", 12, System::Drawing::FontStyle::Regular, System::Drawing::GraphicsUnit::Point,
 				static_cast<System::Byte>(0)));
 			this->ScoreLabel->ForeColor = System::Drawing::Color::White;
-			this->ScoreLabel->Location = System::Drawing::Point(361, 381);
+			this->ScoreLabel->Location = System::Drawing::Point(296, 383);
 			this->ScoreLabel->Name = L"ScoreLabel";
-			this->ScoreLabel->Size = System::Drawing::Size(90, 20);
+			this->ScoreLabel->Size = System::Drawing::Size(106, 25);
 			this->ScoreLabel->TabIndex = 8;
 			this->ScoreLabel->Text = L"Your score";
 			// 
 			// Score
 			// 
-			this->Score->Font = (gcnew System::Drawing::Font(L"Microsoft Sans Serif", 12, System::Drawing::FontStyle::Regular, System::Drawing::GraphicsUnit::Point,
+			this->Score->Font = (gcnew System::Drawing::Font(L"Microsoft Sans Serif", 16, System::Drawing::FontStyle::Regular, System::Drawing::GraphicsUnit::Point,
 				static_cast<System::Byte>(0)));
-			this->Score->Location = System::Drawing::Point(604, 381);
+			this->Score->Location = System::Drawing::Point(559, 384);
 			this->Score->Name = L"Score";
 			this->Score->ReadOnly = true;
-			this->Score->Size = System::Drawing::Size(145, 30);
+			this->Score->Size = System::Drawing::Size(169, 38);
 			this->Score->TabIndex = 9;
 			this->Score->TextAlign = System::Windows::Forms::HorizontalAlignment::Center;
 			// 
@@ -256,12 +258,12 @@ namespace PBLWORDLEGAME {
 			// 
 			this->errMes->AutoSize = true;
 			this->errMes->BackColor = System::Drawing::Color::Transparent;
-			this->errMes->Font = (gcnew System::Drawing::Font(L"Microsoft Sans Serif", 10, System::Drawing::FontStyle::Regular, System::Drawing::GraphicsUnit::Point,
+			this->errMes->Font = (gcnew System::Drawing::Font(L"Microsoft Sans Serif", 12, System::Drawing::FontStyle::Regular, System::Drawing::GraphicsUnit::Point,
 				static_cast<System::Byte>(0)));
 			this->errMes->ForeColor = System::Drawing::Color::White;
-			this->errMes->Location = System::Drawing::Point(451, 352);
+			this->errMes->Location = System::Drawing::Point(386, 354);
 			this->errMes->Name = L"errMes";
-			this->errMes->Size = System::Drawing::Size(0, 20);
+			this->errMes->Size = System::Drawing::Size(0, 25);
 			this->errMes->TabIndex = 10;
 			// 
 			// Title
@@ -271,7 +273,7 @@ namespace PBLWORDLEGAME {
 			this->Title->Font = (gcnew System::Drawing::Font(L"Microsoft Sans Serif", 32, System::Drawing::FontStyle::Regular, System::Drawing::GraphicsUnit::Point,
 				static_cast<System::Byte>(0)));
 			this->Title->ForeColor = System::Drawing::Color::White;
-			this->Title->Location = System::Drawing::Point(301, 22);
+			this->Title->Location = System::Drawing::Point(272, 9);
 			this->Title->Name = L"Title";
 			this->Title->Size = System::Drawing::Size(230, 63);
 			this->Title->TabIndex = 11;
@@ -284,7 +286,7 @@ namespace PBLWORDLEGAME {
 			this->GameState->Font = (gcnew System::Drawing::Font(L"Microsoft Sans Serif", 12, System::Drawing::FontStyle::Regular, System::Drawing::GraphicsUnit::Point,
 				static_cast<System::Byte>(0)));
 			this->GameState->ForeColor = System::Drawing::Color::White;
-			this->GameState->Location = System::Drawing::Point(374, 106);
+			this->GameState->Location = System::Drawing::Point(318, 116);
 			this->GameState->Name = L"GameState";
 			this->GameState->Size = System::Drawing::Size(0, 25);
 			this->GameState->TabIndex = 12;
@@ -296,7 +298,7 @@ namespace PBLWORDLEGAME {
 			this->countDown->Font = (gcnew System::Drawing::Font(L"Microsoft Sans Serif", 20, System::Drawing::FontStyle::Regular, System::Drawing::GraphicsUnit::Point,
 				static_cast<System::Byte>(0)));
 			this->countDown->ForeColor = System::Drawing::Color::White;
-			this->countDown->Location = System::Drawing::Point(505, 179);
+			this->countDown->Location = System::Drawing::Point(431, 216);
 			this->countDown->Name = L"countDown";
 			this->countDown->Size = System::Drawing::Size(102, 39);
 			this->countDown->TabIndex = 13;
@@ -378,13 +380,13 @@ namespace PBLWORDLEGAME {
 				isHidden = true;
 			}
 		}
-
 	}
-	private: System::Void Exit(System::Object^ sender, System::EventArgs^ e) {
+	protected: System::Void Exit(System::Object^ sender, System::EventArgs^ e) override {
 		this->bgMusic->Stop();
 		this->Close();
 	}
-	private: System::Void Render(System::Object^ sender, System::EventArgs^ e) {
+	protected: System::Void Render(System::Object^ sender, System::EventArgs^ e) override {
+		this->GameState->Text = "";
 		this->score = 0;
 		this->Score->Text = this->score.ToString();
 		Game2_Char^ popup = gcnew Game2_Char();
@@ -405,7 +407,7 @@ namespace PBLWORDLEGAME {
 			this->UserAns->Enabled = false;
 			this->GameStart->Enabled = true;
 			this->GameState->Text = "Game Over!";
-			MessageBox::Show("Game Over! Your score is: " + this->score);
+			MessageBox::Show("Time's up!","Notification",MessageBoxButtons::OK,MessageBoxIcon::Information);
 			this->errMes->Text = "";
 			this->getWord->Clear();
 			if (this->UserLogged->getS2() < this->score) {
@@ -413,19 +415,24 @@ namespace PBLWORDLEGAME {
 				scoreUpdating(this->score);
 			}
 			userSaving(this->UserLogged);
+			String^ currentScore = this->Score->Text;
+			int ranking = getRank(this->username);
+			Player_Congratulation^ player_congrat = gcnew Player_Congratulation(UserLogged, currentScore, ranking);
+			player_congrat->ShowDialog();
 
 		}
 	}
 	private: System::Void FetchWord() {
+		this->GameState->Text = "Loading";
 		try {
-			String^ url = "https://api.datamuse.com/words?sp=" + getSizeOfWord(n) + "&max=1000";
+			String^ url = "https://api.datamuse.com/words?sp=" + getSizeOfWord(n) + "&max=10000";
 			WebClient^ client = gcnew WebClient();
 			String^ response = client->DownloadString(url);
 			array<String^>^ words = response->Split('"');
 			this->wordList.clear();
 			String^ res = "";
 			for (int i = 0; i < words->Length; i++) {
-				if (words[i]->Length == 5) { // Only valid 5-letter words
+				if (words[i]->Length == n) { 
 					if (!this->getWord->ContainsKey(words[i])) {
 						this->getWord->Add(words[i], 0);
 					}
@@ -435,6 +442,7 @@ namespace PBLWORDLEGAME {
 		}
 		catch (Exception^ ex) {
 			MessageBox::Show("Error fetching words: " + ex->Message);
+			this->GameState->Text = "Error";
 		}
 	}
 	private: System::Void CheckWord(System::Object^ sender, System::Windows::Forms::KeyEventArgs^ e){

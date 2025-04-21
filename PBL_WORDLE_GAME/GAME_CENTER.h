@@ -6,7 +6,9 @@
 #include "Dashboard_Admin.h"
 #include "Credit.h"
 #include "Account.h"
+#include "SettingManager.h"
 #include <fstream>
+
 
 namespace PBLWORDLEGAME {
 
@@ -87,8 +89,8 @@ namespace PBLWORDLEGAME {
 			// 
 			this->AutoScaleDimensions = System::Drawing::SizeF(8, 16);
 			this->AutoScaleMode = System::Windows::Forms::AutoScaleMode::Font;
-			this->BackgroundImage = (cli::safe_cast<System::Drawing::Image^>(resources->GetObject(L"$this.BackgroundImage")));
-			this->BackgroundImageLayout = System::Windows::Forms::ImageLayout::Stretch;
+			//this->BackgroundImage = (cli::safe_cast<System::Drawing::Image^>(resources->GetObject(L"$this.BackgroundImage")));
+			//this->BackgroundImageLayout = System::Windows::Forms::ImageLayout::Stretch;
 			this->ClientSize = System::Drawing::Size(782, 553);
 			this->Controls->Add(this->mainPanel);
 			this->Icon = (cli::safe_cast<System::Drawing::Icon^>(resources->GetObject(L"$this.Icon")));
@@ -102,6 +104,12 @@ namespace PBLWORDLEGAME {
 #pragma endregion
 	private: System::Void GAME_CENTER_Load(System::Object^ sender, System::EventArgs^ e) {
 		LoadLanding();//Load Landing page
+		SettingManager^ setting = SettingManager::getInstance();//load BgImg save in setting.txt
+		Bitmap^ bg = setting->loadBgImg();
+		if (bg != nullptr) {
+			this->BackgroundImage = bg;
+			this->BackgroundImageLayout = System::Windows::Forms::ImageLayout::Stretch;
+		}
 		playMusic("op");
 	}
 	private: System::Void mainPanel_Paint(System::Object^ sender, System::Windows::Forms::PaintEventArgs^ e) {

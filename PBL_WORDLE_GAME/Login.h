@@ -185,7 +185,6 @@ namespace PBLWORDLEGAME {
 			this->AutoScaleMode = System::Windows::Forms::AutoScaleMode::Font;
 			this->BackColor = System::Drawing::Color::Transparent;
 			this->BackgroundImage = (cli::safe_cast<System::Drawing::Image^>(resources->GetObject(L"$this.BackgroundImage")));
-			//this->BackgroundImage = gcnew System::Drawing::Bitmap("asset\\img\\bg1.jpg");
 			this->BackgroundImageLayout = System::Windows::Forms::ImageLayout::Stretch;
 			this->Controls->Add(this->passInp);
 			this->Controls->Add(this->usrInp);
@@ -226,25 +225,12 @@ namespace PBLWORDLEGAME {
 			goBack(this, e);
 	}
 	private: System::Void openDashBoard(System::Object^ sender, System::EventArgs^ e) {
-		//String^ enteredPassword = ComputeSHA256(this->passInp->Text);
-  // 		String^ storedPassword = "03ac674216f3e15c761ee1a5e255f067" // Giá trị SHA-256 của "1234"
-		/*if (this->usrInp->Text == "Admin" && enteredPassword == storedPassword this->passInp->Text == "1234") {
-        		enterDashBoard(this, e);
-    		}
-		else {
-			this->errMes->Text = "The username or password is invalid!";
-		}
-		if (!this->remCheckbox->Checked) this->usrInp->Text = "";
-		this->passInp->Text = "";*/
 		System::String^ usr = this->usrInp->Text;
 		System::String^ pwd = this->passInp->Text;
 		System::String^ userDir = "UserList\\";
 		System::String^ secureUsr = CryptoUtils::ComputeSHA256(usr);
 		System::String^ userPath = userDir + secureUsr + ".txt";
 		if (File::Exists(userPath)) {
-			/*StreamReader^ reader = gcnew StreamReader(userPath);
-			System::String^ line = reader->ReadLine();
-			array<System::String^>^ part = line->Split(' ');*/
 			array<System::String^>^ lines = File::ReadAllLines(userPath);
 			if (lines->Length < 3) {
 				MessageBox::Show("File Format is invalid!", "Login Failed", MessageBoxButtons::OK, MessageBoxIcon::Error);
@@ -253,7 +239,7 @@ namespace PBLWORDLEGAME {
 				System::String^ role = lines[0];
 				System::String^ storedUsr = lines[1];
 				System::String^ storedPwd = lines[2];
-				System::String^ decryptPwd = PBLWORDLEGAME::CryptoUtils::Decrypt(storedPwd);
+				System::String^ decryptPwd = PBLWORDLEGAME::CryptoUtils::DecryptAES(storedPwd);
 				if (!CryptoUtils::CanLogin(usr)) {
 					this->usrInp->Focus();
 					MessageBox::Show("Too many failed attempts. Try again later.", "Login Failed", MessageBoxButtons::OK, MessageBoxIcon::Error);

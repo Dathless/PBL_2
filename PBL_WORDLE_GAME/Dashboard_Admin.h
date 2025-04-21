@@ -370,7 +370,7 @@ namespace PBLWORDLEGAME {
 			array<String^>^ data = File::ReadAllLines(line);
 			if (data[0] == "user") {
 				String^ uname = data[1];
-				String^ pwd = CryptoUtils::Decrypt(data[2]);
+				String^ pwd = CryptoUtils::DecryptAES(data[2]);
 				int s1 = Int32::Parse(data[3]);
 				int s2 = Int32::Parse(data[4]);
 				int s3 = Int32::Parse(data[5]);

@@ -190,14 +190,14 @@ namespace PBLWORDLEGAME {
 		}
 	}
 	private: System::Void Entering(System::Object^ sender, System::EventArgs^ e) {
-		if (this->numChar->Text == "2->5") {
+		if (this->numChar->Text == "1->20") {
 			this->numChar->Text = "";
 			this->numChar->ForeColor = System::Drawing::Color::Black;
 		}
 	}
 	private: System::Void Leaving(System::Object^ sender, System::EventArgs^ e) {
 		if (this->numChar->Text == "") {
-			this->numChar->Text = "2->5";
+			this->numChar->Text = "1->20";
 			this->numChar->ForeColor = System::Drawing::Color::Gray;
 		}
 	}
