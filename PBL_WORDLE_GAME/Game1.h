@@ -15,7 +15,6 @@ using namespace System::Threading::Tasks;
 #include "User.h"
 #include "CryptoUtils.h"
 
-
 namespace PBLWORDLEGAME {
     using namespace System;
     using namespace System::ComponentModel;
@@ -32,8 +31,14 @@ namespace PBLWORDLEGAME {
         int remainingTime;
         String^ secretWord;
         String^ currentState;
+        int score;
+        int attemptsLeft;
+        bool gameActive;
 
     private:
+        System::Windows::Forms::Label^ HighestScore;
+        Dictionary<String^, int>^ getWord = gcnew Dictionary<String^, int>();
+        User^ UserLogged;
         System::ComponentModel::IContainer^ components;
         System::Windows::Forms::Button^ GameStart;
         System::Windows::Forms::TextBox^ Test;
@@ -44,13 +49,19 @@ namespace PBLWORDLEGAME {
         System::Windows::Forms::Timer^ countdownTimer;
         System::Windows::Forms::Label^ countdownLabel;
         System::Windows::Forms::Button^ SubmitGuessButton;
+        System::Windows::Forms::Label^ AttemptsLabel;
         AxWMPLib::AxWindowsMediaPlayer^ BGMusic;
+        System::Windows::Forms::Button^ HintButton;
+        cliext::vector<int> hiddenIndices;
 
     public:
         Game1(String^ usr)
         {
             InitializeComponent();
             uname = usr;
+            gameActive = false;
+            score = 0;
+            HideAllElements(); // Hide everything initially
         }
 
     protected:
@@ -65,7 +76,7 @@ namespace PBLWORDLEGAME {
     private:
         void InitializeComponent(void)
         {
-
+            this->HighestScore = (gcnew System::Windows::Forms::Label());
             this->components = (gcnew System::ComponentModel::Container());
             System::ComponentModel::ComponentResourceManager^ resources = (gcnew System::ComponentModel::ComponentResourceManager(Game1::typeid));
             this->GameStart = (gcnew System::Windows::Forms::Button());
@@ -77,9 +88,33 @@ namespace PBLWORDLEGAME {
             this->countdownTimer = (gcnew System::Windows::Forms::Timer(this->components));
             this->countdownLabel = (gcnew System::Windows::Forms::Label());
             this->SubmitGuessButton = (gcnew System::Windows::Forms::Button());
+            this->AttemptsLabel = (gcnew System::Windows::Forms::Label());
+            this->HintButton = (gcnew System::Windows::Forms::Button());
             this->BGMusic = (gcnew AxWMPLib::AxWindowsMediaPlayer());
             (cli::safe_cast<System::ComponentModel::ISupportInitialize^>(this->BGMusic))->BeginInit();
             this->SuspendLayout();
+            // 
+            // HighestScore
+            // 
+            this->HighestScore->AutoSize = true;
+            this->HighestScore->BackColor = System::Drawing::Color::Transparent;
+            this->HighestScore->Font = (gcnew System::Drawing::Font(L"Microsoft Sans Serif", 12));
+            this->HighestScore->ForeColor = System::Drawing::Color::White;
+            this->HighestScore->Location = System::Drawing::Point(400, 100); // Adjust position as needed
+            this->HighestScore->Name = L"HighestScore";
+            this->HighestScore->Size = System::Drawing::Size(135, 25);
+            this->HighestScore->TabIndex = 15;
+            this->HighestScore->Text = L"Highest Score: 0";
+            //
+            // HintButton
+            //
+            this->HintButton->ForeColor = System::Drawing::Color::DarkGreen;
+            this->HintButton->Location = System::Drawing::Point(350, 259);
+            this->HintButton->Name = L"HintButton";
+            this->HintButton->Size = System::Drawing::Size(100, 30);
+            this->HintButton->TabIndex = 10;
+            this->HintButton->Text = L"Hint";
+            this->HintButton->Click += gcnew System::EventHandler(this, &Game1::HintButton_Click);
             // 
             // GameStart
             // 
@@ -88,11 +123,12 @@ namespace PBLWORDLEGAME {
             this->GameStart->Name = L"GameStart";
             this->GameStart->Size = System::Drawing::Size(100, 30);
             this->GameStart->TabIndex = 0;
-            this->GameStart->Text = L"Start Game";
-            this->GameStart->Click += gcnew System::EventHandler(this, &Game1::Render);
+            this->GameStart->Text = L"Play";
+            this->GameStart->Click += gcnew System::EventHandler(this, &Game1::StartGame);
             // 
             // Test
             // 
+            this->Test->Enabled = false;
             this->Test->Location = System::Drawing::Point(223, 219);
             this->Test->Name = L"Test";
             this->Test->Size = System::Drawing::Size(100, 20);
@@ -104,6 +140,7 @@ namespace PBLWORDLEGAME {
             this->Score->Name = L"Score";
             this->Score->Size = System::Drawing::Size(100, 30);
             this->Score->TabIndex = 2;
+            this->Score->Text = L"Score: 0";
             // 
             // GameAns
             // 
@@ -144,9 +181,11 @@ namespace PBLWORDLEGAME {
             this->countdownLabel->Name = L"countdownLabel";
             this->countdownLabel->Size = System::Drawing::Size(100, 30);
             this->countdownLabel->TabIndex = 7;
+            this->countdownLabel->Text = L"Time: 0";
             // 
             // SubmitGuessButton
             // 
+            this->SubmitGuessButton->Enabled = false;
             this->SubmitGuessButton->ForeColor = System::Drawing::Color::Coral;
             this->SubmitGuessButton->Location = System::Drawing::Point(223, 259);
             this->SubmitGuessButton->Name = L"SubmitGuessButton";
@@ -154,6 +193,14 @@ namespace PBLWORDLEGAME {
             this->SubmitGuessButton->TabIndex = 6;
             this->SubmitGuessButton->Text = L"Submit Guess";
             this->SubmitGuessButton->Click += gcnew System::EventHandler(this, &Game1::SubmitGuess_Click);
+            // 
+            // AttemptsLabel
+            // 
+            this->AttemptsLabel->Location = System::Drawing::Point(400, 50);
+            this->AttemptsLabel->Name = L"AttemptsLabel";
+            this->AttemptsLabel->Size = System::Drawing::Size(100, 30);
+            this->AttemptsLabel->TabIndex = 9;
+            this->AttemptsLabel->Text = L"Attempts: 0";
             // 
             // BGMusic
             // 
@@ -169,6 +216,7 @@ namespace PBLWORDLEGAME {
             // 
             this->BackColor = System::Drawing::Color::Cornsilk;
             this->ClientSize = System::Drawing::Size(594, 487);
+            this->Controls->Add(this->AttemptsLabel);
             this->Controls->Add(this->BGMusic);
             this->Controls->Add(this->GameStart);
             this->Controls->Add(this->Test);
@@ -178,6 +226,8 @@ namespace PBLWORDLEGAME {
             this->Controls->Add(this->RulesButton);
             this->Controls->Add(this->SubmitGuessButton);
             this->Controls->Add(this->countdownLabel);
+            this->Controls->Add(this->HintButton);
+            this->Controls->Add(this->HighestScore);
             this->FormBorderStyle = System::Windows::Forms::FormBorderStyle::None;
             this->Name = L"Game1";
             this->StartPosition = System::Windows::Forms::FormStartPosition::CenterParent;
@@ -189,165 +239,272 @@ namespace PBLWORDLEGAME {
         }
 
     private:
+
+        void HideAllElements()
+        {
+            // Hide all elements except the Start Game button
+            this->Test->Visible = false;
+            this->Score->Visible = false;
+            this->GameAns->Visible = false;
+            this->Exit->Visible = false;
+            this->RulesButton->Visible = false;
+            this->countdownLabel->Visible = false;
+            this->SubmitGuessButton->Visible = false;
+            this->AttemptsLabel->Visible = false;
+
+            // Center the Start Game button
+            this->GameStart->Location = System::Drawing::Point(
+                (this->ClientSize.Width - this->GameStart->Width) / 2,
+                (this->ClientSize.Height - this->GameStart->Height) / 2);
+            this->HintButton->Visible = false;
+            this->GameStart->Text = L"Start Game";
+        }
+
+        void ShowAllElements()
+        {
+            // Show all elements
+            this->Test->Visible = true;
+            this->Score->Visible = true;
+            this->GameAns->Visible = true;
+            this->Exit->Visible = true;
+            this->RulesButton->Visible = true;
+            this->countdownLabel->Visible = true;
+            this->SubmitGuessButton->Visible = true;
+            this->AttemptsLabel->Visible = true;
+
+            // Reset positions to original layout
+            this->GameStart->Location = System::Drawing::Point(223, 91);
+            this->Test->Location = System::Drawing::Point(223, 219);
+            this->Score->Location = System::Drawing::Point(100, 50);
+            this->GameAns->Location = System::Drawing::Point(175, 142);
+            this->Exit->Location = System::Drawing::Point(223, 363);
+            this->RulesButton->Location = System::Drawing::Point(223, 311);
+            this->countdownLabel->Location = System::Drawing::Point(10, 10);
+            this->SubmitGuessButton->Location = System::Drawing::Point(223, 259);
+            this->AttemptsLabel->Location = System::Drawing::Point(400, 50);
+
+            // Change text to "Replay"
+            this->GameStart->Text = L"Replay";
+            this->HintButton->Visible = true;
+        }
+
         void OnLoad(Object^ sender, EventArgs^ e)
         {
             this->settings = gcnew SettingManager();
-            this->settings->Game1_Music(BGMusic); // Load background music
+            this->settings->Game1_Music(BGMusic);
         }
 
         void Exit_Click(System::Object^ sender, System::EventArgs^ e)
         {
-            this->settings->StopAxWMP(BGMusic); // Stop music when exiting
-            this->Close(); // Close the form
+            this->settings->StopAxWMP(BGMusic);
+            this->Close();
+        }
+
+        void StartGame(System::Object^ sender, System::EventArgs^ e)
+        {
+            ShowAllElements(); // Show all elements when game starts
+            this->gameActive = true;
+            this->GameStart->Enabled = false;
+            this->Test->Enabled = true;
+            this->SubmitGuessButton->Enabled = true;
+            this->score = 0;
+            this->attemptsLeft = 6;
+            this->Score->Text = "Score: 0";
+            this->AttemptsLabel->Text = "Attempts: " + attemptsLeft.ToString();
+            this->Test->Clear();
+            FetchWord();
+            StartCountdown(60); // 60 seconds countdown
         }
 
         void SubmitGuess_Click(System::Object^ sender, System::EventArgs^ e)
         {
+            if (!gameActive) return;
+
             String^ userGuess = this->Test->Text->ToUpper();
 
             // Validate the input
-            if (userGuess->Length == this->secretWord->Length)
+            if (userGuess->Length != this->secretWord->Length)
             {
-                bool correctGuess = false;
-                String^ updatedState = this->currentState;
+                MessageBox::Show("Please enter a " + this->secretWord->Length + "-letter word.");
+                return;
+            }
 
-                // Check if the guess is correct
-                for (int i = 0; i < this->secretWord->Length; i++)
-                {
-                    if (userGuess[i] == this->secretWord[i])
-                    {
-                        updatedState = updatedState->Remove(i, 1)->Insert(i, userGuess[i].ToString());
-                        correctGuess = true;
-                    }
-                }
-                int currentScore;
-                // Update the game state
-                if (correctGuess)
-                {
-                    this->currentState = updatedState;
-                    // Update UI
-                    for (int i = 0; i < this->secretWord->Length; i++)
-                    {
-                        this->GameAns->Controls[i]->Text = this->currentState[i].ToString();
-                    }
-                    currentScore++;
-                    this->Score->Text = "Score: " +currentScore.ToString(); // Tăng điểm
-                }
+            // Process the guess
+            bool correctGuess = false;
+            String^ updatedState = this->currentState;
 
-                // Check if the game is won
-                if (this->currentState == this->secretWord)
+            // Check each letter in the guess
+            for (int i = 0; i < this->secretWord->Length; i++)
+            {
+                if (userGuess[i] == this->secretWord[i])
                 {
-                    MessageBox::Show("Congratulations! You guessed the word!");
-                    this->GameStart->Enabled = true;
+                    // Correct letter in correct position
+                    updatedState = updatedState->Remove(i, 1)->Insert(i, userGuess[i].ToString());
+                    correctGuess = true;
                 }
+            }
+
+            // Update the game state
+            this->currentState = updatedState;
+            UpdateWordDisplay();
+
+            // Update score and attempts
+            if (correctGuess)
+            {
+                score += 10; // Award points for correct letters
+                this->Score->Text = "Score: " + score.ToString();
             }
             else
             {
-                MessageBox::Show("Please enter the correct number of letters.");
+                attemptsLeft--;
+                this->AttemptsLabel->Text = "Attempts: " + attemptsLeft.ToString();
             }
 
-            // Clear the input box after submission
+            // Check for win/lose conditions
+            if (this->currentState == this->secretWord)
+            {
+                EndGame(true);
+            }
+            else if (attemptsLeft <= 0)
+            {
+                EndGame(false);
+            }
+
+            // Clear the input box
             this->Test->Clear();
         }
 
-
-        void Render(System::Object^ sender, System::EventArgs^ e)
+        void UpdateWordDisplay()
         {
-            this->GameStart->Enabled = false;
-            this->Score->Text = "0";
-            this->Test->Clear();
-            FetchWord();
-            StartCountdown(20); // Start countdown timer with 60 seconds
+            this->GameAns->Controls->Clear();
+            FlowLayoutPanel^ flowPanel = gcnew FlowLayoutPanel();
+            flowPanel->Dock = DockStyle::Top;
+            flowPanel->FlowDirection = FlowDirection::LeftToRight;
+            flowPanel->AutoSize = true;
+            flowPanel->WrapContents = false;
+
+            for (int i = 0; i < this->currentState->Length; i++)
+            {
+                Label^ lbl = gcnew Label();
+                lbl->Text = this->currentState[i].ToString();
+                lbl->Font = gcnew System::Drawing::Font(L"Microsoft Sans Serif", 20);
+                lbl->AutoSize = true;
+                lbl->Margin = System::Windows::Forms::Padding(5);
+
+                // Highlight revealed letters in green
+                if (this->currentState[i] != '_') {
+                    lbl->ForeColor = System::Drawing::Color::Green;
+                }
+
+                flowPanel->Controls->Add(lbl);
+            }
+
+            this->GameAns->Controls->Add(flowPanel);
+        }
+
+        void EndGame(bool won)
+        {
+            this->gameActive = false;
+            this->countdownTimer->Stop();
+            this->GameStart->Enabled = true;
+            this->Test->Enabled = false;
+            this->SubmitGuessButton->Enabled = false;
+
+            if (won)
+            {
+                MessageBox::Show("Congratulations! You guessed the word: " + this->secretWord, "You Win!");
+            }
+            else
+            {
+                MessageBox::Show("Game Over! The word was: " + this->secretWord, "Try Again");
+            }
         }
 
         void ShowRules(System::Object^ sender, System::EventArgs^ e)
         {
-            String^ rules = "1. A random word will be displayed.\n"
-                "2. You need to guess the word by entering letters.\n"
-                "3. Each correct letter will appear in the word.\n"
-                "4. Incorrect guesses will reduce your score.\n"
-                "5. The game ends when you guess the word or time runs out.\n"
-                "6. You have a limited time to guess the word.";
+            String^ rules = "Word Guessing Game Rules:\n\n"
+                "1. A random word will be selected (all uppercase)\n"
+                "2. You have 6 attempts to guess the word\n"
+                "3. Each attempt must be the same length as the secret word\n"
+                "4. Correct letters will be revealed in their positions\n"
+                "5. You earn 10 points for each correct letter\n"
+                "6. You have 60 seconds to guess the word\n"
+                "7. The game ends when you guess the word or run out of attempts/time";
             MessageBox::Show(rules, "Game Rules");
         }
 
-        void FetchWord() {
-            HttpClient^ client = gcnew HttpClient();
-            String^ url = "https://api.datamuse.com/words?sp=?????&max=10"; // Lấy nhiều từ
-            try {
-                Task<String^>^ task = client->GetStringAsync(url);
-                task->Wait();
-                String^ response = task->Result;
+        void FetchWord()
+        {
+            // For testing, use a local word list
+            array<String^>^ wordList = gcnew array<String^> {
+                "APPLE", "BRAIN", "CHAIR", "DANCE", "EAGLE",
+                    "FRUIT", "GHOST", "HOUSE", "IGLOO", "JUICE",
+                    "KOALA", "LEMON", "MUSIC", "NIGHT", "OCEAN"
+            };
 
-                if (!String::IsNullOrEmpty(response)) {
-                    // Lấy từ ngẫu nhiên từ danh sách kết quả
-                    int start = response->IndexOf("\"word\":\"") + 8;
-                    int end = response->IndexOf("\"", start);
-                    String^ word = response->Substring(start, end - start);
-                    StartGameWithWord(word);
-                }
-                else {
-                    StartGameWithWord("Error fetching word");
-                }
-            }
-            catch (Exception^ ex) {
-                StartGameWithWord("API Error");
-            }
+            // Select a random word from the list
+            Random^ rand = gcnew Random();
+            int index = rand->Next(wordList->Length);
+            StartGameWithWord(wordList[index]);
         }
-
-
 
         void StartGameWithWord(String^ word)
         {
-            // Clear any previous controls
-            this->GameAns->Controls->Clear();
-
-            // Create a FlowLayoutPanel to handle horizontal alignment
-            FlowLayoutPanel^ flowPanel = gcnew FlowLayoutPanel();
-            flowPanel->Dock = DockStyle::Top;  // Position it at the top of the parent panel
-            flowPanel->FlowDirection = FlowDirection::LeftToRight;  // Horizontal layout
-            flowPanel->AutoSize = true;  // Allow resizing based on content
-            flowPanel->WrapContents = false;  // Prevent wrapping of controls to the next line
-
-            // Loop through each character in the word and create a label for it
-            for (int i = 0; i < word->Length; i++)
-            {
-                Label^ lbl = gcnew Label();
-                lbl->Text = "_";  // Set initial label text to "_"
-                lbl->Font = (gcnew System::Drawing::Font(L"Microsoft Sans Serif", 20));  // Adjust font size
-                lbl->AutoSize = true;  // Allow label to resize based on text content
-               lbl->Margin = System::Windows::Forms::Padding(5, 5, 5, 5);  // Correct Set margin on all sides
-                flowPanel->Controls->Add(lbl);  // Add label to the FlowLayoutPanel
-            }
-
-            // Add FlowLayoutPanel to the GameAns panel
-            this->GameAns->Controls->Add(flowPanel);
-
-            // Store the secret word and initialize currentState with underscores
-            this->secretWord = word;
+            this->secretWord = word->ToUpper();
             this->currentState = gcnew String('_', word->Length);
 
-            // Initialize the score and disable the start button (or enable based on game logic)
-            this->Score->Text = "0";
-            this->GameStart->Enabled = false;  // Disable start button during game play
+            // Initialize hidden indices
+            hiddenIndices.clear();
+            for (int i = 0; i < word->Length; i++) {
+                hiddenIndices.push_back(i);
+            }
+
+            UpdateWordDisplay();
         }
 
+        void HintButton_Click(System::Object^ sender, System::EventArgs^ e)
+        {
+            if (!gameActive || hiddenIndices.empty()) return;
 
+            // Deduct points for using hint
+            score = Math::Max(0, score - 5); // Deduct 5 points for each hint
+            this->Score->Text = "Score: " + score.ToString();
+
+            // Select a random hidden letter to reveal
+            Random^ rand = gcnew Random();
+            int hintIndex = rand->Next(hiddenIndices.size());
+            int charIndex = hiddenIndices[hintIndex];
+
+            // Update the current state
+            this->currentState = this->currentState->Remove(charIndex, 1)->Insert(charIndex, this->secretWord[charIndex].ToString());
+
+            // Remove this index from hidden indices
+            hiddenIndices.erase(hiddenIndices.begin() + hintIndex);
+
+            // Update display
+            UpdateWordDisplay();
+
+            // Check if game is won
+            if (this->currentState == this->secretWord) {
+                EndGame(true);
+            }
+        }
 
         void StartCountdown(int seconds)
         {
             this->remainingTime = seconds;
+            this->countdownLabel->Text = "Time: " + seconds.ToString();
             this->countdownTimer->Start();
         }
 
         void OnCountdownTick(System::Object^ sender, System::EventArgs^ e)
         {
+            this->remainingTime--;
             this->countdownLabel->Text = "Time: " + this->remainingTime.ToString();
-            if (--this->remainingTime <= 0)
+
+            if (this->remainingTime <= 0)
             {
-                this->countdownTimer->Stop();
-                MessageBox::Show("Time's up!");
-                MessageBox::Show("The word is: ");
+                EndGame(false);
             }
         }
     };
