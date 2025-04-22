@@ -83,6 +83,12 @@
     <ClInclude Include="SettingManager.h">
       <Filter>Header Files</Filter>
     </ClInclude>
+    <ClInclude Include="Setting.h">
+      <Filter>Header Files\Content</Filter>
+    </ClInclude>
+    <ClInclude Include="BrowsePopup.h">
+      <Filter>Header Files\Popup_Model</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ResourceCompile Include="PBL_WORDLE_GAME.rc">

@@ -4,6 +4,7 @@
 #include "Game.h"
 #include <random>
 #include "User.h"
+#include "SettingManager.h"
 #include "CryptoUtils.h"
 #include "Player_Congratulation.h"
 
@@ -22,6 +23,8 @@ namespace PBLWORDLEGAME {
 	using namespace System::Threading::Tasks;
 	using namespace System::IO;
 	using namespace System::Media;
+	using namespace WMPLib;
+	using namespace AxWMPLib;
 
 	/// <summary>
 	/// Summary for Game2
@@ -45,7 +48,9 @@ namespace PBLWORDLEGAME {
 	private: System::Windows::Forms::Label^ Title;
 	private: System::Windows::Forms::Label^ GameState;
 	private: System::Windows::Forms::Label^ countDown;
-	private: SoundPlayer^ bgMusic;
+	private: SoundPlayer^ clicking;
+	private: AxWMPLib::AxWindowsMediaPlayer^ BGMusic;
+	private: SettingManager^ settings;
 	public:
 		Game2(String^ uname)
 		{
@@ -70,11 +75,8 @@ namespace PBLWORDLEGAME {
 	private: System::Windows::Forms::Button^ GameExit;
 	private: System::Windows::Forms::Button^ GameStart;
 	private: System::Windows::Forms::FlowLayoutPanel^ SideBar;
-
 	private: System::Windows::Forms::Label^ Rank;
 	private: System::Windows::Forms::Button^ showRule;
-
-
 	private: System::Windows::Forms::Button^ toggleSidebar;
 	private: System::Windows::Forms::Label^ HighestScore;
 
@@ -111,7 +113,9 @@ namespace PBLWORDLEGAME {
 			this->Title = (gcnew System::Windows::Forms::Label());
 			this->GameState = (gcnew System::Windows::Forms::Label());
 			this->countDown = (gcnew System::Windows::Forms::Label());
+			this->BGMusic = (gcnew AxWMPLib::AxWindowsMediaPlayer());
 			this->SideBar->SuspendLayout();
+			(cli::safe_cast<System::ComponentModel::ISupportInitialize^>(this->BGMusic))->BeginInit();
 			this->SuspendLayout();
 			// 
 			// GameExit
@@ -304,6 +308,16 @@ namespace PBLWORDLEGAME {
 			this->countDown->TabIndex = 13;
 			this->countDown->Text = L"Time:";
 			// 
+			// BGMusic
+			// 
+			this->BGMusic->Enabled = true;
+			this->BGMusic->Location = System::Drawing::Point(604, 102);
+			this->BGMusic->Name = L"BGMusic";
+			this->BGMusic->OcxState = (cli::safe_cast<System::Windows::Forms::AxHost::State^>(resources->GetObject(L"BGMusic.OcxState")));
+			this->BGMusic->Size = System::Drawing::Size(75, 23);
+			this->BGMusic->TabIndex = 14;
+			this->BGMusic->Visible = false;
+			// 
 			// Game2
 			// 
 			this->AutoScaleDimensions = System::Drawing::SizeF(8, 16);
@@ -311,6 +325,7 @@ namespace PBLWORDLEGAME {
 			this->BackgroundImage = (cli::safe_cast<System::Drawing::Image^>(resources->GetObject(L"$this.BackgroundImage")));
 			this->BackgroundImageLayout = System::Windows::Forms::ImageLayout::Stretch;
 			this->ClientSize = System::Drawing::Size(782, 553);
+			this->Controls->Add(this->BGMusic);
 			this->Controls->Add(this->countDown);
 			this->Controls->Add(this->GameState);
 			this->Controls->Add(this->Title);
@@ -331,12 +346,15 @@ namespace PBLWORDLEGAME {
 			this->Load += gcnew System::EventHandler(this, &Game2::GameLoading);
 			this->SideBar->ResumeLayout(false);
 			this->SideBar->PerformLayout();
+			(cli::safe_cast<System::ComponentModel::ISupportInitialize^>(this->BGMusic))->EndInit();
 			this->ResumeLayout(false);
 			this->PerformLayout();
 
 		}
 #pragma endregion
 	private: System::Void GameLoading(System::Object^ sender, System::EventArgs^ e) {
+		this->settings = gcnew SettingManager();
+		settings->Game2_Music(BGMusic);
 		userLoading(this->username);
 		this->HighestScore->Text = "Highest Score: " + this->UserLogged->getS2();
 		this->UserAns->Text = "Enter your word!";
@@ -350,12 +368,6 @@ namespace PBLWORDLEGAME {
 		this->sidebarTimer = gcnew Timer();
 		this->sidebarTimer->Interval = 5;
 		this->sidebarTimer->Tick += gcnew System::EventHandler(this, &Game2::AnimateSidebar);
-		playMusic("continue");
-	}
-	private: System::Void playMusic(System::String^ filesound) {
-		this->bgMusic->Stop();
-		this->bgMusic = gcnew SoundPlayer("asset\\sound\\" + filesound + ".wav");
-		this->bgMusic->PlayLooping();
 	}
 	private: System::Void ToggleSidebar(System::Object^ sender, System::EventArgs^ e) {
 		(this->toggleSidebar->Text == "<<") ? this->toggleSidebar->Text = ">>" : this->toggleSidebar->Text = "<<";
@@ -382,7 +394,7 @@ namespace PBLWORDLEGAME {
 		}
 	}
 	protected: System::Void Exit(System::Object^ sender, System::EventArgs^ e) override {
-		this->bgMusic->Stop();
+		this->settings->StopAxWMP(BGMusic);
 		this->Close();
 	}
 	protected: System::Void Render(System::Object^ sender, System::EventArgs^ e) override {

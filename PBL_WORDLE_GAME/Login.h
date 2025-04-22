@@ -203,17 +203,6 @@ namespace PBLWORDLEGAME {
 
 		}
 #pragma endregion
-	/*private: System::String^ ComputeSHA256(String^ input) {
-	    std::string inputStr = msclr::interop::marshal_as<std::string>(input);
-	    unsigned char hash[SHA256_DIGEST_LENGTH];
-	    SHA256((unsigned char*)inputStr.c_str(), inputStr.length(), hash);
-	
-	    StringBuilder^ sb = gcnew StringBuilder();
-	    for (int i = 0; i < SHA256_DIGEST_LENGTH; i++) {
-	        sb->Append(hash[i].ToString("x2"));
-	    }
-	    return sb->ToString();
-	}*/
 	private: System::Void Login_Load(System::Object^ sender, System::EventArgs^ e) {
 		this->usrInp->Focus();
 		if (!this->remCheckbox->Checked) {

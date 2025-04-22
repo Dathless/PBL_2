@@ -27,8 +27,9 @@ namespace PBLWORDLEGAME {
 		public: SoundPlayer^ bgMusic;
 		public: SoundPlayer^ clickTrack;
 		event EventHandler^ goBack;
-		event EventHandler^ enterGame1;
+		event EventHandler^ enterGame2;
 		public: User^ UserLogged;
+		event EventHandler^ backDashBoard;
 		DashBoard(System::String^ usr)
 		{
 			InitializeComponent();
@@ -459,14 +460,12 @@ namespace PBLWORDLEGAME {
 	}
 	private: System::Void DashBoard_Load(System::Object^ sender, System::EventArgs^ e) {
 		makeCircle(avtBox);
-		playMusic("bgMusic");
 	}
 	private: System::Void backToLanding(System::Object^ sender, System::EventArgs^ e) {
-		Clicking();
 		goBack(this, e);
 	}
 	private: System::Void passChanging(System::Object^ sender, System::EventArgs^ e){
-		Clicking();
+
 	}
 private: System::Void openGame1(System::Object^ sender, System::EventArgs^ e) {
 	// Instantiate Game1 class (assuming it's in the WordGuessGame namespace)
@@ -480,21 +479,11 @@ private: System::Void openGame1(System::Object^ sender, System::EventArgs^ e) {
 }
 
 	private: System::Void openGame2(System::Object^ sender, System::EventArgs^ e) {
+		enterGame2(this, e);
 		Game2^ game2 = gcnew Game2(this->usrname);
-		enterGame1(this, e);
 		game2->ShowDialog();
-		this->bgMusic->PlayLooping();
+		backDashBoard(this, e);
 	}
-	private: System::Void playMusic(System::String^ filesound) {
-		this->bgMusic->Stop();
-		this->bgMusic = gcnew SoundPlayer("asset\\sound\\" + filesound + ".wav");
-		this->bgMusic->PlayLooping();
-	}
-	private: System::Void Clicking() {
-		this->bgMusic->Stop();
-		this->clickTrack = gcnew SoundPlayer("asset\\sound\\click.wav");
-		this->clickTrack->PlaySync();
-		this->bgMusic->PlayLooping();
-	}
+	
 };
 }

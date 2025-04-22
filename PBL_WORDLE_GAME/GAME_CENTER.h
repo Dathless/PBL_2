@@ -4,6 +4,7 @@
 #include "Register.h"
 #include "DashBoard.h"
 #include "Dashboard_Admin.h"
+#include "Setting.h"
 #include "Credit.h"
 #include "Account.h"
 #include "SettingManager.h"
@@ -31,9 +32,11 @@ namespace PBLWORDLEGAME {
 	private: Register^ regis;
 	private: DashBoard^ dashBoard;
 	private: Dashboard_Admin^ adminDashBoard;
+	private: Setting^ setting;
 	private: Credit^ credit;
 	private: System::String^ user;
-	private: SoundPlayer^ bgMusic;
+	private: AxWMPLib::AxWindowsMediaPlayer^ BGMusic;
+	private: SettingManager^ settings;
 	public:
 		GAME_CENTER(void)
 		{
@@ -74,43 +77,54 @@ namespace PBLWORDLEGAME {
 		{
 			System::ComponentModel::ComponentResourceManager^ resources = (gcnew System::ComponentModel::ComponentResourceManager(GAME_CENTER::typeid));
 			this->mainPanel = (gcnew System::Windows::Forms::Panel());
+			this->BGMusic = (gcnew AxWMPLib::AxWindowsMediaPlayer());
+			this->mainPanel->SuspendLayout();
+			(cli::safe_cast<System::ComponentModel::ISupportInitialize^>(this->BGMusic))->BeginInit();
 			this->SuspendLayout();
 			// 
 			// mainPanel
 			// 
 			this->mainPanel->BackColor = System::Drawing::Color::Transparent;
+			this->mainPanel->Controls->Add(this->BGMusic);
 			this->mainPanel->Location = System::Drawing::Point(0, 0);
 			this->mainPanel->Name = L"mainPanel";
 			this->mainPanel->Size = System::Drawing::Size(782, 553);
 			this->mainPanel->TabIndex = 0;
 			this->mainPanel->Paint += gcnew System::Windows::Forms::PaintEventHandler(this, &GAME_CENTER::mainPanel_Paint);
 			// 
+			// BGMusic
+			// 
+			this->BGMusic->Enabled = true;
+			this->BGMusic->Location = System::Drawing::Point(636, 29);
+			this->BGMusic->Name = L"BGMusic";
+			this->BGMusic->OcxState = (cli::safe_cast<System::Windows::Forms::AxHost::State^>(resources->GetObject(L"BGMusic.OcxState")));
+			this->BGMusic->Size = System::Drawing::Size(110, 36);
+			this->BGMusic->TabIndex = 0;
+			this->BGMusic->Visible = false;
+			// 
 			// GAME_CENTER
 			// 
 			this->AutoScaleDimensions = System::Drawing::SizeF(8, 16);
 			this->AutoScaleMode = System::Windows::Forms::AutoScaleMode::Font;
-			//this->BackgroundImage = (cli::safe_cast<System::Drawing::Image^>(resources->GetObject(L"$this.BackgroundImage")));
-			//this->BackgroundImageLayout = System::Windows::Forms::ImageLayout::Stretch;
 			this->ClientSize = System::Drawing::Size(782, 553);
 			this->Controls->Add(this->mainPanel);
 			this->Icon = (cli::safe_cast<System::Drawing::Icon^>(resources->GetObject(L"$this.Icon")));
 			this->Name = L"GAME_CENTER";
 			this->StartPosition = System::Windows::Forms::FormStartPosition::CenterScreen;
 			this->Text = L"GAME_CENTER";
-			this->Load += gcnew System::EventHandler(this, &GAME_CENTER::GAME_CENTER_Load);
+			this->Load += gcnew System::EventHandler(this, &GAME_CENTER::OnLoad);
+			this->mainPanel->ResumeLayout(false);
+			(cli::safe_cast<System::ComponentModel::ISupportInitialize^>(this->BGMusic))->EndInit();
 			this->ResumeLayout(false);
 
 		}
 #pragma endregion
-	private: System::Void GAME_CENTER_Load(System::Object^ sender, System::EventArgs^ e) {
+	private: System::Void OnLoad(System::Object^ sender, System::EventArgs^ e) {
 		LoadLanding();//Load Landing page
-		SettingManager^ setting = SettingManager::getInstance();//load BgImg save in setting.txt
-		Bitmap^ bg = setting->loadBgImg();
-		if (bg != nullptr) {
-			this->BackgroundImage = bg;
-			this->BackgroundImageLayout = System::Windows::Forms::ImageLayout::Stretch;
-		}
-		playMusic("op");
+		this->settings = gcnew SettingManager();//setting manager ( bg Img, music, ... )
+		settings->Landing_BgImg(this);
+		settings->Landing_Music(this->BGMusic);
+		
 	}
 	private: System::Void mainPanel_Paint(System::Object^ sender, System::Windows::Forms::PaintEventArgs^ e) {
 	}
@@ -120,6 +134,7 @@ namespace PBLWORDLEGAME {
 		this->landing->Dock = System::Windows::Forms::DockStyle::Fill;
 		this->landing->enterLogin += gcnew System::EventHandler(this, &GAME_CENTER::showLogin);
 		this->landing->enterRegis += gcnew System::EventHandler(this, &GAME_CENTER::showRegis);
+		this->landing->enterSetting += gcnew System::EventHandler(this, &GAME_CENTER::showSetting);
 		this->landing->enterCredit += gcnew System::EventHandler(this, &GAME_CENTER::showCredit);
 		this->landing->quitForm += gcnew System::EventHandler(this, &GAME_CENTER::quitGame);
 		this->mainPanel->Controls->Add(landing);
@@ -142,6 +157,14 @@ namespace PBLWORDLEGAME {
 		this->regis->goBack += gcnew System::EventHandler(this, &GAME_CENTER::GoToBack);
 		this->mainPanel->Controls->Add(regis);
 	}
+	private: System::Void showSetting(System::Object^ sender, System::EventArgs^ e) {
+		this->mainPanel->Controls->Clear();
+		this->setting = gcnew Setting();
+		this->setting->Dock = DockStyle::Fill;
+		this->setting->goBack += gcnew System::EventHandler(this, &GAME_CENTER::GoToBack);
+		this->setting->ApplyEvent += gcnew System::EventHandler(this, &GAME_CENTER::OnLoad);
+		this->mainPanel->Controls->Add(setting);
+	}
 	private: System::Void showCredit(System::Object^ sender, System::EventArgs^ e) {
 		this->mainPanel->Controls->Clear();
 		// Create Credit form
@@ -157,7 +180,7 @@ namespace PBLWORDLEGAME {
 	private: System::Void BackToLanding(System::Object^ sender, System::EventArgs^ e) {
 		this->mainPanel->Controls->Clear();
 		this->mainPanel->Controls->Add(landing);
-		playMusic("op");
+		this->settings->Landing_Music(BGMusic);
 	}
 
 	private: System::Void showDashBoard(System::Object^ sender, System::EventArgs^ e) {
@@ -166,7 +189,10 @@ namespace PBLWORDLEGAME {
 		this->dashBoard = gcnew DashBoard(usr);
 		this->dashBoard->Dock = System::Windows::Forms::DockStyle::Fill;
 		this->dashBoard->goBack += gcnew System::EventHandler(this, &GAME_CENTER::BackToLanding);
+		this->dashBoard->enterGame2 += gcnew System::EventHandler(this, &GAME_CENTER::pauseMusic);
+		this->dashBoard->backDashBoard += gcnew System::EventHandler(this, &GAME_CENTER::continueMusic);
 		this->mainPanel->Controls->Add(dashBoard);
+		this->settings->Dashboard_Music(this->BGMusic);
 	}
 	private: System::Void showAdminDashBoard(System::Object^ sender, System::EventArgs^ e) {
 		this->mainPanel->Controls->Clear();
@@ -175,14 +201,19 @@ namespace PBLWORDLEGAME {
 		this->adminDashBoard->Dock = System::Windows::Forms::DockStyle::Fill;
 		this->adminDashBoard->goBack += gcnew System::EventHandler(this, &GAME_CENTER::BackToLanding);
 		this->mainPanel->Controls->Add(adminDashBoard);
+		this->settings->Dashboard_Music(this->BGMusic);
+	}
+	private: System::Void pauseMusic(Object^ sender, EventArgs^ e) {
+		this->settings->PauseAxWMP(BGMusic);
+
+	}
+	private: System::Void continueMusic(Object^ sender, EventArgs^ e) {
+		this->settings->Dashboard_Music(BGMusic);
 	}
 	private: System::Void quitGame(System::Object^ sender, System::EventArgs^ e) {
+		this->BGMusic->Ctlcontrols->stop();
 		this->Close();
 	}
-	private: System::Void playMusic(System::String^ filesound) {
-		this->bgMusic->Stop();
-		this->bgMusic = gcnew SoundPlayer("asset\\sound\\" + filesound + ".wav");
-		this->bgMusic->PlayLooping();
-	}
+	
 	};
 }

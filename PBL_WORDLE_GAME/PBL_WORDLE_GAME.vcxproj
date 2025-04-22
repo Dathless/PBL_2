@@ -127,6 +127,7 @@
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Admin.h" />
+    <ClInclude Include="BrowsePopup.h" />
     <ClInclude Include="ChangePass.h">
       <FileType>CppForm</FileType>
     </ClInclude>
@@ -156,6 +157,9 @@
     <ClInclude Include="Account.h" />
     <ClInclude Include="Player_Congratulation.h">
       <FileType>CppForm</FileType>
+    </ClInclude>
+    <ClInclude Include="Setting.h">
+      <FileType>CppControl</FileType>
     </ClInclude>
     <ClInclude Include="SettingManager.h" />
     <ClInclude Include="User.h" />
@@ -206,6 +210,9 @@
     </EmbeddedResource>
     <EmbeddedResource Include="Register.resx">
       <DependentUpon>Register.h</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Setting.resx">
+      <DependentUpon>Setting.h</DependentUpon>
     </EmbeddedResource>
   </ItemGroup>
   <ItemGroup>

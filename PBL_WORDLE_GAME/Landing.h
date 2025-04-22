@@ -21,6 +21,7 @@ namespace PBLWORDLEGAME {
 		event EventHandler^ enterLogin;
 		event EventHandler^ enterRegis;
 		event EventHandler^ enterCredit;
+		event EventHandler^ enterSetting;
 		event EventHandler^ quitForm;
 		Landing(void)
 		{
@@ -151,6 +152,7 @@ namespace PBLWORDLEGAME {
 			this->settingLabel->TabStop = true;
 			this->settingLabel->Text = L"SETTING";
 			this->settingLabel->TextAlign = System::Drawing::ContentAlignment::MiddleCenter;
+			this->settingLabel->LinkClicked += gcnew System::Windows::Forms::LinkLabelLinkClickedEventHandler(this, &Landing::openSetting);
 			// 
 			// creLabel
 			// 
@@ -204,9 +206,6 @@ namespace PBLWORDLEGAME {
 			this->AutoScaleDimensions = System::Drawing::SizeF(8, 16);
 			this->AutoScaleMode = System::Windows::Forms::AutoScaleMode::Font;
 			this->BackColor = System::Drawing::Color::Transparent;
-			//this->BackgroundImage = (cli::safe_cast<System::Drawing::Image^>(resources->GetObject(L"$this.BackgroundImage")));
-			//this->BackgroundImage = gcnew System::Drawing::Bitmap("asset\\img\\bg1.jpg");
-			//this->BackgroundImageLayout = System::Windows::Forms::ImageLayout::Stretch;
 			this->Controls->Add(this->flowLayoutPanel1);
 			this->Controls->Add(this->subTitle);
 			this->Controls->Add(this->Title);
@@ -225,6 +224,9 @@ namespace PBLWORDLEGAME {
 		}
 		private: System::Void openRegis(System::Object^ sender, System::Windows::Forms::LinkLabelLinkClickedEventArgs^ e) {
 			enterRegis(this, e);
+		}
+		private: System::Void openSetting(System::Object^ sender, System::Windows::Forms::LinkLabelLinkClickedEventArgs^ e) {
+			enterSetting(this, e);
 		}
 		private: System::Void openCredit(System::Object^ sender, System::Windows::Forms::LinkLabelLinkClickedEventArgs^ e) {
 			enterCredit(this, e);
