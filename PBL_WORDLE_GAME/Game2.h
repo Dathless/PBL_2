@@ -36,6 +36,9 @@ namespace PBLWORDLEGAME {
         bool gameActive;
 
     private:
+        System::Windows::Forms::Label^ HighestScore;
+        Dictionary<String^, int>^ getWord = gcnew Dictionary<String^, int>();
+        User^ UserLogged;
         System::ComponentModel::IContainer^ components;
         System::Windows::Forms::Button^ GameStart;
         System::Windows::Forms::TextBox^ Test;
@@ -48,6 +51,8 @@ namespace PBLWORDLEGAME {
         System::Windows::Forms::Button^ SubmitGuessButton;
         System::Windows::Forms::Label^ AttemptsLabel;
         AxWMPLib::AxWindowsMediaPlayer^ BGMusic;
+        System::Windows::Forms::Button^ HintButton;
+        cliext::vector<int> hiddenIndices;
 
     public:
         Game1(String^ usr)
@@ -56,6 +61,7 @@ namespace PBLWORDLEGAME {
             uname = usr;
             gameActive = false;
             score = 0;
+            HideAllElements(); // Hide everything initially
         }
 
     protected:
@@ -70,6 +76,7 @@ namespace PBLWORDLEGAME {
     private:
         void InitializeComponent(void)
         {
+            this->HighestScore = (gcnew System::Windows::Forms::Label());
             this->components = (gcnew System::ComponentModel::Container());
             System::ComponentModel::ComponentResourceManager^ resources = (gcnew System::ComponentModel::ComponentResourceManager(Game1::typeid));
             this->GameStart = (gcnew System::Windows::Forms::Button());
@@ -82,9 +89,32 @@ namespace PBLWORDLEGAME {
             this->countdownLabel = (gcnew System::Windows::Forms::Label());
             this->SubmitGuessButton = (gcnew System::Windows::Forms::Button());
             this->AttemptsLabel = (gcnew System::Windows::Forms::Label());
+            this->HintButton = (gcnew System::Windows::Forms::Button());
             this->BGMusic = (gcnew AxWMPLib::AxWindowsMediaPlayer());
             (cli::safe_cast<System::ComponentModel::ISupportInitialize^>(this->BGMusic))->BeginInit();
             this->SuspendLayout();
+            // 
+            // HighestScore
+            // 
+            this->HighestScore->AutoSize = true;
+            this->HighestScore->BackColor = System::Drawing::Color::Transparent;
+            this->HighestScore->Font = (gcnew System::Drawing::Font(L"Microsoft Sans Serif", 12));
+            this->HighestScore->ForeColor = System::Drawing::Color::White;
+            this->HighestScore->Location = System::Drawing::Point(400, 100); // Adjust position as needed
+            this->HighestScore->Name = L"HighestScore";
+            this->HighestScore->Size = System::Drawing::Size(135, 25);
+            this->HighestScore->TabIndex = 15;
+            this->HighestScore->Text = L"Highest Score: 0";
+            //
+            // HintButton
+            //
+            this->HintButton->ForeColor = System::Drawing::Color::DarkGreen;
+            this->HintButton->Location = System::Drawing::Point(350, 259);
+            this->HintButton->Name = L"HintButton";
+            this->HintButton->Size = System::Drawing::Size(100, 30);
+            this->HintButton->TabIndex = 10;
+            this->HintButton->Text = L"Hint";
+            this->HintButton->Click += gcnew System::EventHandler(this, &Game1::HintButton_Click);
             // 
             // GameStart
             // 
@@ -93,7 +123,7 @@ namespace PBLWORDLEGAME {
             this->GameStart->Name = L"GameStart";
             this->GameStart->Size = System::Drawing::Size(100, 30);
             this->GameStart->TabIndex = 0;
-            this->GameStart->Text = L"Start Game";
+            this->GameStart->Text = L"Play";
             this->GameStart->Click += gcnew System::EventHandler(this, &Game1::StartGame);
             // 
             // Test
@@ -196,6 +226,8 @@ namespace PBLWORDLEGAME {
             this->Controls->Add(this->RulesButton);
             this->Controls->Add(this->SubmitGuessButton);
             this->Controls->Add(this->countdownLabel);
+            this->Controls->Add(this->HintButton);
+            this->Controls->Add(this->HighestScore);
             this->FormBorderStyle = System::Windows::Forms::FormBorderStyle::None;
             this->Name = L"Game1";
             this->StartPosition = System::Windows::Forms::FormStartPosition::CenterParent;
@@ -203,9 +235,59 @@ namespace PBLWORDLEGAME {
             (cli::safe_cast<System::ComponentModel::ISupportInitialize^>(this->BGMusic))->EndInit();
             this->ResumeLayout(false);
             this->PerformLayout();
+
         }
 
     private:
+
+        void HideAllElements()
+        {
+            // Hide all elements except the Start Game button
+            this->Test->Visible = false;
+            this->Score->Visible = false;
+            this->GameAns->Visible = false;
+            this->Exit->Visible = false;
+            this->RulesButton->Visible = false;
+            this->countdownLabel->Visible = false;
+            this->SubmitGuessButton->Visible = false;
+            this->AttemptsLabel->Visible = false;
+
+            // Center the Start Game button
+            this->GameStart->Location = System::Drawing::Point(
+                (this->ClientSize.Width - this->GameStart->Width) / 2,
+                (this->ClientSize.Height - this->GameStart->Height) / 2);
+            this->HintButton->Visible = false;
+            this->GameStart->Text = L"Start Game";
+        }
+
+        void ShowAllElements()
+        {
+            // Show all elements
+            this->Test->Visible = true;
+            this->Score->Visible = true;
+            this->GameAns->Visible = true;
+            this->Exit->Visible = true;
+            this->RulesButton->Visible = true;
+            this->countdownLabel->Visible = true;
+            this->SubmitGuessButton->Visible = true;
+            this->AttemptsLabel->Visible = true;
+
+            // Reset positions to original layout
+            this->GameStart->Location = System::Drawing::Point(223, 91);
+            this->Test->Location = System::Drawing::Point(223, 219);
+            this->Score->Location = System::Drawing::Point(100, 50);
+            this->GameAns->Location = System::Drawing::Point(175, 142);
+            this->Exit->Location = System::Drawing::Point(223, 363);
+            this->RulesButton->Location = System::Drawing::Point(223, 311);
+            this->countdownLabel->Location = System::Drawing::Point(10, 10);
+            this->SubmitGuessButton->Location = System::Drawing::Point(223, 259);
+            this->AttemptsLabel->Location = System::Drawing::Point(400, 50);
+
+            // Change text to "Replay"
+            this->GameStart->Text = L"Replay";
+            this->HintButton->Visible = true;
+        }
+
         void OnLoad(Object^ sender, EventArgs^ e)
         {
             this->settings = gcnew SettingManager();
@@ -220,6 +302,7 @@ namespace PBLWORDLEGAME {
 
         void StartGame(System::Object^ sender, System::EventArgs^ e)
         {
+            ShowAllElements(); // Show all elements when game starts
             this->gameActive = true;
             this->GameStart->Enabled = false;
             this->Test->Enabled = true;
@@ -307,6 +390,12 @@ namespace PBLWORDLEGAME {
                 lbl->Font = gcnew System::Drawing::Font(L"Microsoft Sans Serif", 20);
                 lbl->AutoSize = true;
                 lbl->Margin = System::Windows::Forms::Padding(5);
+
+                // Highlight revealed letters in green
+                if (this->currentState[i] != '_') {
+                    lbl->ForeColor = System::Drawing::Color::Green;
+                }
+
                 flowPanel->Controls->Add(lbl);
             }
 
@@ -357,37 +446,48 @@ namespace PBLWORDLEGAME {
             Random^ rand = gcnew Random();
             int index = rand->Next(wordList->Length);
             StartGameWithWord(wordList[index]);
-
-            // Note: The API code is commented out for reliability
-            /*
-            HttpClient^ client = gcnew HttpClient();
-            String^ url = "https://api.datamuse.com/words?sp=?????&max=10";
-            try {
-                Task<String^>^ task = client->GetStringAsync(url);
-                task->Wait();
-                String^ response = task->Result;
-
-                if (!String::IsNullOrEmpty(response)) {
-                    int start = response->IndexOf("\"word\":\"") + 8;
-                    int end = response->IndexOf("\"", start);
-                    String^ word = response->Substring(start, end - start);
-                    StartGameWithWord(word->ToUpper());
-                }
-                else {
-                    StartGameWithWord("APPLE"); // Fallback word
-                }
-            }
-            catch (Exception^ ex) {
-                StartGameWithWord("APPLE"); // Fallback word
-            }
-            */
         }
 
         void StartGameWithWord(String^ word)
         {
             this->secretWord = word->ToUpper();
             this->currentState = gcnew String('_', word->Length);
+
+            // Initialize hidden indices
+            hiddenIndices.clear();
+            for (int i = 0; i < word->Length; i++) {
+                hiddenIndices.push_back(i);
+            }
+
             UpdateWordDisplay();
+        }
+
+        void HintButton_Click(System::Object^ sender, System::EventArgs^ e)
+        {
+            if (!gameActive || hiddenIndices.empty()) return;
+
+            // Deduct points for using hint
+            score = Math::Max(0, score - 5); // Deduct 5 points for each hint
+            this->Score->Text = "Score: " + score.ToString();
+
+            // Select a random hidden letter to reveal
+            Random^ rand = gcnew Random();
+            int hintIndex = rand->Next(hiddenIndices.size());
+            int charIndex = hiddenIndices[hintIndex];
+
+            // Update the current state
+            this->currentState = this->currentState->Remove(charIndex, 1)->Insert(charIndex, this->secretWord[charIndex].ToString());
+
+            // Remove this index from hidden indices
+            hiddenIndices.erase(hiddenIndices.begin() + hintIndex);
+
+            // Update display
+            UpdateWordDisplay();
+
+            // Check if game is won
+            if (this->currentState == this->secretWord) {
+                EndGame(true);
+            }
         }
 
         void StartCountdown(int seconds)
