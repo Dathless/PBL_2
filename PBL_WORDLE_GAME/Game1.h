@@ -93,6 +93,14 @@ namespace PBLWORDLEGAME {
             this->BGMusic = (gcnew AxWMPLib::AxWindowsMediaPlayer());
             (cli::safe_cast<System::ComponentModel::ISupportInitialize^>(this->BGMusic))->BeginInit();
             this->SuspendLayout();
+            // Test
+            this->Test->Enabled = false;
+            this->Test->Location = System::Drawing::Point(223, 219);
+            this->Test->Name = L"Test";
+            this->Test->Size = System::Drawing::Size(100, 20);
+            this->Test->TabIndex = 1;
+            this->Test->AcceptsReturn = false;
+            this->Test->KeyDown += gcnew System::Windows::Forms::KeyEventHandler(this, &Game1::Test_KeyDown);
             // 
             // HighestScore
             // 
@@ -239,7 +247,15 @@ namespace PBLWORDLEGAME {
         }
 
     private:
-
+        /*
+        void Test_KeyDown(System::Object^ sender, System::Windows::Forms::KeyEventArgs^ e) {
+            if (e->KeyCode == Keys::Enter && gameActive) {
+                // Call the same method as the Submit button
+                SubmitGuess_Click(sender, e);
+                e->SuppressKeyPress = true; // Prevent the ding sound
+            }
+        }
+        */
         void HideAllElements()
         {
             // Hide all elements except the Start Game button
