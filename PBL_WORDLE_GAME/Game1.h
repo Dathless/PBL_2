@@ -1,12 +1,12 @@
 #pragma once
-
+#include "SettingManager.h"
 #include <cliext/vector>
 #include "Game.h"
 #include <random>
 #include "User.h"
 #include "CryptoUtils.h"
 
-namespace WordGuessGame {
+namespace PBLWORDLEGAME {
     using namespace System;
     using namespace System::ComponentModel;
     using namespace System::Windows::Forms;
@@ -45,70 +45,113 @@ namespace WordGuessGame {
         System::Windows::Forms::Timer^ countdownTimer;
         System::Windows::Forms::Label^ countdownLabel;
         System::Windows::Forms::Button^ SubmitGuessButton;
-        System::Media::SoundPlayer^ bgMusic;
         String^ secretWord;
         String^ currentState;
-        int remainingTime;
+    private: AxWMPLib::AxWindowsMediaPlayer^ BGMusic;
+    private: SettingManager^ settings;
+    private: int remainingTime;
 
     private:
         void InitializeComponent(void)
         {
-            this->GameStart = gcnew System::Windows::Forms::Button();
-            this->Test = gcnew System::Windows::Forms::TextBox();
-            this->Score = gcnew System::Windows::Forms::Label();
-            this->GameAns = gcnew System::Windows::Forms::Panel();
-            this->Exit = gcnew System::Windows::Forms::Button();
-            this->RulesButton = gcnew System::Windows::Forms::Button();
-            this->countdownTimer = gcnew System::Windows::Forms::Timer();
-            this->countdownLabel = gcnew System::Windows::Forms::Label();
-            this->SubmitGuessButton = gcnew System::Windows::Forms::Button();
-
-            // GameStart Button
+            this->components = (gcnew System::ComponentModel::Container());
+            System::ComponentModel::ComponentResourceManager^ resources = (gcnew System::ComponentModel::ComponentResourceManager(Game1::typeid));
+            this->GameStart = (gcnew System::Windows::Forms::Button());
+            this->Test = (gcnew System::Windows::Forms::TextBox());
+            this->Score = (gcnew System::Windows::Forms::Label());
+            this->GameAns = (gcnew System::Windows::Forms::Panel());
+            this->Exit = (gcnew System::Windows::Forms::Button());
+            this->RulesButton = (gcnew System::Windows::Forms::Button());
+            this->countdownTimer = (gcnew System::Windows::Forms::Timer(this->components));
+            this->countdownLabel = (gcnew System::Windows::Forms::Label());
+            this->SubmitGuessButton = (gcnew System::Windows::Forms::Button());
+            this->BGMusic = (gcnew AxWMPLib::AxWindowsMediaPlayer());
+            (cli::safe_cast<System::ComponentModel::ISupportInitialize^>(this->BGMusic))->BeginInit();
+            this->SuspendLayout();
+            // 
+            // GameStart
+            // 
             this->GameStart->Location = System::Drawing::Point(100, 150);
+            this->GameStart->Name = L"GameStart";
             this->GameStart->Size = System::Drawing::Size(100, 30);
-            this->GameStart->Text = "Start Game";
+            this->GameStart->TabIndex = 0;
+            this->GameStart->Text = L"Start Game";
             this->GameStart->Click += gcnew System::EventHandler(this, &Game1::Render);
-
-            // Test TextBox
+            // 
+            // Test
+            // 
             this->Test->Location = System::Drawing::Point(100, 100);
-            this->Test->Size = System::Drawing::Size(100, 30);
-
-            // Score Label
+            this->Test->Name = L"Test";
+            this->Test->Size = System::Drawing::Size(100, 22);
+            this->Test->TabIndex = 1;
+            // 
+            // Score
+            // 
             this->Score->Location = System::Drawing::Point(100, 50);
+            this->Score->Name = L"Score";
             this->Score->Size = System::Drawing::Size(100, 30);
-
-            // GameAns Panel
+            this->Score->TabIndex = 2;
+            // 
+            // GameAns
+            // 
             this->GameAns->Location = System::Drawing::Point(100, 200);
+            this->GameAns->Name = L"GameAns";
             this->GameAns->Size = System::Drawing::Size(200, 50);
-
-            // Exit Button
+            this->GameAns->TabIndex = 3;
+            // 
+            // Exit
+            // 
             this->Exit->Location = System::Drawing::Point(100, 250);
+            this->Exit->Name = L"Exit";
             this->Exit->Size = System::Drawing::Size(100, 30);
-            this->Exit->Text = "Exit";
+            this->Exit->TabIndex = 4;
+            this->Exit->Text = L"Exit";
             this->Exit->Click += gcnew System::EventHandler(this, &Game1::Exit_Click);
-
+            // 
             // RulesButton
+            // 
             this->RulesButton->Location = System::Drawing::Point(100, 300);
+            this->RulesButton->Name = L"RulesButton";
             this->RulesButton->Size = System::Drawing::Size(100, 30);
-            this->RulesButton->Text = "Game Rules";
+            this->RulesButton->TabIndex = 5;
+            this->RulesButton->Text = L"Game Rules";
             this->RulesButton->Click += gcnew System::EventHandler(this, &Game1::ShowRules);
-
-            // SubmitGuessButton
-            this->SubmitGuessButton->Location = System::Drawing::Point(100, 350);
-            this->SubmitGuessButton->Size = System::Drawing::Size(100, 30);
-            this->SubmitGuessButton->Text = "Submit Guess";
-            this->SubmitGuessButton->Click += gcnew System::EventHandler(this, &Game1::SubmitGuess_Click);
-
-            // CountdownLabel
-            this->countdownLabel->Location = System::Drawing::Point(10, 10);
-            this->countdownLabel->Size = System::Drawing::Size(100, 30);
-
-            // Timer Setup
+            // 
+            // countdownTimer
+            // 
             this->countdownTimer->Interval = 1000;
             this->countdownTimer->Tick += gcnew System::EventHandler(this, &Game1::OnCountdownTick);
-
-            // Form Setup
+            // 
+            // countdownLabel
+            // 
+            this->countdownLabel->Location = System::Drawing::Point(10, 10);
+            this->countdownLabel->Name = L"countdownLabel";
+            this->countdownLabel->Size = System::Drawing::Size(100, 30);
+            this->countdownLabel->TabIndex = 7;
+            // 
+            // SubmitGuessButton
+            // 
+            this->SubmitGuessButton->Location = System::Drawing::Point(100, 350);
+            this->SubmitGuessButton->Name = L"SubmitGuessButton";
+            this->SubmitGuessButton->Size = System::Drawing::Size(100, 30);
+            this->SubmitGuessButton->TabIndex = 6;
+            this->SubmitGuessButton->Text = L"Submit Guess";
+            this->SubmitGuessButton->Click += gcnew System::EventHandler(this, &Game1::SubmitGuess_Click);
+            // 
+            // BGMusic
+            // 
+            this->BGMusic->Enabled = true;
+            this->BGMusic->Location = System::Drawing::Point(313, 80);
+            this->BGMusic->Name = L"BGMusic";
+            this->BGMusic->OcxState = (cli::safe_cast<System::Windows::Forms::AxHost::State^>(resources->GetObject(L"BGMusic.OcxState")));
+            this->BGMusic->Size = System::Drawing::Size(75, 23);
+            this->BGMusic->TabIndex = 8;
+            this->BGMusic->Visible = false;
+            // 
+            // Game1
+            // 
             this->ClientSize = System::Drawing::Size(400, 400);
+            this->Controls->Add(this->BGMusic);
             this->Controls->Add(this->GameStart);
             this->Controls->Add(this->Test);
             this->Controls->Add(this->Score);
@@ -117,11 +160,24 @@ namespace WordGuessGame {
             this->Controls->Add(this->RulesButton);
             this->Controls->Add(this->SubmitGuessButton);
             this->Controls->Add(this->countdownLabel);
+            this->FormBorderStyle = System::Windows::Forms::FormBorderStyle::None;
+            this->Name = L"Game1";
+            this->StartPosition = System::Windows::Forms::FormStartPosition::CenterParent;
+            this->Load += gcnew System::EventHandler(this, &Game1::OnLoad);
+            (cli::safe_cast<System::ComponentModel::ISupportInitialize^>(this->BGMusic))->EndInit();
+            this->ResumeLayout(false);
+            this->PerformLayout();
+
         }
 
     private:
+        private: System::Void OnLoad(Object^ sender, EventArgs^ e) {
+            this->settings = gcnew SettingManager();
+            this->settings->Game1_Music(BGMusic);
+        }
         // Event handler for Exit button
         void Exit_Click(System::Object^ sender, System::EventArgs^ e) {
+            this->settings->StopAxWMP(BGMusic);
             this->Close();
         }
 

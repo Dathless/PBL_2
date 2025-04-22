@@ -27,7 +27,7 @@ namespace PBLWORDLEGAME {
 		public: SoundPlayer^ bgMusic;
 		public: SoundPlayer^ clickTrack;
 		event EventHandler^ goBack;
-		event EventHandler^ enterGame2;
+		event EventHandler^ enterGame;
 		public: User^ UserLogged;
 		event EventHandler^ backDashBoard;
 		DashBoard(System::String^ usr)
@@ -467,19 +467,14 @@ namespace PBLWORDLEGAME {
 	private: System::Void passChanging(System::Object^ sender, System::EventArgs^ e){
 
 	}
-private: System::Void openGame1(System::Object^ sender, System::EventArgs^ e) {
-	// Instantiate Game1 class (assuming it's in the WordGuessGame namespace)
-	WordGuessGame::Game1^ game1 = gcnew WordGuessGame::Game1(usrname);
-
-	// Show Game1 as a modal dialog
-	game1->ShowDialog();
-
-	// Optionally play background music if needed
-	this->bgMusic->PlayLooping();
-}
-
+	private: System::Void openGame1(System::Object^ sender, System::EventArgs^ e) {
+		enterGame(this, e);
+		Game1^ game1 = gcnew Game1(this->usrname);
+		game1->ShowDialog();
+		backDashBoard(this, e);
+	}
 	private: System::Void openGame2(System::Object^ sender, System::EventArgs^ e) {
-		enterGame2(this, e);
+		enterGame(this, e);
 		Game2^ game2 = gcnew Game2(this->usrname);
 		game2->ShowDialog();
 		backDashBoard(this, e);

@@ -189,7 +189,7 @@ namespace PBLWORDLEGAME {
 		this->dashBoard = gcnew DashBoard(usr);
 		this->dashBoard->Dock = System::Windows::Forms::DockStyle::Fill;
 		this->dashBoard->goBack += gcnew System::EventHandler(this, &GAME_CENTER::BackToLanding);
-		this->dashBoard->enterGame2 += gcnew System::EventHandler(this, &GAME_CENTER::pauseMusic);
+		this->dashBoard->enterGame += gcnew System::EventHandler(this, &GAME_CENTER::pauseMusic);
 		this->dashBoard->backDashBoard += gcnew System::EventHandler(this, &GAME_CENTER::continueMusic);
 		this->mainPanel->Controls->Add(dashBoard);
 		this->settings->Dashboard_Music(this->BGMusic);

@@ -331,8 +331,7 @@ namespace PBLWORDLEGAME {
 			// Dashboard_Admin
 			// 
 			this->AutoScaleMode = System::Windows::Forms::AutoScaleMode::None;
-			this->BackgroundImage = (cli::safe_cast<System::Drawing::Image^>(resources->GetObject(L"$this.BackgroundImage")));
-			this->BackgroundImageLayout = System::Windows::Forms::ImageLayout::Stretch;
+			this->BackColor = System::Drawing::Color::Transparent;
 			this->Controls->Add(this->dashboardLayout);
 			this->Name = L"Dashboard_Admin";
 			this->Size = System::Drawing::Size(782, 553);

@@ -195,9 +195,7 @@ namespace PBLWORDLEGAME {
 			// 
 			this->AutoScaleDimensions = System::Drawing::SizeF(8, 16);
 			this->AutoScaleMode = System::Windows::Forms::AutoScaleMode::Font;
-			this->BackgroundImage = (cli::safe_cast<System::Drawing::Image^>(resources->GetObject(L"$this.BackgroundImage")));
-			//this->BackgroundImage = gcnew System::Drawing::Bitmap("asset\\img\\bg1.jpg");
-			this->BackgroundImageLayout = System::Windows::Forms::ImageLayout::Stretch;
+			this->BackColor = System::Drawing::Color::Transparent;
 			this->Controls->Add(this->backBtn);
 			this->Controls->Add(this->regisBtn);
 			this->Controls->Add(this->errMes);
@@ -222,18 +220,12 @@ namespace PBLWORDLEGAME {
 	private: System::Void backToLanding(System::Object^ sender, System::EventArgs^ e) {
 		goBack(this, e);
 	}
-	//private: String^ hashPassword(String^ password) {
-	//    array<Byte>^ passwordBytes = System::Text::Encoding::UTF8->GetBytes(password);
-	//    System::Security::Cryptography::SHA256^ sha256 = System::Security::Cryptography::SHA256::Create();
-	//    array<Byte>^ hashBytes = sha256->ComputeHash(passwordBytes);
-	//    return BitConverter::ToString(hashBytes)->Replace("-", ""); // Chuyển thành chuỗi hex
 	private: System::Void PerformRegister(System::Object^ sender, System::Windows::Forms::KeyEventArgs^ e) {
 		if (e->KeyCode == System::Windows::Forms::Keys::Enter) {
 			e->SuppressKeyPress = true;
 			registerAccount(sender, e);
 		}
 	}
-	//}
 	private: System::Void registerAccount(System::Object^ sender, System::EventArgs^ e) {
 		errMes->Text = ""; // Xóa lỗi cũ khi nhập lại
 		if (usrInp->Text == "" || passInp->Text == "" || rePassInp->Text == "") {

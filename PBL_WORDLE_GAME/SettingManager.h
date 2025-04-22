@@ -71,6 +71,13 @@ namespace PBLWORDLEGAME {
 		wmp->settings->setMode("loop", true);
 		wmp->settings->autoStart = true;
 	}
+	public: System::Void Game1_Music(AxWindowsMediaPlayer^ wmp) {
+		if (String::IsNullOrWhiteSpace(Game1Music)) return;
+		wmp->URL = this->Game1Music;
+		wmp->settings->volume = vol;
+		wmp->settings->setMode("loop", true);
+		wmp->settings->autoStart = true;
+	}
 	public: System::Void Game2_Music(AxWindowsMediaPlayer^ wmp) {
 		if (String::IsNullOrWhiteSpace(Game2Music)) return;
 		wmp->URL = this->Game2Music;
