@@ -93,6 +93,7 @@ namespace PBLWORDLEGAME {
             this->BGMusic = (gcnew AxWMPLib::AxWindowsMediaPlayer());
             (cli::safe_cast<System::ComponentModel::ISupportInitialize^>(this->BGMusic))->BeginInit();
             this->SuspendLayout();
+            /*
             // Test
             this->Test->Enabled = false;
             this->Test->Location = System::Drawing::Point(223, 219);
@@ -101,6 +102,7 @@ namespace PBLWORDLEGAME {
             this->Test->TabIndex = 1;
             this->Test->AcceptsReturn = false;
             this->Test->KeyDown += gcnew System::Windows::Forms::KeyEventHandler(this, &Game1::Test_KeyDown);
+            */
             // 
             // HighestScore
             // 
