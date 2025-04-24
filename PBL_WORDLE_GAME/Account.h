@@ -27,9 +27,7 @@ namespace PBLWORDLEGAME {
 		~Account() {};
 		//Class data
 	public:
-		virtual System::String^ ToData() {
-			return role + "\n" + username + "\n" + password;
-		};
+		virtual System::String^ ToData() = 0;
 		System::String^ ToTXTObject() {
 			return "{\n  \"username\": \"" + username + "\",\n  \"password\": \"" + password + "\",\n}";
 		}
@@ -42,22 +40,15 @@ namespace PBLWORDLEGAME {
 			MessageBox::Show("User not found!", "Error", MessageBoxButtons::OK, MessageBoxIcon::Information);
 		}
 	}
-	public: System::Void changePassword(System::String^ usr, System::String^ newPwd) {
-		System::String^ filePath = "UserList\\" + usr + ".txt";
-		if (File::Exists(filePath)) {
-			StreamWriter^ file = gcnew StreamWriter(filePath);
-			file->WriteLine(usr + " " + newPwd);
-			file->Close();
-		}
-		else {
-			MessageBox::Show("User not found!", "Error", MessageBoxButtons::OK, MessageBoxIcon::Information);
-		}
-	}
+	public: virtual System::Void changePassword(System::String^ usr, System::String^ newPwd) {}
 	public: System::Void setPwd(System::String^ pwd) {
 		this->password = pwd;
 	}
 	public: System::String^ getPwd() {
-		return this->password;
+		return password;
+	}
+	protected: String^ getPath() {
+		return "UserList\\" + CryptoUtils::ComputeSHA256(username) + ".txt";
 	}
 	};
 }

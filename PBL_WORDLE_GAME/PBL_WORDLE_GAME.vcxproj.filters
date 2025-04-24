@@ -24,9 +24,6 @@
     <ClCompile Include="GAME_CENTER.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="GameRule.cpp">
-      <Filter>Header Files\Popup_Model</Filter>
-    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="GAME_CENTER.h">
@@ -98,10 +95,19 @@
     <ClInclude Include="GameRule.h">
       <Filter>Header Files\Popup_Model</Filter>
     </ClInclude>
+    <ClInclude Include="Delete_Acc.h">
+      <Filter>Header Files\Popup_Model</Filter>
+    </ClInclude>
+    <ClInclude Include="AddAccount.h">
+      <Filter>Header Files\Popup_Model</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ResourceCompile Include="PBL_WORDLE_GAME.rc">
       <Filter>Resource Files</Filter>
     </ResourceCompile>
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="README.md" />
   </ItemGroup>
 </Project>

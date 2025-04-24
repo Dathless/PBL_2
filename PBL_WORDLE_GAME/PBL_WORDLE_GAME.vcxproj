@@ -123,10 +123,12 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
-    <ClCompile Include="GameRule.cpp" />
     <ClCompile Include="GAME_CENTER.cpp" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="AddAccount.h">
+      <FileType>CppForm</FileType>
+    </ClInclude>
     <ClInclude Include="Admin.h" />
     <ClInclude Include="AnimationManager.h" />
     <ClInclude Include="BrowsePopup.h" />
@@ -142,6 +144,9 @@
     </ClInclude>
     <ClInclude Include="Dashboard_Admin.h">
       <FileType>CppControl</FileType>
+    </ClInclude>
+    <ClInclude Include="Delete_Acc.h">
+      <FileType>CppForm</FileType>
     </ClInclude>
     <ClInclude Include="Game.h" />
     <ClInclude Include="Game1.h">
@@ -180,6 +185,9 @@
     <ClInclude Include="resource.h" />
   </ItemGroup>
   <ItemGroup>
+    <EmbeddedResource Include="AddAccount.resx">
+      <DependentUpon>AddAccount.h</DependentUpon>
+    </EmbeddedResource>
     <EmbeddedResource Include="ChangePass.resx">
       <DependentUpon>ChangePass.h</DependentUpon>
     </EmbeddedResource>
@@ -191,6 +199,9 @@
     </EmbeddedResource>
     <EmbeddedResource Include="Dashboard_Admin.resx">
       <DependentUpon>Dashboard_Admin.h</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Delete_Acc.resx">
+      <DependentUpon>Delete_Acc.h</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Include="Game1.resx">
       <DependentUpon>Game1.h</DependentUpon>
@@ -244,6 +255,9 @@
       <Lcid>0</Lcid>
       <Isolated>false</Isolated>
     </COMReference>
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="README.md" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

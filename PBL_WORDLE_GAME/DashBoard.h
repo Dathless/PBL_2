@@ -2,9 +2,10 @@
 #include "fstream"
 #include "Game1.h"
 #include "Game2.h"
-#include "Account.h"
 #include "User.h"
-#include "Admin.h"
+#include "Delete_Acc.h"
+#include "CryptoUtils.h"
+#include "ChangePass.h"
 
 using namespace System;
 using namespace System::Media;
@@ -23,9 +24,12 @@ namespace PBLWORDLEGAME {
 	public ref class DashBoard : public System::Windows::Forms::UserControl
 	{
 	private: System::String^ usrname;
+	private: System::String^ usrPwd;
 	public:
 		public: SoundPlayer^ bgMusic;
 		public: SoundPlayer^ clickTrack;
+	private: System::Windows::Forms::Label^ DelAcc;
+	public:
 		event EventHandler^ goBack;
 		event EventHandler^ enterGame;
 		public: User^ UserLogged;
@@ -100,6 +104,7 @@ namespace PBLWORDLEGAME {
 			this->usrName = (gcnew System::Windows::Forms::Label());
 			this->changePass = (gcnew System::Windows::Forms::Label());
 			this->setting = (gcnew System::Windows::Forms::Label());
+			this->DelAcc = (gcnew System::Windows::Forms::Label());
 			this->logOut = (gcnew System::Windows::Forms::Label());
 			this->GameContainer = (gcnew System::Windows::Forms::FlowLayoutPanel());
 			this->listTitle = (gcnew System::Windows::Forms::Label());
@@ -165,6 +170,7 @@ namespace PBLWORDLEGAME {
 			this->playerInfo->Controls->Add(this->usrName);
 			this->playerInfo->Controls->Add(this->changePass);
 			this->playerInfo->Controls->Add(this->setting);
+			this->playerInfo->Controls->Add(this->DelAcc);
 			this->playerInfo->Controls->Add(this->logOut);
 			this->playerInfo->FlowDirection = System::Windows::Forms::FlowDirection::TopDown;
 			this->playerInfo->Location = System::Drawing::Point(3, 113);
@@ -195,7 +201,7 @@ namespace PBLWORDLEGAME {
 			this->usrName->Location = System::Drawing::Point(20, 128);
 			this->usrName->Margin = System::Windows::Forms::Padding(20, 10, 0, 10);
 			this->usrName->Name = L"usrName";
-			this->usrName->Size = System::Drawing::Size(68, 25);
+			this->usrName->Size = System::Drawing::Size(0, 25);
 			this->usrName->TabIndex = 2;
 			// 
 			// changePass
@@ -229,6 +235,21 @@ namespace PBLWORDLEGAME {
 			this->setting->TabIndex = 2;
 			this->setting->Text = L"Setting";
 			// 
+			// DelAcc
+			// 
+			this->DelAcc->AutoSize = true;
+			this->DelAcc->BackColor = System::Drawing::Color::Transparent;
+			this->DelAcc->Font = (gcnew System::Drawing::Font(L"Microsoft Sans Serif", 12, System::Drawing::FontStyle::Regular, System::Drawing::GraphicsUnit::Point,
+				static_cast<System::Byte>(0)));
+			this->DelAcc->ForeColor = System::Drawing::Color::White;
+			this->DelAcc->Location = System::Drawing::Point(22, 288);
+			this->DelAcc->Margin = System::Windows::Forms::Padding(22, 10, 3, 10);
+			this->DelAcc->Name = L"DelAcc";
+			this->DelAcc->Size = System::Drawing::Size(84, 50);
+			this->DelAcc->TabIndex = 3;
+			this->DelAcc->Text = L"Delete Account";
+			this->DelAcc->Click += gcnew System::EventHandler(this, &DashBoard::AccountDelete);
+			// 
 			// logOut
 			// 
 			this->logOut->AutoSize = true;
@@ -237,7 +258,7 @@ namespace PBLWORDLEGAME {
 			this->logOut->Font = (gcnew System::Drawing::Font(L"Microsoft Sans Serif", 12, System::Drawing::FontStyle::Regular, System::Drawing::GraphicsUnit::Point,
 				static_cast<System::Byte>(0)));
 			this->logOut->ForeColor = System::Drawing::Color::White;
-			this->logOut->Location = System::Drawing::Point(20, 288);
+			this->logOut->Location = System::Drawing::Point(20, 358);
 			this->logOut->Margin = System::Windows::Forms::Padding(20, 10, 0, 10);
 			this->logOut->Name = L"logOut";
 			this->logOut->Size = System::Drawing::Size(82, 25);
@@ -430,8 +451,7 @@ namespace PBLWORDLEGAME {
 			// 
 			this->AutoScaleDimensions = System::Drawing::SizeF(8, 16);
 			this->AutoScaleMode = System::Windows::Forms::AutoScaleMode::Font;
-			this->BackgroundImage = (cli::safe_cast<System::Drawing::Image^>(resources->GetObject(L"$this.BackgroundImage")));
-			this->BackgroundImageLayout = System::Windows::Forms::ImageLayout::Stretch;
+			this->BackColor = System::Drawing::Color::Transparent;
 			this->Controls->Add(this->dashboardLayout);
 			this->Name = L"DashBoard";
 			this->Size = System::Drawing::Size(782, 553);
@@ -460,11 +480,35 @@ namespace PBLWORDLEGAME {
 	}
 	private: System::Void DashBoard_Load(System::Object^ sender, System::EventArgs^ e) {
 		makeCircle(avtBox);
+		LoadUser();
 	}
 	private: System::Void backToLanding(System::Object^ sender, System::EventArgs^ e) {
 		goBack(this, e);
 	}
 	private: System::Void passChanging(System::Object^ sender, System::EventArgs^ e){
+		ChangePass^ passPopup = gcnew ChangePass(this->UserLogged->getPwd());
+		if (passPopup->ShowDialog() == System::Windows::Forms::DialogResult::OK) {
+			this->UserLogged->changePassword(passPopup->getPass());
+		}
+	}
+	private: Void AccountDelete(Object^ sender, EventArgs^ e) {
+		Delete_Acc^ delPopup = gcnew Delete_Acc(this->UserLogged->getPwd());
+		if (delPopup->ShowDialog() == System::Windows::Forms::DialogResult::OK) {
+			UserLogged->deletAccount();
+		}
+		goBack(this, e);
+	}
+	private: Void LoadUser() {
+		String^ encryptUser = CryptoUtils::ComputeSHA256(usrname);
+		String^ userPath = "UserList\\" + encryptUser + ".txt";
+		if (File::Exists(userPath)) {
+			array<String^>^ lines = File::ReadAllLines(userPath);
+			String^ decryptedPassword = CryptoUtils::DecryptAES(lines[2]);
+			UserLogged = gcnew User(lines[1], decryptedPassword, Int32::Parse(lines[3]), Int32::Parse(lines[4]), Int32::Parse(lines[5]));
+		}
+		else {
+			MessageBox::Show("User not found!", "Error", MessageBoxButtons::OK, MessageBoxIcon::Error);
+		}
 
 	}
 	private: System::Void openGame1(System::Object^ sender, System::EventArgs^ e) {

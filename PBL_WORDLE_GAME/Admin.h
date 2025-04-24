@@ -1,6 +1,7 @@
 #pragma once
 #include "Account.h"
 #include <fstream>
+#include "CryptoUtils.h"
 
 using namespace System;
 using namespace System::IO;
@@ -34,6 +35,13 @@ namespace PBLWORDLEGAME {
 			MessageBox::Show("Error reading file: " + ex->Message, "Error", MessageBoxButtons::OK, MessageBoxIcon::Information);
 			return;
 		}
+	}
+	public:	String^ ToData() override {
+			return role + "\n" + username + "\n" + CryptoUtils::EncryptAES(password);
+		}
+	public: Void WriteToFile() {
+		String^ filePath = getPath();
+		File::WriteAllText(filePath, ToData());
 	}
 	};
 }

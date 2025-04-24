@@ -4,6 +4,7 @@
 #include "Admin.h"
 #include <fstream>
 #include "ChangePass.h"
+#include "AddAccount.h"
 using namespace System;
 using namespace System::Media;
 using namespace System::IO;
@@ -37,6 +38,9 @@ namespace PBLWORDLEGAME {
 	private: System::Windows::Forms::DataGridViewLinkColumn^ changePwd;
 	private: System::Windows::Forms::DataGridViewButtonColumn^ deleteAcc;
 	private: Admin^ admin;
+	private: System::Windows::Forms::Label^ AddAcc;
+
+
 	public: event EventHandler^ goBack;
 	private: String^ newPass;
 	public:
@@ -62,9 +66,10 @@ namespace PBLWORDLEGAME {
 			}
 		}
 	private: System::Windows::Forms::TableLayoutPanel^ dashboardLayout;
+	private: System::Windows::Forms::Label^ Title;
 	protected:
 
-	private: System::Windows::Forms::Label^ label1;
+
 	private: System::Windows::Forms::FlowLayoutPanel^ playerInfo;
 	private: System::Windows::Forms::PictureBox^ avtBox;
 	private: System::Windows::Forms::Label^ usrName;
@@ -89,7 +94,7 @@ namespace PBLWORDLEGAME {
 		{
 			System::ComponentModel::ComponentResourceManager^ resources = (gcnew System::ComponentModel::ComponentResourceManager(Dashboard_Admin::typeid));
 			this->dashboardLayout = (gcnew System::Windows::Forms::TableLayoutPanel());
-			this->label1 = (gcnew System::Windows::Forms::Label());
+			this->Title = (gcnew System::Windows::Forms::Label());
 			this->playerInfo = (gcnew System::Windows::Forms::FlowLayoutPanel());
 			this->avtBox = (gcnew System::Windows::Forms::PictureBox());
 			this->usrName = (gcnew System::Windows::Forms::Label());
@@ -105,6 +110,7 @@ namespace PBLWORDLEGAME {
 			this->s3 = (gcnew System::Windows::Forms::DataGridViewTextBoxColumn());
 			this->changePwd = (gcnew System::Windows::Forms::DataGridViewLinkColumn());
 			this->deleteAcc = (gcnew System::Windows::Forms::DataGridViewButtonColumn());
+			this->AddAcc = (gcnew System::Windows::Forms::Label());
 			this->dashboardLayout->SuspendLayout();
 			this->playerInfo->SuspendLayout();
 			(cli::safe_cast<System::ComponentModel::ISupportInitialize^>(this->avtBox))->BeginInit();
@@ -119,7 +125,7 @@ namespace PBLWORDLEGAME {
 				17.00767F)));
 			this->dashboardLayout->ColumnStyles->Add((gcnew System::Windows::Forms::ColumnStyle(System::Windows::Forms::SizeType::Percent,
 				82.99232F)));
-			this->dashboardLayout->Controls->Add(this->label1, 1, 0);
+			this->dashboardLayout->Controls->Add(this->Title, 1, 0);
 			this->dashboardLayout->Controls->Add(this->playerInfo, 0, 1);
 			this->dashboardLayout->Controls->Add(this->userTable, 1, 1);
 			this->dashboardLayout->Location = System::Drawing::Point(0, 0);
@@ -130,19 +136,19 @@ namespace PBLWORDLEGAME {
 			this->dashboardLayout->Size = System::Drawing::Size(782, 553);
 			this->dashboardLayout->TabIndex = 0;
 			// 
-			// label1
+			// Title
 			// 
-			this->label1->Anchor = System::Windows::Forms::AnchorStyles::Left;
-			this->label1->AutoSize = true;
-			this->label1->Font = (gcnew System::Drawing::Font(L"Microsoft Sans Serif", 28, System::Drawing::FontStyle::Regular, System::Drawing::GraphicsUnit::Point,
+			this->Title->Anchor = System::Windows::Forms::AnchorStyles::Left;
+			this->Title->AutoSize = true;
+			this->Title->Font = (gcnew System::Drawing::Font(L"Microsoft Sans Serif", 28, System::Drawing::FontStyle::Regular, System::Drawing::GraphicsUnit::Point,
 				static_cast<System::Byte>(0)));
-			this->label1->ForeColor = System::Drawing::Color::White;
-			this->label1->Location = System::Drawing::Point(252, 30);
-			this->label1->Margin = System::Windows::Forms::Padding(120, 0, 3, 0);
-			this->label1->Name = L"label1";
-			this->label1->Size = System::Drawing::Size(270, 54);
-			this->label1->TabIndex = 0;
-			this->label1->Text = L"Dash Board";
+			this->Title->ForeColor = System::Drawing::Color::White;
+			this->Title->Location = System::Drawing::Point(252, 30);
+			this->Title->Margin = System::Windows::Forms::Padding(120, 0, 3, 0);
+			this->Title->Name = L"Title";
+			this->Title->Size = System::Drawing::Size(270, 54);
+			this->Title->TabIndex = 0;
+			this->Title->Text = L"Dash Board";
 			// 
 			// playerInfo
 			// 
@@ -150,6 +156,7 @@ namespace PBLWORDLEGAME {
 				static_cast<System::Int32>(static_cast<System::Byte>(255)), static_cast<System::Int32>(static_cast<System::Byte>(255)));
 			this->playerInfo->Controls->Add(this->avtBox);
 			this->playerInfo->Controls->Add(this->usrName);
+			this->playerInfo->Controls->Add(this->AddAcc);
 			this->playerInfo->Controls->Add(this->changePass);
 			this->playerInfo->Controls->Add(this->setting);
 			this->playerInfo->Controls->Add(this->logOut);
@@ -193,7 +200,7 @@ namespace PBLWORDLEGAME {
 			this->changePass->Font = (gcnew System::Drawing::Font(L"Microsoft Sans Serif", 12, System::Drawing::FontStyle::Regular, System::Drawing::GraphicsUnit::Point,
 				static_cast<System::Byte>(0)));
 			this->changePass->ForeColor = System::Drawing::Color::White;
-			this->changePass->Location = System::Drawing::Point(20, 173);
+			this->changePass->Location = System::Drawing::Point(20, 243);
 			this->changePass->Margin = System::Windows::Forms::Padding(20, 10, 0, 10);
 			this->changePass->Name = L"changePass";
 			this->changePass->Size = System::Drawing::Size(98, 50);
@@ -208,7 +215,7 @@ namespace PBLWORDLEGAME {
 			this->setting->Font = (gcnew System::Drawing::Font(L"Microsoft Sans Serif", 12, System::Drawing::FontStyle::Regular, System::Drawing::GraphicsUnit::Point,
 				static_cast<System::Byte>(0)));
 			this->setting->ForeColor = System::Drawing::Color::White;
-			this->setting->Location = System::Drawing::Point(20, 243);
+			this->setting->Location = System::Drawing::Point(20, 313);
 			this->setting->Margin = System::Windows::Forms::Padding(20, 10, 0, 10);
 			this->setting->Name = L"setting";
 			this->setting->Size = System::Drawing::Size(73, 25);
@@ -223,7 +230,7 @@ namespace PBLWORDLEGAME {
 			this->logOut->Font = (gcnew System::Drawing::Font(L"Microsoft Sans Serif", 12, System::Drawing::FontStyle::Regular, System::Drawing::GraphicsUnit::Point,
 				static_cast<System::Byte>(0)));
 			this->logOut->ForeColor = System::Drawing::Color::White;
-			this->logOut->Location = System::Drawing::Point(20, 288);
+			this->logOut->Location = System::Drawing::Point(20, 358);
 			this->logOut->Margin = System::Windows::Forms::Padding(20, 10, 0, 10);
 			this->logOut->Name = L"logOut";
 			this->logOut->Size = System::Drawing::Size(82, 25);
@@ -329,6 +336,22 @@ namespace PBLWORDLEGAME {
 			this->deleteAcc->ToolTipText = L"Delete this account";
 			this->deleteAcc->Width = 50;
 			// 
+			// AddAcc
+			// 
+			this->AddAcc->AutoSize = true;
+			this->AddAcc->BackColor = System::Drawing::Color::Transparent;
+			this->AddAcc->Cursor = System::Windows::Forms::Cursors::Hand;
+			this->AddAcc->Font = (gcnew System::Drawing::Font(L"Microsoft Sans Serif", 12, System::Drawing::FontStyle::Regular, System::Drawing::GraphicsUnit::Point,
+				static_cast<System::Byte>(0)));
+			this->AddAcc->ForeColor = System::Drawing::Color::White;
+			this->AddAcc->Location = System::Drawing::Point(23, 173);
+			this->AddAcc->Margin = System::Windows::Forms::Padding(23, 10, 3, 10);
+			this->AddAcc->Name = L"AddAcc";
+			this->AddAcc->Size = System::Drawing::Size(84, 50);
+			this->AddAcc->TabIndex = 3;
+			this->AddAcc->Text = L"Add Account";
+			this->AddAcc->Click += gcnew System::EventHandler(this, &PBLWORDLEGAME::Dashboard_Admin::CreateAccount);
+			// 
 			// Dashboard_Admin
 			// 
 			this->AutoScaleMode = System::Windows::Forms::AutoScaleMode::None;
@@ -406,6 +429,23 @@ namespace PBLWORDLEGAME {
 				this->userList->RemoveAt(col);
 			}
 		}
+	}
+	private: Void CreateAccount(Object^ sender, EventArgs^ e) {
+		AddAccount^ addPopup = gcnew AddAccount();
+		if (addPopup->ShowDialog() == System::Windows::Forms::DialogResult::OK) {
+			String^ role = addPopup->getRole();
+			String^ usr = addPopup->getUname();
+			String^ pwd = addPopup->getPass();
+			if (role == "user") {
+				User^ newUser = gcnew User(usr, pwd);
+				newUser->writeToFile();
+			}
+			else {
+				Admin^ newAdmin = gcnew Admin(usr, pwd);
+				newAdmin->WriteToFile();
+			}
+		}
+		dataLoading();
 	}
 	private: System::Void backToLanding(System::Object^ sender, System::EventArgs^ e) {
 		goBack(this, e);

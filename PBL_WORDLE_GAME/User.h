@@ -46,8 +46,19 @@ namespace PBLWORDLEGAME {
 		System::Void setS2(int s2) { game2Score = s2; }
 		System::Void setS3(int s3) { game3Score = s3; }
 	public: System::Void writeToFile() {
-		String^ fileName = "UserList\\" + CryptoUtils::ComputeSHA256(username) + ".txt";
+		String^ fileName = getPath();
 		File::WriteAllText(fileName, ToData());
+	}
+	public: System::Void changePassword(System::String^ newPwd) override {
+		String^ filePath = getPath();
+		setPwd(newPwd);
+		String^ saveData = ToData();
+		if (File::Exists(filePath)) {
+			File::WriteAllText(filePath, saveData);
+		}
+		else {
+			MessageBox::Show("User not found!", "Error", MessageBoxButtons::OK, MessageBoxIcon::Error);
+		}
 	}
 	};
 }
