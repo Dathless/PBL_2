@@ -183,6 +183,16 @@ namespace PBLWORDLEGAME {
 			this->rankTxt->TabIndex = 9;
 			this->rankTxt->TextAlign = System::Windows::Forms::HorizontalAlignment::Center;
 			// 
+			// BGMusic
+			// 
+			this->BGMusic->Enabled = true;
+			this->BGMusic->Location = System::Drawing::Point(0, 0);
+			this->BGMusic->Name = L"BGMusic";
+			this->BGMusic->OcxState = (cli::safe_cast<System::Windows::Forms::AxHost::State^>(resources->GetObject(L"BGMusic.OcxState")));
+			this->BGMusic->Size = System::Drawing::Size(75, 23);
+			this->BGMusic->TabIndex = 0;
+			this->BGMusic->Visible = false;
+			// 
 			// Player_Congratulation
 			// 
 			this->AutoScaleDimensions = System::Drawing::SizeF(12, 25);

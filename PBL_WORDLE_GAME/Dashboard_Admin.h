@@ -229,6 +229,7 @@ namespace PBLWORDLEGAME {
 			this->logOut->Size = System::Drawing::Size(82, 25);
 			this->logOut->TabIndex = 2;
 			this->logOut->Text = L"Log Out";
+			this->logOut->Click += gcnew System::EventHandler(this, &Dashboard_Admin::backToLanding);
 			// 
 			// userTable
 			// 
@@ -351,14 +352,8 @@ namespace PBLWORDLEGAME {
 		gp->AddEllipse(0, 0, pic->Width, pic->Height);
 		pic->Region = gcnew System::Drawing::Region(gp);
 	}
-	private: System::Void playMusic(System::String^ filesound) {
-		this->bgMusic->Stop();
-		this->bgMusic = gcnew SoundPlayer("asset\\sound\\" + filesound + ".wav");
-		this->bgMusic->PlayLooping();
-	}
 	private: System::Void onLoad(System::Object^ sender, System::EventArgs^ e){
 		makeCircle(avtBox);
-		playMusic("bgMusic");
 		dataLoading();
 	}
 	private: System::Void dataLoading(){
