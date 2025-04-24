@@ -85,6 +85,12 @@ namespace PBLWORDLEGAME {
 		wmp->settings->setMode("loop", true);
 		wmp->settings->autoStart = true;
 	}
+	public: Void Congrat_Sound(AxWindowsMediaPlayer^ wmp) {
+		String^ soundPath = "asset\\sound\\Applause.wav";
+		wmp->URL = soundPath;
+		wmp->settings->volume = 100;
+		ContinueAxWMP(wmp);
+	}
 	public: System::Void VolumeChanging(AxWindowsMediaPlayer^ wmp, int volu) {
 		wmp->settings->volume = volu;
 	}

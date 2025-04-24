@@ -1,5 +1,6 @@
 #pragma once
 #include "User.h"
+#include "SettingManager.h"
 namespace PBLWORDLEGAME {
 
 	using namespace System;
@@ -16,7 +17,8 @@ namespace PBLWORDLEGAME {
 	{
 	private: User^ usr;
 	private: String^ GameScore;
-
+	private: SettingManager^ settings;
+	private: AxWMPLib::AxWindowsMediaPlayer^ BGMusic;
 
 	private: int Ranking;
 	public:
@@ -80,6 +82,8 @@ namespace PBLWORDLEGAME {
 			this->scoreTxt = (gcnew System::Windows::Forms::TextBox());
 			this->hScoreTxt = (gcnew System::Windows::Forms::TextBox());
 			this->rankTxt = (gcnew System::Windows::Forms::TextBox());
+			this->BGMusic = (gcnew AxWMPLib::AxWindowsMediaPlayer());
+			(cli::safe_cast<System::ComponentModel::ISupportInitialize^>(this->BGMusic))->BeginInit();
 			this->SuspendLayout();
 			// 
 			// Title
@@ -185,6 +189,7 @@ namespace PBLWORDLEGAME {
 			this->AutoScaleMode = System::Windows::Forms::AutoScaleMode::Font;
 			this->BackgroundImage = (cli::safe_cast<System::Drawing::Image^>(resources->GetObject(L"$this.BackgroundImage")));
 			this->ClientSize = System::Drawing::Size(620, 330);
+			this->Controls->Add(this->BGMusic);
 			this->Controls->Add(this->rankTxt);
 			this->Controls->Add(this->hScoreTxt);
 			this->Controls->Add(this->scoreTxt);
@@ -205,6 +210,7 @@ namespace PBLWORDLEGAME {
 			this->Text = L"Player_Congratulation";
 			this->Load += gcnew System::EventHandler(this, &Player_Congratulation::onLoad);
 			this->KeyDown += gcnew System::Windows::Forms::KeyEventHandler(this, &Player_Congratulation::ExitPerform);
+			(cli::safe_cast<System::ComponentModel::ISupportInitialize^>(this->BGMusic))->EndInit();
 			this->ResumeLayout(false);
 			this->PerformLayout();
 
@@ -215,8 +221,12 @@ namespace PBLWORDLEGAME {
 			this->scoreTxt->Text = GameScore;
 			this->hScoreTxt->Text = usr->getS2().ToString();
 			this->rankTxt->Text = this->Ranking.ToString();
+			this->settings = gcnew SettingManager();
+			this->settings->Congrat_Sound(BGMusic);
 		}
 		private: System::Void Exit(System::Object^ sender, System::EventArgs^ e) {
+			this->DialogResult = System::Windows::Forms::DialogResult::OK;
+			this->settings->StopAxWMP(BGMusic);
 			this->Close();
 		}
 	private: System::Void ExitPerform(System::Object^ sender, System::Windows::Forms::KeyEventArgs^ e) {

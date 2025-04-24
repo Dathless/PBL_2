@@ -7,6 +7,8 @@
 #include "SettingManager.h"
 #include "CryptoUtils.h"
 #include "Player_Congratulation.h"
+#include "AnimationManager.h"
+#include "GameRule.h"
 
 namespace PBLWORDLEGAME {
 
@@ -32,9 +34,7 @@ namespace PBLWORDLEGAME {
 	public ref class Game2 : public Game
 	{
 	private: System::String^ username;
-	private: Timer^ sidebarTimer;
 	private: Timer^ gameTimer;
-	private: bool isHidden = false;
 	private: System::Windows::Forms::TextBox^ UserAns;
 	private: cliext::vector<System::String^> wordList;
 	private: Dictionary<String^, int>^ getWord = gcnew Dictionary<String^, int>();
@@ -49,8 +49,8 @@ namespace PBLWORDLEGAME {
 	private: System::Windows::Forms::Label^ GameState;
 	private: System::Windows::Forms::Label^ countDown;
 	private: SoundPlayer^ clicking;
-	private: AxWMPLib::AxWindowsMediaPlayer^ BGMusic;
 	private: SettingManager^ settings;
+	private: SideBarManager^ aniSidebar;
 	public:
 		Game2(String^ uname)
 		{
@@ -195,6 +195,7 @@ namespace PBLWORDLEGAME {
 			this->showRule->TabIndex = 3;
 			this->showRule->Text = L"Rule";
 			this->showRule->UseVisualStyleBackColor = true;
+			this->showRule->Click += gcnew System::EventHandler(this, &PBLWORDLEGAME::Game2::showGameRule);
 			// 
 			// toggleSidebar
 			// 
@@ -355,6 +356,7 @@ namespace PBLWORDLEGAME {
 	private: System::Void GameLoading(System::Object^ sender, System::EventArgs^ e) {
 		this->settings = gcnew SettingManager();
 		settings->Game2_Music(BGMusic);
+		this->aniSidebar = gcnew SideBarManager(this->SideBar, this->toggleSidebar);
 		userLoading(this->username);
 		this->HighestScore->Text = "Highest Score: " + this->UserLogged->getS2();
 		this->UserAns->Text = "Enter your word!";
@@ -362,36 +364,21 @@ namespace PBLWORDLEGAME {
 		loadAllUser(2);
 		this->Rank->Text = "Rank: " + getRank(UserLogged->username);
 		this->Score->Text = "0";
+		LoadRule();
+		this->isShowed = false;
 		this->gameTimer = gcnew Timer();
 		this->gameTimer->Interval = 1000; // 1 second
 		this->gameTimer->Tick += gcnew System::EventHandler(this, &Game2::GameRunning);
-		this->sidebarTimer = gcnew Timer();
-		this->sidebarTimer->Interval = 5;
-		this->sidebarTimer->Tick += gcnew System::EventHandler(this, &Game2::AnimateSidebar);
 	}
 	private: System::Void ToggleSidebar(System::Object^ sender, System::EventArgs^ e) {
-		(this->toggleSidebar->Text == "<<") ? this->toggleSidebar->Text = ">>" : this->toggleSidebar->Text = "<<";
-		this->sidebarTimer->Start();
+		
 	}
-	private: System::Void AnimateSidebar(System::Object^ sender, System::EventArgs^ e) {
-		if (isHidden) {
-			this->SideBar->Left += 10;
-			this->toggleSidebar->Left += 10;
-			if (SideBar->Left >= 0) {
-				SideBar->Left = 0;
-				sidebarTimer->Stop();
-				isHidden = false;
-			}
-		}
-		else {
-			this->SideBar->Left -= 10;
-			this->toggleSidebar->Left -= 10;
-			if (SideBar->Left <= -SideBar->Width) {
-				SideBar->Left = -SideBar->Width;
-				sidebarTimer->Stop();
-				isHidden = true;
-			}
-		}
+	private: Void showGameRule(Object^ sender, EventArgs^ e) {
+		GameRule^ gameRule = gcnew GameRule(this->Rule);
+		gameRule->ShowDialog();
+	}
+	private: Void LoadRule() {
+		this->Rule = "In this game, you have to find the most wordsc with N\ncharacter(s) in 60 second. You will get 10 points for each\ncorrect word. N is a unsigned interger you can choose";
 	}
 	protected: System::Void Exit(System::Object^ sender, System::EventArgs^ e) override {
 		this->settings->StopAxWMP(BGMusic);
@@ -401,6 +388,10 @@ namespace PBLWORDLEGAME {
 		this->GameState->Text = "";
 		this->score = 0;
 		this->Score->Text = this->score.ToString();
+		if (this->isShowed == false) {
+			showGameRule(sender, e);
+			this->isShowed = true;
+		}
 		Game2_Char^ popup = gcnew Game2_Char();
 		if (popup->ShowDialog() == System::Windows::Forms::DialogResult::OK) {
 			this->n = Int32::Parse(popup->NumberChar);
@@ -430,8 +421,9 @@ namespace PBLWORDLEGAME {
 			String^ currentScore = this->Score->Text;
 			int ranking = getRank(this->username);
 			Player_Congratulation^ player_congrat = gcnew Player_Congratulation(UserLogged, currentScore, ranking);
+			this->settings->PauseAxWMP(BGMusic);
 			player_congrat->ShowDialog();
-
+			this->settings->ContinueAxWMP(BGMusic);
 		}
 	}
 	private: System::Void FetchWord() {

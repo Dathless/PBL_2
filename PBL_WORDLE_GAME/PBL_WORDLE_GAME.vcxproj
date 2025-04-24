@@ -123,10 +123,12 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <ClCompile Include="GameRule.cpp" />
     <ClCompile Include="GAME_CENTER.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Admin.h" />
+    <ClInclude Include="AnimationManager.h" />
     <ClInclude Include="BrowsePopup.h" />
     <ClInclude Include="ChangePass.h">
       <FileType>CppForm</FileType>
@@ -149,6 +151,9 @@
       <FileType>CppForm</FileType>
     </ClInclude>
     <ClInclude Include="Game2_Char.h">
+      <FileType>CppForm</FileType>
+    </ClInclude>
+    <ClInclude Include="GameRule.h">
       <FileType>CppForm</FileType>
     </ClInclude>
     <ClInclude Include="GAME_CENTER.h">
@@ -195,6 +200,9 @@
     </EmbeddedResource>
     <EmbeddedResource Include="Game2_Char.resx">
       <DependentUpon>Game2_Char.h</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="GameRule.resx">
+      <DependentUpon>GameRule.h</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Include="GAME_CENTER.resx">
       <DependentUpon>GAME_CENTER.h</DependentUpon>

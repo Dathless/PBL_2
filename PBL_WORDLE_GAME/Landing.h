@@ -2,6 +2,7 @@
 #include "Login.h"
 #include "fstream"
 
+
 using namespace System;
 using namespace System::ComponentModel;
 using namespace System::Collections;
@@ -211,6 +212,7 @@ namespace PBLWORDLEGAME {
 			this->Controls->Add(this->Title);
 			this->Name = L"Landing";
 			this->Size = System::Drawing::Size(782, 553);
+			this->Load += gcnew System::EventHandler(this, &PBLWORDLEGAME::Landing::OnLoad);
 			this->flowLayoutPanel1->ResumeLayout(false);
 			this->flowLayoutPanel1->PerformLayout();
 			this->ResumeLayout(false);
@@ -218,7 +220,9 @@ namespace PBLWORDLEGAME {
 
 		}
 #pragma endregion
-
+		private: System::Void OnLoad(Object^ sender, EventArgs^ e) {
+			
+		}
 		private: System::Void openLogin(System::Object^ sender, System::Windows::Forms::LinkLabelLinkClickedEventArgs^ e) {
 			enterLogin(this, e);
 		}

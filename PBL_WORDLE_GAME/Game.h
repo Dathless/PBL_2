@@ -4,14 +4,20 @@
 #include <fstream>
 
 using namespace System;
-using namespace System::IO;
 using namespace System::ComponentModel;
 using namespace System::Collections;
-using namespace System::Collections::Generic;
 using namespace System::Windows::Forms;
 using namespace System::Data;
 using namespace System::Drawing;
+using namespace System::Net;
+using namespace System::Text::Json;
+using namespace System::Collections::Generic;
+using namespace System::Net::Http;
+using namespace System::Threading::Tasks;
+using namespace System::IO;
 using namespace System::Media;
+using namespace WMPLib;
+using namespace AxWMPLib;
 
 namespace PBLWORDLEGAME {
 	public ref class Game : public System::Windows::Forms::Form
@@ -19,8 +25,12 @@ namespace PBLWORDLEGAME {
 	protected: User^ UserLogged;
 	protected: SoundPlayer^ bgMusic;
 	private: Dictionary<String^, int>^ Ranking = gcnew Dictionary<String^, int>();
+	protected: String^ Rule;
+	protected: bool isShowed;
+	protected: AxWMPLib::AxWindowsMediaPlayer^ BGMusic;
 	protected: virtual System::Void Render(System::Object^ sender, System::EventArgs^ e) = 0;
 	protected: virtual System::Void Exit(System::Object^ sender, System::EventArgs^e) {}
+	protected: virtual Void ShowRule(System::Object^ sender, System::EventArgs^ e) {}
 	protected: System::Void userLoading(String^ usr) {
 		String^ encryptUser = CryptoUtils::ComputeSHA256(usr);
 		String^ userPath = "UserList\\" + encryptUser + ".txt";

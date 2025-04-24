@@ -165,7 +165,7 @@ namespace PBLWORDLEGAME {
 		}
 #pragma endregion
 	private: System::Void OnLoad(System::Object^ sender, System::EventArgs^ e) {
-		this->numChar->Text = "2->5";
+		this->numChar->Text = "1->20";
 		this->numChar->ForeColor = System::Drawing::Color::Gray;
 		this->numChar->Focus();
 		this->numChar->SelectAll();
