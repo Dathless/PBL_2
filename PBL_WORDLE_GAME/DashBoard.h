@@ -2,6 +2,7 @@
 #include "fstream"
 #include "Game1.h"
 #include "Game2.h"
+#include "Game3.h"
 #include "User.h"
 #include "Delete_Acc.h"
 #include "CryptoUtils.h"
@@ -446,6 +447,7 @@ namespace PBLWORDLEGAME {
 			this->GameBtn3->TabIndex = 2;
 			this->GameBtn3->Text = L"Start";
 			this->GameBtn3->UseVisualStyleBackColor = true;
+			this->GameBtn3->Click += gcnew System::EventHandler(this, &DashBoard::GameBtn3_Click);
 			// 
 			// DashBoard
 			// 
@@ -523,6 +525,9 @@ namespace PBLWORDLEGAME {
 		game2->ShowDialog();
 		backDashBoard(this, e);
 	}
-	
+	private: System::Void GameBtn3_Click(System::Object^ sender, System::EventArgs^ e) {
+		Game3^ game3 = gcnew Game3(usrname);
+		game3->ShowDialog();
+	}
 };
 }
