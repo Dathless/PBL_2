@@ -22,7 +22,6 @@ namespace PBLWORDLEGAME {
     using namespace System::Drawing;
     using namespace System::Net::Http;
     using namespace System::Threading::Tasks;
-
     public ref class Game1 : public System::Windows::Forms::Form
     {
     private:
@@ -34,9 +33,11 @@ namespace PBLWORDLEGAME {
         int score;
         int attemptsLeft;
         bool gameActive;
-
+        bool isShowed;
+    private: Dictionary<String^, int>^ Ranking = gcnew Dictionary<String^, int>();
     private:
         System::Windows::Forms::Label^ HighestScore;
+        System::Windows::Forms::Label^ Rank;
         Dictionary<String^, int>^ getWord = gcnew Dictionary<String^, int>();
         User^ UserLogged;
         System::ComponentModel::IContainer^ components;
@@ -52,7 +53,9 @@ namespace PBLWORDLEGAME {
         System::Windows::Forms::Label^ AttemptsLabel;
         AxWMPLib::AxWindowsMediaPlayer^ BGMusic;
         System::Windows::Forms::Button^ HintButton;
-        cliext::vector<int> hiddenIndices;
+        String^ Rule;
+
+           cliext::vector<int> hiddenIndices;
 
     public:
         Game1(String^ usr)
@@ -61,6 +64,7 @@ namespace PBLWORDLEGAME {
             uname = usr;
             gameActive = false;
             score = 0;
+            isShowed = false;
             HideAllElements(); // Hide everything initially
         }
 
@@ -72,13 +76,19 @@ namespace PBLWORDLEGAME {
                 delete components;
             }
         }
-
+    private:
+        void Exit_Click(System::Object^ sender, System::EventArgs^ e)
+        {
+            // Close the application when the Exit button is clicked  
+            Application::Exit();
+        }
     private:
         void InitializeComponent(void)
         {
-            this->HighestScore = (gcnew System::Windows::Forms::Label());
             this->components = (gcnew System::ComponentModel::Container());
             System::ComponentModel::ComponentResourceManager^ resources = (gcnew System::ComponentModel::ComponentResourceManager(Game1::typeid));
+            this->HighestScore = (gcnew System::Windows::Forms::Label());
+            this->Rank = (gcnew System::Windows::Forms::Label());
             this->GameStart = (gcnew System::Windows::Forms::Button());
             this->Test = (gcnew System::Windows::Forms::TextBox());
             this->Score = (gcnew System::Windows::Forms::Label());
@@ -93,38 +103,30 @@ namespace PBLWORDLEGAME {
             this->BGMusic = (gcnew AxWMPLib::AxWindowsMediaPlayer());
             (cli::safe_cast<System::ComponentModel::ISupportInitialize^>(this->BGMusic))->BeginInit();
             this->SuspendLayout();
-            /*
-            // Test
-            this->Test->Enabled = false;
-            this->Test->Location = System::Drawing::Point(223, 219);
-            this->Test->Name = L"Test";
-            this->Test->Size = System::Drawing::Size(100, 20);
-            this->Test->TabIndex = 1;
-            this->Test->AcceptsReturn = false;
-            this->Test->KeyDown += gcnew System::Windows::Forms::KeyEventHandler(this, &Game1::Test_KeyDown);
-            */
             // 
             // HighestScore
             // 
             this->HighestScore->AutoSize = true;
             this->HighestScore->BackColor = System::Drawing::Color::Transparent;
             this->HighestScore->Font = (gcnew System::Drawing::Font(L"Microsoft Sans Serif", 12));
-            this->HighestScore->ForeColor = System::Drawing::Color::White;
-            this->HighestScore->Location = System::Drawing::Point(400, 100); // Adjust position as needed
+            this->HighestScore->ForeColor = System::Drawing::Color::Transparent;
+            this->HighestScore->Location = System::Drawing::Point(400, 100);
             this->HighestScore->Name = L"HighestScore";
-            this->HighestScore->Size = System::Drawing::Size(135, 25);
+            this->HighestScore->Size = System::Drawing::Size(127, 20);
             this->HighestScore->TabIndex = 15;
             this->HighestScore->Text = L"Highest Score: 0";
-            //
-            // HintButton
-            //
-            this->HintButton->ForeColor = System::Drawing::Color::DarkGreen;
-            this->HintButton->Location = System::Drawing::Point(350, 259);
-            this->HintButton->Name = L"HintButton";
-            this->HintButton->Size = System::Drawing::Size(100, 30);
-            this->HintButton->TabIndex = 10;
-            this->HintButton->Text = L"Hint";
-            this->HintButton->Click += gcnew System::EventHandler(this, &Game1::HintButton_Click);
+            // 
+            // Rank
+            // 
+            this->Rank->AutoSize = true;
+            this->Rank->BackColor = System::Drawing::Color::Transparent;
+            this->Rank->Font = (gcnew System::Drawing::Font(L"Microsoft Sans Serif", 12));
+            this->Rank->ForeColor = System::Drawing::Color::Transparent;
+            this->Rank->Location = System::Drawing::Point(400, 150);
+            this->Rank->Name = L"Rank";
+            this->Rank->Size = System::Drawing::Size(64, 20);
+            this->Rank->TabIndex = 16;
+            this->Rank->Text = L"Rank: 0";
             // 
             // GameStart
             // 
@@ -212,6 +214,16 @@ namespace PBLWORDLEGAME {
             this->AttemptsLabel->TabIndex = 9;
             this->AttemptsLabel->Text = L"Attempts: 0";
             // 
+            // HintButton
+            // 
+            this->HintButton->ForeColor = System::Drawing::Color::DarkGreen;
+            this->HintButton->Location = System::Drawing::Point(350, 259);
+            this->HintButton->Name = L"HintButton";
+            this->HintButton->Size = System::Drawing::Size(100, 30);
+            this->HintButton->TabIndex = 10;
+            this->HintButton->Text = L"Hint";
+            this->HintButton->Click += gcnew System::EventHandler(this, &Game1::HintButton_Click);
+            // 
             // BGMusic
             // 
             this->BGMusic->Enabled = true;
@@ -238,6 +250,7 @@ namespace PBLWORDLEGAME {
             this->Controls->Add(this->countdownLabel);
             this->Controls->Add(this->HintButton);
             this->Controls->Add(this->HighestScore);
+            this->Controls->Add(this->Rank);
             this->FormBorderStyle = System::Windows::Forms::FormBorderStyle::None;
             this->Name = L"Game1";
             this->StartPosition = System::Windows::Forms::FormStartPosition::CenterParent;
@@ -247,7 +260,60 @@ namespace PBLWORDLEGAME {
             this->PerformLayout();
 
         }
+    protected: System::Void loadAllUser(int pos) {
+        String^ folderPath = "UserList\\";
+        array<String^>^ files = Directory::GetFiles(folderPath, "*.txt");
+        for each (String ^ file in files) {
+            array<String^>^ lines = File::ReadAllLines(file);
+            if (lines[0] == "user") {
+                String^ uname = lines[1];
+                int score = Int32::Parse(lines[2 + pos]);//Game1 pos=1, Game2 pos=2, Game3 pos=3
+                Ranking[uname] = score;
+            }
+        }
+    }
 
+    protected: System::Void userLoading(String^ usr) {
+        String^ encryptUser = CryptoUtils::ComputeSHA256(usr);
+        String^ userPath = "UserList\\" + encryptUser + ".txt";
+
+        if (File::Exists(userPath)) {
+            array<String^>^ lines = File::ReadAllLines(userPath);
+            String^ decryptedPassword = CryptoUtils::DecryptAES(lines[2]);
+            UserLogged = gcnew User(lines[1], decryptedPassword, Int32::Parse(lines[3]), Int32::Parse(lines[4]), Int32::Parse(lines[5]));
+        }
+        else {
+            MessageBox::Show("User not found!", "Error", MessageBoxButtons::OK, MessageBoxIcon::Error);
+        }
+    }
+    protected: int getRank(String^ usr) {
+        List<KeyValuePair<String^, int>>^ sortedRank = gcnew List<KeyValuePair<String^, int>>(Ranking);
+        for (int i = 0; i < sortedRank->Count - 1; i++) {
+            for (int j = i + 1; j < sortedRank->Count; j++) {
+                if (sortedRank[i].Value < sortedRank[j].Value) { // Descending order
+                    KeyValuePair<String^, int> temp = sortedRank[i];
+                    sortedRank[i] = sortedRank[j];
+                    sortedRank[j] = temp;
+                }
+            }
+        }
+        for (int i = 0; i < sortedRank->Count; i++) {
+            if (sortedRank[i].Key == usr) {
+                return i + 1;
+            }
+        }
+        return -1;
+    }
+     private:
+         void OnLoad(Object^ sender, EventArgs^ e)
+         {
+             this->settings = gcnew SettingManager();
+             this->settings->Game1_Music(BGMusic);
+             userLoading(this->uname);
+             this->HighestScore->Text = "Highest Score: " + this->UserLogged->getS1();
+             loadAllUser(1);
+             this->Rank->Text = "Rank: " + getRank(UserLogged->username);
+         }
     private:
         /*
         void Test_KeyDown(System::Object^ sender, System::Windows::Forms::KeyEventArgs^ e) {
@@ -269,6 +335,8 @@ namespace PBLWORDLEGAME {
             this->countdownLabel->Visible = false;
             this->SubmitGuessButton->Visible = false;
             this->AttemptsLabel->Visible = false;
+			this->HighestScore->Visible = false;
+			this->Rank->Visible = false;
 
             // Center the Start Game button
             this->GameStart->Location = System::Drawing::Point(
@@ -289,6 +357,8 @@ namespace PBLWORDLEGAME {
             this->countdownLabel->Visible = true;
             this->SubmitGuessButton->Visible = true;
             this->AttemptsLabel->Visible = true;
+			this->HighestScore->Visible = true;
+			this->Rank->Visible = true;
 
             // Reset positions to original layout
             this->GameStart->Location = System::Drawing::Point(223, 91);
@@ -306,17 +376,6 @@ namespace PBLWORDLEGAME {
             this->HintButton->Visible = true;
         }
 
-        void OnLoad(Object^ sender, EventArgs^ e)
-        {
-            this->settings = gcnew SettingManager();
-            this->settings->Game1_Music(BGMusic);
-        }
-
-        void Exit_Click(System::Object^ sender, System::EventArgs^ e)
-        {
-            this->settings->StopAxWMP(BGMusic);
-            this->Close();
-        }
 
         void StartGame(System::Object^ sender, System::EventArgs^ e)
         {
@@ -525,5 +584,9 @@ namespace PBLWORDLEGAME {
                 EndGame(false);
             }
         }
-    };
+    private: System::Void label1_Click(System::Object^ sender, System::EventArgs^ e) {
+    }
+
+};
 }
+
