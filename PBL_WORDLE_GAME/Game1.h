@@ -3,10 +3,6 @@
 #using <System.Windows.Forms.dll>
 #using <System.Net.Http.dll>
 #using <System.Threading.Tasks.dll>
-using namespace System;
-using namespace System::Windows::Forms;
-using namespace System::Net::Http;
-using namespace System::Threading::Tasks;
 
 #include "SettingManager.h"
 #include <cliext/vector>
@@ -22,7 +18,7 @@ namespace PBLWORDLEGAME {
     using namespace System::Drawing;
     using namespace System::Net::Http;
     using namespace System::Threading::Tasks;
-    public ref class Game1 : public System::Windows::Forms::Form
+    public ref class Game1 : public Game
     {
     private:
         String^ uname;
@@ -33,25 +29,23 @@ namespace PBLWORDLEGAME {
         int score;
         int attemptsLeft;
         bool gameActive;
-        bool isShowed;
+        /*bool isShowed;*/
     private: Dictionary<String^, int>^ Ranking = gcnew Dictionary<String^, int>();
     private:
         System::Windows::Forms::Label^ HighestScore;
         System::Windows::Forms::Label^ Rank;
         Dictionary<String^, int>^ getWord = gcnew Dictionary<String^, int>();
-        User^ UserLogged;
         System::ComponentModel::IContainer^ components;
         System::Windows::Forms::Button^ GameStart;
         System::Windows::Forms::TextBox^ Test;
         System::Windows::Forms::Label^ Score;
         System::Windows::Forms::Panel^ GameAns;
-        System::Windows::Forms::Button^ Exit;
+        System::Windows::Forms::Button^ ExitBtn;
         System::Windows::Forms::Button^ RulesButton;
         System::Windows::Forms::Timer^ countdownTimer;
         System::Windows::Forms::Label^ countdownLabel;
         System::Windows::Forms::Button^ SubmitGuessButton;
         System::Windows::Forms::Label^ AttemptsLabel;
-        AxWMPLib::AxWindowsMediaPlayer^ BGMusic;
         System::Windows::Forms::Button^ HintButton;
         String^ Rule;
 
@@ -76,11 +70,12 @@ namespace PBLWORDLEGAME {
                 delete components;
             }
         }
-    private:
-        void Exit_Click(System::Object^ sender, System::EventArgs^ e)
+    public:
+        void Exit(System::Object^ sender, System::EventArgs^ e) override
         {
+            this->settings->StopAxWMP(BGMusic);
             // Close the application when the Exit button is clicked  
-            Application::Exit();
+            this->Close();
         }
     private:
         void InitializeComponent(void)
@@ -93,7 +88,7 @@ namespace PBLWORDLEGAME {
             this->Test = (gcnew System::Windows::Forms::TextBox());
             this->Score = (gcnew System::Windows::Forms::Label());
             this->GameAns = (gcnew System::Windows::Forms::Panel());
-            this->Exit = (gcnew System::Windows::Forms::Button());
+            this->ExitBtn = (gcnew System::Windows::Forms::Button());
             this->RulesButton = (gcnew System::Windows::Forms::Button());
             this->countdownTimer = (gcnew System::Windows::Forms::Timer(this->components));
             this->countdownLabel = (gcnew System::Windows::Forms::Label());
@@ -163,14 +158,14 @@ namespace PBLWORDLEGAME {
             // 
             // Exit
             // 
-            this->Exit->BackColor = System::Drawing::Color::Crimson;
-            this->Exit->Location = System::Drawing::Point(223, 363);
-            this->Exit->Name = L"Exit";
-            this->Exit->Size = System::Drawing::Size(100, 30);
-            this->Exit->TabIndex = 4;
-            this->Exit->Text = L"Exit";
-            this->Exit->UseVisualStyleBackColor = false;
-            this->Exit->Click += gcnew System::EventHandler(this, &Game1::Exit_Click);
+            this->ExitBtn->BackColor = System::Drawing::Color::Crimson;
+            this->ExitBtn->Location = System::Drawing::Point(223, 363);
+            this->ExitBtn->Name = L"Exit";
+            this->ExitBtn->Size = System::Drawing::Size(100, 30);
+            this->ExitBtn->TabIndex = 4;
+            this->ExitBtn->Text = L"Exit";
+            this->ExitBtn->UseVisualStyleBackColor = false;
+            this->ExitBtn->Click += gcnew System::EventHandler(this, &Game1::Exit);
             // 
             // RulesButton
             // 
@@ -244,7 +239,7 @@ namespace PBLWORDLEGAME {
             this->Controls->Add(this->Test);
             this->Controls->Add(this->Score);
             this->Controls->Add(this->GameAns);
-            this->Controls->Add(this->Exit);
+            this->Controls->Add(this->ExitBtn);
             this->Controls->Add(this->RulesButton);
             this->Controls->Add(this->SubmitGuessButton);
             this->Controls->Add(this->countdownLabel);
@@ -254,58 +249,14 @@ namespace PBLWORDLEGAME {
             this->FormBorderStyle = System::Windows::Forms::FormBorderStyle::None;
             this->Name = L"Game1";
             this->StartPosition = System::Windows::Forms::FormStartPosition::CenterParent;
-            this->Load += gcnew System::EventHandler(this, &Game1::OnLoad);
+            this->Load += gcnew System::EventHandler(this, &Game1::Render);
             (cli::safe_cast<System::ComponentModel::ISupportInitialize^>(this->BGMusic))->EndInit();
             this->ResumeLayout(false);
             this->PerformLayout();
 
         }
-    protected: System::Void loadAllUser(int pos) {
-        String^ folderPath = "UserList\\";
-        array<String^>^ files = Directory::GetFiles(folderPath, "*.txt");
-        for each (String ^ file in files) {
-            array<String^>^ lines = File::ReadAllLines(file);
-            if (lines[0] == "user") {
-                String^ uname = lines[1];
-                int score = Int32::Parse(lines[2 + pos]);//Game1 pos=1, Game2 pos=2, Game3 pos=3
-                Ranking[uname] = score;
-            }
-        }
-    }
-
-    protected: System::Void userLoading(String^ usr) {
-        String^ encryptUser = CryptoUtils::ComputeSHA256(usr);
-        String^ userPath = "UserList\\" + encryptUser + ".txt";
-
-        if (File::Exists(userPath)) {
-            array<String^>^ lines = File::ReadAllLines(userPath);
-            String^ decryptedPassword = CryptoUtils::DecryptAES(lines[2]);
-            UserLogged = gcnew User(lines[1], decryptedPassword, Int32::Parse(lines[3]), Int32::Parse(lines[4]), Int32::Parse(lines[5]));
-        }
-        else {
-            MessageBox::Show("User not found!", "Error", MessageBoxButtons::OK, MessageBoxIcon::Error);
-        }
-    }
-    protected: int getRank(String^ usr) {
-        List<KeyValuePair<String^, int>>^ sortedRank = gcnew List<KeyValuePair<String^, int>>(Ranking);
-        for (int i = 0; i < sortedRank->Count - 1; i++) {
-            for (int j = i + 1; j < sortedRank->Count; j++) {
-                if (sortedRank[i].Value < sortedRank[j].Value) { // Descending order
-                    KeyValuePair<String^, int> temp = sortedRank[i];
-                    sortedRank[i] = sortedRank[j];
-                    sortedRank[j] = temp;
-                }
-            }
-        }
-        for (int i = 0; i < sortedRank->Count; i++) {
-            if (sortedRank[i].Key == usr) {
-                return i + 1;
-            }
-        }
-        return -1;
-    }
-     private:
-         void OnLoad(Object^ sender, EventArgs^ e)
+     public:
+         void Render(Object^ sender, EventArgs^ e) override
          {
              this->settings = gcnew SettingManager();
              this->settings->Game1_Music(BGMusic);
@@ -315,22 +266,22 @@ namespace PBLWORDLEGAME {
              this->Rank->Text = "Rank: " + getRank(UserLogged->username);
          }
     private:
-        /*
+        
         void Test_KeyDown(System::Object^ sender, System::Windows::Forms::KeyEventArgs^ e) {
             if (e->KeyCode == Keys::Enter && gameActive) {
+                e->SuppressKeyPress = true; // Prevent the ding sound
                 // Call the same method as the Submit button
                 SubmitGuess_Click(sender, e);
-                e->SuppressKeyPress = true; // Prevent the ding sound
             }
         }
-        */
+        
         void HideAllElements()
         {
             // Hide all elements except the Start Game button
             this->Test->Visible = false;
             this->Score->Visible = false;
             this->GameAns->Visible = false;
-            this->Exit->Visible = false;
+            this->ExitBtn->Visible = false;
             this->RulesButton->Visible = false;
             this->countdownLabel->Visible = false;
             this->SubmitGuessButton->Visible = false;
@@ -352,7 +303,7 @@ namespace PBLWORDLEGAME {
             this->Test->Visible = true;
             this->Score->Visible = true;
             this->GameAns->Visible = true;
-            this->Exit->Visible = true;
+            this->ExitBtn->Visible = true;
             this->RulesButton->Visible = true;
             this->countdownLabel->Visible = true;
             this->SubmitGuessButton->Visible = true;
@@ -365,7 +316,7 @@ namespace PBLWORDLEGAME {
             this->Test->Location = System::Drawing::Point(223, 219);
             this->Score->Location = System::Drawing::Point(100, 50);
             this->GameAns->Location = System::Drawing::Point(175, 142);
-            this->Exit->Location = System::Drawing::Point(223, 363);
+            this->ExitBtn->Location = System::Drawing::Point(223, 363);
             this->RulesButton->Location = System::Drawing::Point(223, 311);
             this->countdownLabel->Location = System::Drawing::Point(10, 10);
             this->SubmitGuessButton->Location = System::Drawing::Point(223, 259);
@@ -383,6 +334,7 @@ namespace PBLWORDLEGAME {
             this->gameActive = true;
             this->GameStart->Enabled = false;
             this->Test->Enabled = true;
+            this->Test->Focus();
             this->SubmitGuessButton->Enabled = true;
             this->score = 0;
             this->attemptsLeft = 6;
@@ -449,6 +401,7 @@ namespace PBLWORDLEGAME {
 
             // Clear the input box
             this->Test->Clear();
+            this->Test->Focus();
         }
 
         void UpdateWordDisplay()
@@ -478,7 +431,12 @@ namespace PBLWORDLEGAME {
 
             this->GameAns->Controls->Add(flowPanel);
         }
-
+    public: 
+		System::Void scoreUpdating(int score) override
+		{
+            this->UserLogged->setS1(score);
+		}
+    private:
         void EndGame(bool won)
         {
             this->gameActive = false;
@@ -563,6 +521,10 @@ namespace PBLWORDLEGAME {
 
             // Check if game is won
             if (this->currentState == this->secretWord) {
+				if (score > this->UserLogged->getS1()) {
+					scoreUpdating(score);
+				}
+                userSaving(this->UserLogged);
                 EndGame(true);
             }
         }

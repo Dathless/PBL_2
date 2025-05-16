@@ -1,5 +1,5 @@
 asset\\img\\bg1.jpg
-asset\sound\op2.wav
+asset\sound\lull.mp3
 asset\\sound\\bgMusic.wav
 asset\\sound\\continue.wav
 asset\\sound\\continue.wav

@@ -48,7 +48,6 @@ namespace PBLWORDLEGAME {
 	private: System::Windows::Forms::Label^ Title;
 	private: System::Windows::Forms::Label^ GameState;
 	private: System::Windows::Forms::Label^ countDown;
-	private: SoundPlayer^ clicking;
 	private: SettingManager^ settings;
 	private: SideBarManager^ aniSidebar;
 	public:

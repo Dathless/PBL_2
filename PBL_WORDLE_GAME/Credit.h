@@ -49,6 +49,7 @@ namespace PBLWORDLEGAME {
 	private: System::Windows::Forms::TextBox^ textBox2;
 	private: System::Windows::Forms::Button^ backBtn;
 	private: System::Windows::Forms::TextBox^ textBox3;
+	private: System::Windows::Forms::TextBox^ textBox4;
 
 
 	private:
@@ -64,7 +65,6 @@ namespace PBLWORDLEGAME {
 		/// </summary>
 		void InitializeComponent(void)
 		{
-			System::ComponentModel::ComponentResourceManager^ resources = (gcnew System::ComponentModel::ComponentResourceManager(Credit::typeid));
 			this->Title = (gcnew System::Windows::Forms::Label());
 			this->author = (gcnew System::Windows::Forms::Label());
 			this->courseName = (gcnew System::Windows::Forms::Label());
@@ -77,6 +77,7 @@ namespace PBLWORDLEGAME {
 			this->textBox2 = (gcnew System::Windows::Forms::TextBox());
 			this->backBtn = (gcnew System::Windows::Forms::Button());
 			this->textBox3 = (gcnew System::Windows::Forms::TextBox());
+			this->textBox4 = (gcnew System::Windows::Forms::TextBox());
 			this->SuspendLayout();
 			// 
 			// Title
@@ -218,11 +219,22 @@ namespace PBLWORDLEGAME {
 			this->textBox3->TabIndex = 11;
 			this->textBox3->Text = L"Trương Quốc Cường";
 			// 
+			// textBox4
+			// 
+			this->textBox4->Font = (gcnew System::Drawing::Font(L"Microsoft Sans Serif", 14, System::Drawing::FontStyle::Regular, System::Drawing::GraphicsUnit::Point,
+				static_cast<System::Byte>(0)));
+			this->textBox4->Location = System::Drawing::Point(337, 437);
+			this->textBox4->Name = L"textBox4";
+			this->textBox4->Size = System::Drawing::Size(339, 34);
+			this->textBox4->TabIndex = 11;
+			this->textBox4->Text = L"Trương Quốc Cường";
+			// 
 			// Credit
 			// 
 			this->AutoScaleDimensions = System::Drawing::SizeF(8, 16);
 			this->AutoScaleMode = System::Windows::Forms::AutoScaleMode::Font;
 			this->BackColor = System::Drawing::Color::Transparent;
+			this->Controls->Add(this->textBox4);
 			this->Controls->Add(this->backBtn);
 			this->Controls->Add(this->textBox2);
 			this->Controls->Add(this->textBox1);
