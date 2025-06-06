@@ -1,31 +1,55 @@
-
 # 🎮 Wordle Game Center
 
-Wordle Game Center là một hệ thống chơi trò chơi Wordle đa dạng, hướng đến việc hỗ trợ người chơi rèn luyện kỹ năng tiếng Anh.Giao diện thân thiện, nhạc nền hấp dẫn và hỗ trợ mở rộng thêm rất nhiều
-mini game khác. Đồng thời người dùng cũng có thể tự thiết kế giao diện thuộc về riêng bản thân.
-
-
-
+Wordle Game Center là một hệ thống chơi trò chơi Wordle đa dạng, hướng đến việc hỗ trợ người chơi rèn luyện kỹ năng tiếng Anh. Giao diện thân thiện, nhạc nền hấp dẫn và hỗ trợ mở rộng thêm rất nhiều mini game khác. Đồng thời người dùng cũng có thể tự thiết kế giao diện thuộc về riêng bản thân.
 
 ## Mục lục
-- Tính năng.
-- Cấu trúc thư mục.
-- Cấu trúc class và form.
-- Thư viện & API sử dụng.
-- Cách chạy dự án.
-- Đóng góp.
- 
+- Tính năng
+- Cấu trúc thư mục
+- Cấu trúc class và form
+- Thư viện & API sử dụng
+- Cách chạy dự án
+- Đóng góp
+
 ## Tính năng
 
-- Đăng nhập và đăng ký tài khoản người dùng.
-- Hệ thống phân quyền.
-- Giao diện người chơi đơn giản, thân thiện.
-- Admin có thể quản lý tài khoản: xem điểm, sửa mật khẩu, xoá người dùng, thêm người dùng hoặc admin mới.
-- Hệ thống game đa dạng.
-- Hỗ trợ đa dạng file nhạc nền với AxWindowMediaPlayer.
-- Các popup chức năng: đổi mật khẩu, thêm/xoá tài khoản.
-- Cập nhật từ vựng với Datamuse API.
-- Hệ thống animation và quản lý file hình nền, âm thanh, ...
+### Hệ thống người dùng
+- Đăng nhập và đăng ký tài khoản người dùng
+- Hệ thống phân quyền (Admin và User)
+- Quản lý tài khoản:
+  - Xem điểm số
+  - Sửa mật khẩu
+  - Xoá người dùng
+  - Thêm người dùng mới
+  - Thêm admin mới
+- Bảo mật mật khẩu với mã hóa AES
+
+### Game Features
+- Ba chế độ chơi khác nhau (Game1, Game2, Game3)
+- Nhiều cấp độ khó (Easy, Medium, Hard)
+- Nhiều chủ đề từ vựng:
+  - Animals
+  - Food
+  - Countries
+  - Sports
+  - Random
+- Hệ thống tính điểm và xếp hạng
+- Hệ thống gợi ý (Hints)
+- Màn hình chúc mừng khi thắng
+- Quy tắc chơi chi tiết
+
+### Giao diện và Trải nghiệm
+- Giao diện người chơi đơn giản, thân thiện
+- Hệ thống animation mượt mà
+- Hỗ trợ đa dạng file nhạc nền với AxWindowMediaPlayer
+- Tùy chỉnh giao diện:
+  - Thay đổi nhạc nền
+  - Thay đổi hình nền
+  - Tùy chỉnh màu sắc
+- Các popup chức năng:
+  - Đổi mật khẩu
+  - Thêm/xoá tài khoản
+  - Cài đặt game
+
 ## Cấu trúc thư mục
 ### Thư mục source code:
 /PBL_WORDLE_GAME
@@ -37,57 +61,89 @@ mini game khác. Đồng thời người dùng cũng có thể tự thiết kế
 │
 ├── /UserList          # Chứa file ${SHA256(username)}.txt (username, AES password)
 │
+├── /Interop          # Thư viện COM components
+│
 ├── setting.txt        # Lưu đường dẫn nhạc nền, ảnh nền
-├── *.h                # Các file header chứa code của dự án
-└──README.md          # File mô tả dự án
+├── UserData.txt      # Lưu thông tin người dùng
+├── UserScore.txt     # Lưu điểm số người chơi
+├── *.h               # Các file header chứa code của dự án
+└── README.md         # File mô tả dự án
+
 ### Thư mục tổng:
 /PBL_WORDLE_GAME  
 │
 ├── /PBL_WORDLE_GAME    # Thư mục source code ở trên
 │
 ├── /x64              # Thư mục để chạy dự án
-│   ├── /Debug         # Thư mục chứa các thư viện động và  file exe để chạy dự án
-|           ├── PBL_WORDLE_GAME.exe # file thực thi của dự án
-└──PBL_WORDLE_GAME.sln  #File khởi chạy dự án trong visual studio 2022
+│   ├── /Debug        # Thư mục chứa các thư viện động và file exe để chạy dự án
+│           ├── PBL_WORDLE_GAME.exe # file thực thi của dự án
+└── PBL_WORDLE_GAME.sln  # File khởi chạy dự án trong visual studio 2022
+
 ## Cấu trúc form và class
-- Form chính: 
-    - GameCenter: trống và dùng để load UC Landing
-- Điều hướng:
-    - Landing: chứa link tới Login, Register, Setting, Credit, Quit.
-- User Controls:
-    - Login, Register, Setting, Credit: xử lý chức năng tương ứng.
-- Dashboard:
-    - Dashboard: cho người dùng ( hiển thị game, xoá tài khoản, đổi mật khẩu, log out).
-    - Dashboard_Admin: cho admin ( quản trị User thông qua DataGridView, tạo tài khoản mới, ...).
-- Game Form:
-    - Game1, Game2: các trò chơi hiện tại.
--Popup Form:
-    - ChangePass, AddAccount, Delete_Acc,...: Các form chức năng phụ trợ.
--Class:
-    - Game: Base class của Game1, Game2. Chứa các hàm tương đồng của 2 form.
-    - Account: Base class của Admin, User. Chứa các phương thức và thuộc tính chung của Admin và User.
-    - CrytoUtils: quản lý bảo mật.
-    - AnimationManager: quản lý hoạt ảnh.
-    - SettingManager: quản lý các file trong setting.txt vận hành.
-    - BrowsePopup: quản lý việc đọc file với hệ thống.
+### Form chính: 
+- GameCenter: Form chính để load các UserControl
+- Landing: Trang chủ với các link tới Login, Register, Setting, Credit, Quit
+
+### User Controls:
+- Login: Xử lý đăng nhập
+- Register: Xử lý đăng ký
+- Setting: Cài đặt game
+- Credit: Thông tin về dự án
+- GameRule: Hiển thị luật chơi
+
+### Dashboard:
+- Dashboard: Cho người dùng thường
+  - Hiển thị game
+  - Xoá tài khoản
+  - Đổi mật khẩu
+  - Log out
+- Dashboard_Admin: Cho admin
+  - Quản trị User qua DataGridView
+  - Tạo tài khoản mới
+  - Quản lý người dùng
+
+### Game Forms:
+- Game1: Chế độ chơi cơ bản
+- Game2: Chế độ chơi nâng cao
+- Game3: Chế độ chơi đặc biệt
+- Player_Congratulation: Màn hình chúc mừng
+
+### Popup Forms:
+- ChangePass: Đổi mật khẩu
+- AddAccount: Thêm tài khoản
+- Delete_Acc: Xóa tài khoản
+- BrowsePopup: Chọn file
+
+### Core Classes:
+- Game: Base class cho Game1, Game2, Game3
+- Account: Base class cho Admin và User
+- CryptoUtils: Quản lý bảo mật và mã hóa
+- AnimationManager: Quản lý hoạt ảnh
+- SettingManager: Quản lý cài đặt
+- User: Quản lý thông tin người dùng
+
 ## Thư viện & API
-- AxWMPLib.AxWindowMediaPlayer: phụ trách nhạc nền.
-- fstream: hỗ trợ đọc/ghi file.
-- System::Sercurity::CryptoGraphy: phụ trách xây dựng bảo mật.
-- DataMuse API: lưu trữ từ vựng để vận hành game.
-- Window::Form: namespace phụ trách việc tạo Form, UserControl,...
+- AxWMPLib.AxWindowMediaPlayer: Phát nhạc nền
+- fstream: Đọc/ghi file
+- System::Security::Cryptography: Bảo mật và mã hóa
+- DataMuse API: Cung cấp từ vựng cho game
+- Window::Form: Tạo Form và UserControl
+- System::Drawing: Xử lý đồ họa và animation
+
 ## Chạy dự án
 ### Yêu cầu hệ thống:
-    - Microsoft Visual Studio 2022.
-    - .NET FrameWork 4.7.2
-    - AxWindowMediaPlayer (COM component)
-    - /clr: Hỗ trợ cho dự án Window Form viết bằng CPP/CLI
-### Các chạy:
-    - Mở Microsoft Visual Studio 2022
-    - Chạy file PBL_WORDLE_GAME.sln
-    - Build and Run
+- Microsoft Visual Studio 2022
+- .NET Framework 4.7.2
+- AxWindowMediaPlayer (COM component)
+- /clr: Hỗ trợ cho dự án Window Form viết bằng CPP/CLI
+
+### Cách chạy:
+1. Mở Microsoft Visual Studio 2022
+2. Chạy file PBL_WORDLE_GAME.sln
+3. Build and Run
+
 ## Feedback
 
 Github repo: https://github.com/Dathless/PBL_2
-Nếu có bất kì góp ý gì, hãy truy cập link repo trên và chia sẽ. Cảm ơn!
+Nếu có bất kì góp ý gì, hãy truy cập link repo trên và chia sẻ. Cảm ơn!
 
